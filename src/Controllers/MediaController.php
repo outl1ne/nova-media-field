@@ -6,6 +6,7 @@ namespace OptimistDigital\MediaField\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use OptimistDigital\MediaField\Models\Media;
+use OptimistDigital\MediaField\Classes\MediaHandler;
 
 class MediaController extends Controller
 {
