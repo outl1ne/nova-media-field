@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
-use Optimistdigital\MediaField\Models\Media;
+use OptimistDigital\MediaField\Models\Media;
 
 class MediaHandler
 {
