@@ -206,18 +206,20 @@ export default {
 
     mounted() {
 
+      if (this.field.value && this.field.value !== '') {
         axios.get( '/api/media/find', {
-            params: {
-                ids: this.field.value.split(',')
-            },
+          params: {
+            ids: this.field.value.split(',')
+          },
         }).then(response => {
-            this.selectedFiles = response.data.map(file => ({
-                data: file,
-                processed: true,
-                uploading: false,
-                uploadProgress: 0
-            }));
+          this.selectedFiles = response.data.map(file => ({
+            data: file,
+            processed: true,
+            uploading: false,
+            uploadProgress: 0
+          }));
         });
+      }
 
         if (!window.mediaLibrary) {
             window.mediaLibrary = {
