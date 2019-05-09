@@ -19,6 +19,10 @@ class FieldServiceProvider extends ServiceProvider
             __DIR__.'/../config/nova-media-field.php' => config_path('nova-media-field.php'),
         ]);
 
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/nova-media-field.php', 'nova-media-field'
+        );
+
         $this->loadMigrationsFrom(__DIR__.'/../migrations');
         $this->loadRoutesFrom(__DIR__.'/routes.php');
 
