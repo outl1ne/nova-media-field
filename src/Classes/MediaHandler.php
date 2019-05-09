@@ -1,13 +1,13 @@
 <?php
 
-namespace MediaField\Classes;
+namespace OptimistDigital\MediaField\Classes;
 
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
-use MediaField\Models\Media;
+use Optimistdigital\MediaField\Models\Media;
 
 class MediaHandler
 {
@@ -24,7 +24,7 @@ class MediaHandler
         $extension =  pathinfo($file, PATHINFO_EXTENSION);
 
         $sizes = [];
-        foreach (config('media-library.image_sizes') as $sizeName => $config) {
+        foreach (config('nova-media-field.image_sizes') as $sizeName => $config) {
 
             $img = Image::make($file);
 
@@ -63,7 +63,7 @@ class MediaHandler
 
         $disk = Storage::disk('local');
 
-        $subPath = config('media-library.storage_path') . date('Y') . '/' . date('m') . '/';
+        $subPath = config('nova-media-field.storage_path') . date('Y') . '/' . date('m') . '/';
 
         if (!$disk->exists($subPath)) {
             $disk->makeDirectory($subPath);

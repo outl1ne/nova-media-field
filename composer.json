@@ -11,13 +11,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Optimistdigital\\MediaField\\": "src/"
+            "OptimistDigital\\MediaField\\": ["src/"]
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Optimistdigital\\MediaField\\FieldServiceProvider"
+                "OptimistDigital\\MediaField\\FieldServiceProvider"
             ]
         }
     },

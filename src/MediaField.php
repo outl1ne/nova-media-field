@@ -1,6 +1,6 @@
 <?php
 
-namespace Optimistdigital\MediaField;
+namespace OptimistDigital\MediaField;
 
 use Laravel\Nova\Fields\Field;
 

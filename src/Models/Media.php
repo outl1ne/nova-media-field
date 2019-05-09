@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaField\Models;
+namespace OptimistDigital\MediaField\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
