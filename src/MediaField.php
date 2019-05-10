@@ -3,6 +3,8 @@
 namespace OptimistDigital\MediaField;
 
 use Laravel\Nova\Fields\Field;
+use OptimistDigital\MediaField\Models\Media;
+
 
 class MediaField extends Field
 {
@@ -30,6 +32,7 @@ class MediaField extends Field
     }
 
     /**
+     *
      * Prepare the element for JSON serialization.
      *
      * @return array
@@ -40,4 +43,16 @@ class MediaField extends Field
             'multiple' => $this->multiple
         ]);
     }
+
+    public function resolveResponseValue($fieldValue)
+    {
+        $query = Media::whereIn('id', explode(',', $fieldValue));
+
+        if ($this->multiple) {
+            return $query->get();
+        }
+
+        return $query->first();
+    }
+
 }

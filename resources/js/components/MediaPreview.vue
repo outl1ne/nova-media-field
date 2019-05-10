@@ -77,6 +77,16 @@
             width: 90px;
             height: 90px;
             margin: 2.5px;
+            border: 0;
+
+            &:hover {
+                border: 0;
+                box-shadow: none;
+            }
+
+            img {
+                object-fit: cover;
+            }
         }
     }
 
