@@ -8,7 +8,7 @@
         </div>
 
         <div class="thumbnail-container" v-if="file !== void 0">
-            <img draggable="false" :src="file.image_sizes.thumbnail.url" />
+            <img draggable="false" :src="(file.image_sizes.thumbnail || file).url" />
         </div>
 
         <div class="checked-box" v-if="selected">

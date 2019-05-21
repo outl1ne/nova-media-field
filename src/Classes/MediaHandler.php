@@ -46,14 +46,18 @@ class MediaHandler
 
            $sizeFileName = $origName . '-' . $img->getWidth() . 'px-' . $img->getHeight() . 'px.' . $extension;
 
-           $img->save(dirname($file) . '/'. $sizeFileName);
+           try {
+               $img->save(dirname($file) . '/'. $sizeFileName);
 
-            $sizes[$sizeName] = [
-                'file_name' => $sizeFileName,
-                'file_size' => filesize(dirname($file) . '/'. $sizeFileName),
-                'width' => $img->getWidth(),
-                'height' => $img->getHeight(),
-            ];
+               $sizes[$sizeName] = [
+                   'file_name' => $sizeFileName,
+                   'file_size' => filesize(dirname($file) . '/'. $sizeFileName),
+                   'width' => $img->getWidth(),
+                   'height' => $img->getHeight(),
+               ];
+           } catch (\Intervention\Image\Exception\NotSupportedException $e) {
+               break;
+           }
         }
 
         return $sizes;
