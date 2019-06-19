@@ -40,14 +40,23 @@
 
         computed: {
             style() {
-                return 'width: ' + this.width + 'px;';
+                return 'max-width: ' + this.width + 'px;';
             },
         },
     };
 </script>
 
-<style scoped>
+<style>
+
+    .vue-portal-target .modal > div > div {
+        padding: 0 20px;
+        width: 100%;
+    }
+
     .od-modal {
+        overflow: hidden;
         position: relative;
+        width: 100%;
+        margin: 0 auto;
     }
 </style>

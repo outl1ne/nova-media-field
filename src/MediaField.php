@@ -16,7 +16,9 @@ class MediaField extends Field
      */
     public $component = 'media-field';
 
-    public $multiple = false;
+    protected $multiple = false;
+
+    protected $collection = null;
 
     /**
      * Set the number of rows used for the textarea.
@@ -31,6 +33,13 @@ class MediaField extends Field
         return $this;
     }
 
+
+    public function collection($collection)
+    {
+        $this->collection = $collection;
+        return $this;
+    }
+
     /**
      *
      * Prepare the element for JSON serialization.
@@ -40,7 +49,9 @@ class MediaField extends Field
     public function jsonSerialize()
     {
         return array_merge(parent::jsonSerialize(), [
-            'multiple' => $this->multiple
+            'multiple' => $this->multiple,
+            'displayCollection' => $this->collection,
+            'collections' => config('nova-media-field.collections')
         ]);
     }
 
@@ -54,5 +65,6 @@ class MediaField extends Field
 
         return $query->first();
     }
+
 
 }

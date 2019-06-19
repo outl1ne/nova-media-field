@@ -31,7 +31,27 @@
             </div>
         </div>
 
+        <div class="label-field">
+            <label class="text-80 leading-tight">
+                <span>File size:</span>
+                <span>{{ parseInt(file.file_size / 1000 , 10) }} kb</span>
+            </label>
+            <label class="text-80 leading-tight">
+                <span>Mime type:</span>
+                <span>{{ file.mime_type }}</span>
+            </label>
+            <label v-if="file.dimensions" class="text-80 leading-tight">
+                <span>Dimensions:</span>
+                <span>{{ file.dimensions.width }} x {{ file.dimensions.height }}</span>
+            </label>
+        </div>
 
+        <div class="label-field">
+            <label class="text-80 leading-tight">
+                <span>Collection:</span>
+                <span>{{ file.collection_name || 'none' }}</span>
+            </label>
+        </div>
     </div>
 </template>
 
@@ -70,7 +90,7 @@
     };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 
     .thumbnail-container {
@@ -90,5 +110,18 @@
 
     .form-field {
         padding: 10px 20px;
+    }
+
+    .label-field {
+        padding: 10px 20px;
+
+        > label {
+            display: block;
+            padding: 2px 0;
+
+            span:nth-child(1) {
+                font-weight: bold;
+            }
+        }
     }
 </style>
