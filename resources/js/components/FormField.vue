@@ -7,7 +7,7 @@
                 <media-browsing-modal :field="field"
                                       :files.sync="files"
                                       :isModalOpen.sync="isModalOpen"
-                                      :chosenCollection="chosenCollection"
+                                      :chosenCollection.sync="chosenCollection"
                                       :activeFile.sync="activeFile"
                                       :updateMedia="updateMedia"
                                       :selectedFiles.sync="selectedFiles" />

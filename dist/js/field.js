@@ -531,6 +531,7 @@ Nova.booting(function (Vue, router, store) {
     Vue.component('uploaded-file', __webpack_require__(17));
     Vue.component('od-modal', __webpack_require__(22));
     Vue.component('media-browsing-modal', __webpack_require__(48));
+    Vue.component('media-modal-constraints', __webpack_require__(51));
     Vue.component('index-media-field', __webpack_require__(27));
     Vue.component('detail-media-field', __webpack_require__(30));
     Vue.component('form-media-field', __webpack_require__(33));
@@ -12065,6 +12066,12 @@ var render = function() {
                   "update:is-modal-open": function($event) {
                     _vm.isModalOpen = $event
                   },
+                  "update:chosenCollection": function($event) {
+                    _vm.chosenCollection = $event
+                  },
+                  "update:chosen-collection": function($event) {
+                    _vm.chosenCollection = $event
+                  },
                   "update:activeFile": function($event) {
                     _vm.activeFile = $event
                   },
@@ -12398,18 +12405,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -12430,9 +12425,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         return this.field.displayCollection || this.chosenCollection;
       },
       set: function set(value) {
-        this.chosenCollection = value;
+        this.$emit('update:chosenCollection', value);
       }
     },
+
     displayCollection: function displayCollection() {
       return this.field.displayCollection;
     },
@@ -12494,37 +12490,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     closeModal: function closeModal() {
       this.$emit('update:isModalOpen', false);
     },
-    parseConstraintKey: function parseConstraintKey(key) {
-      return key.replace(/_/g, ' ');
-    },
-    parseConstraintValue: function parseConstraintValue(key, value) {
-
-      if (key === 'mime_types' && Array.isArray(value)) {
-        var newValue = value[0];
-
-        for (var valueKey in value) {
-          if (valueKey == 0) continue;
-          newValue += ', ' + value[valueKey];
-        }
-
-        return newValue;
-      }
-
-      var dimensions = ['height', 'width', 'min_height', 'min_width', 'max_height', 'max_width'];
-
-      if (dimensions.indexOf(key) !== -1) {
-        return value + 'px';
-      }
-
-      return value;
-    },
     filterUploadedFiles: function filterUploadedFiles(file) {
 
-      if (this.currentCollection) {
-        return file.data.collection_name === this.currentCollection;
+      if (file.uploading || !file.processed) {
+        return true;
       }
 
-      return true;
+      return !this.currentCollection || file.data.collection_name && file.data.collection_name === this.currentCollection;
     },
     dropEventListener: function dropEventListener(e) {
       e.preventDefault();
@@ -12543,6 +12515,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
           this.files.unshift({
             fileInput: e.dataTransfer.files[fileKey],
+            collection: this.currentCollection || null,
+            data: {},
             uploadProgress: 0,
             uploading: false,
             processed: false
@@ -12569,9 +12543,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     dragEndListener: function dragEndListener(e) {
       e.preventDefault();
-
       this.endDrag = true;
-
       this.setEndDrag();
     },
     dragLeaveListener: function dragLeaveListener(e) {
@@ -12586,14 +12558,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     dragOverListener: function dragOverListener(e) {
       e.preventDefault();
-
       this.draggingFile = true;
-
       this.endDrag = false;
 
-      if (e.target.matches('.input-dropzone')) {
-        this.draggingOverDropzone = true;
-      }
+      if (e.target.matches('.input-dropzone')) this.draggingOverDropzone = true;
     },
 
 
@@ -12650,6 +12618,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         var form = new FormData();
 
         form.append('file', fileInfo.fileInput);
+
+        if (fileInfo.collection) {
+          form.append('collection', fileInfo.collection);
+        }
 
         fileInfo.uploading = true;
 
@@ -12737,194 +12709,172 @@ var render = function() {
           }
         },
         [
-          _c("div", { attrs: { slot: "container" }, slot: "container" }, [
-            _c(
-              "div",
-              {
-                staticClass: "modal-header flex flex-wrap justify-between mb-6"
-              },
-              [
-                _c("h2", { staticClass: "text-90 font-normal text-xl" }, [
-                  _vm._v(
-                    "\n                Media library\n                " +
-                      _vm._s(
-                        _vm.currentCollection
-                          ? "(" +
-                              _vm.field.collections[_vm.currentCollection]
-                                .label +
-                              ")"
-                          : ""
-                      ) +
-                      "\n            "
-                  )
-                ]),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "collection-select" },
-                  [
-                    _c("span", [_vm._v("Collection")]),
-                    _vm._v(" "),
-                    _c(
-                      "select-control",
-                      {
-                        staticClass: "w-full form-control form-select",
-                        attrs: {
-                          id: _vm.collectionField.attribute,
-                          dusk: _vm.collectionField.attribute,
-                          fieldName: _vm.collectionField.fieldName,
-                          options: _vm.collectionField.options,
-                          disabled: _vm.displayCollection != null
-                        },
-                        model: {
-                          value: _vm.currentCollection,
-                          callback: function($$v) {
-                            _vm.currentCollection = $$v
-                          },
-                          expression: "currentCollection"
-                        }
-                      },
-                      [
-                        _c("option", { attrs: { value: "", selected: "" } }, [
-                          _vm._v(_vm._s(_vm.__("All collections")))
-                        ])
-                      ]
-                    )
-                  ],
-                  1
-                )
-              ]
-            ),
-            _vm._v(" "),
-            _vm.currentCollection &&
-            _vm.field.collections[_vm.currentCollection].constraints
-              ? _c(
-                  "div",
-                  { staticClass: "media-rules" },
-                  [
-                    _c("div", { staticClass: "media-rule-label" }, [
-                      _vm._v("\n                Constraints\n            ")
-                    ]),
-                    _vm._v(" "),
-                    _vm._l(
-                      Object.keys(
-                        _vm.field.collections[_vm.currentCollection].constraints
-                      ),
-                      function(constraintKey) {
-                        return _c("div", { staticClass: "single-constraint" }, [
-                          _c("span", { staticClass: "constraint-label" }, [
-                            _vm._v(
-                              "\n                                        " +
-                                _vm._s(_vm.parseConstraintKey(constraintKey)) +
-                                "\n                                    "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("span", { staticClass: "value" }, [
-                            _vm._v(
-                              "\n                                        " +
-                                _vm._s(
-                                  _vm.parseConstraintValue(
-                                    constraintKey,
-                                    _vm.field.collections[_vm.currentCollection]
-                                      .constraints[constraintKey]
-                                  )
-                                ) +
-                                "\n                                    "
-                            )
-                          ])
-                        ])
-                      }
-                    )
-                  ],
-                  2
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _c("div", { class: "flex mb-6", attrs: { id: "media-dropzone" } }, [
-              _c(
-                "div",
-                { staticClass: "img-collection" },
-                [
-                  _vm.files.length === 0
-                    ? _c("div", { staticClass: "empty-message" }, [
-                        _c("p", [
-                          _vm._v(
-                            "\n                        There are currently no media files in this library\n                    "
-                          )
-                        ]),
-                        _vm._v(" "),
-                        _c("p", [
-                          _vm._v(
-                            "\n                        Drag and drop files here to upload them\n                    "
-                          )
-                        ])
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm._l(_vm.files.filter(_vm.filterUploadedFiles), function(
-                    file
-                  ) {
-                    return _c("uploaded-file", {
-                      key: file,
-                      attrs: {
-                        selected:
-                          _vm.selectedFiles.find(function(item) {
-                            return (
-                              item.processed && item.data.id === file.data.id
-                            )
-                          }) !== void 0,
-                        active:
-                          file.processed &&
-                          _vm.activeFile &&
-                          file.data.id === _vm.activeFile.data.id,
-                        file: file.processed ? file.data : void 0,
-                        progress: file.uploading ? file.uploadProgress : -1
-                      },
-                      nativeOn: {
-                        click: function($event) {
-                          return _vm.toggleFileSelect(file)
-                        }
-                      }
-                    })
-                  })
-                ],
-                2
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "image-editor" },
-                [
-                  _vm.activeFile !== void 0
-                    ? _c("edit-image", { attrs: { file: _vm.activeFile.data } })
-                    : _vm._e()
-                ],
-                1
-              ),
-              _vm._v(" "),
+          _c(
+            "div",
+            { attrs: { slot: "container" }, slot: "container" },
+            [
               _c(
                 "div",
                 {
-                  class:
-                    "input-dropzone-wrap " +
-                    (_vm.draggingFile ? "visible" : "") +
-                    " " +
-                    (_vm.draggingFile && !_vm.draggingOverDropzone
-                      ? "pulse"
-                      : "")
+                  staticClass:
+                    "modal-header flex flex-wrap justify-between mb-6"
                 },
                 [
-                  _c("p", [_vm._v("Drag and drop your files here!")]),
+                  _c("h2", { staticClass: "text-90 font-normal text-xl" }, [
+                    _vm._v(
+                      "\n                Media library\n                " +
+                        _vm._s(
+                          _vm.currentCollection
+                            ? "(" +
+                                _vm.field.collections[_vm.currentCollection]
+                                  .label +
+                                ")"
+                            : ""
+                        ) +
+                        "\n            "
+                    )
+                  ]),
                   _vm._v(" "),
-                  _c("input", {
-                    staticClass: "input-dropzone",
-                    attrs: { type: "file", name: "media" }
-                  })
+                  _c(
+                    "div",
+                    { staticClass: "collection-select" },
+                    [
+                      _c("span", [_vm._v("Collection")]),
+                      _vm._v(" "),
+                      _c(
+                        "select-control",
+                        {
+                          staticClass: "w-full form-control form-select",
+                          attrs: {
+                            id: _vm.collectionField.attribute,
+                            dusk: _vm.collectionField.attribute,
+                            fieldName: _vm.collectionField.fieldName,
+                            options: _vm.collectionField.options,
+                            disabled: _vm.displayCollection != null
+                          },
+                          model: {
+                            value: _vm.currentCollection,
+                            callback: function($$v) {
+                              _vm.currentCollection = $$v
+                            },
+                            expression: "currentCollection"
+                          }
+                        },
+                        [
+                          _c("option", { attrs: { value: "", selected: "" } }, [
+                            _vm._v(_vm._s(_vm.__("All collections")))
+                          ])
+                        ]
+                      )
+                    ],
+                    1
+                  )
+                ]
+              ),
+              _vm._v(" "),
+              _c("media-modal-constraints", {
+                attrs: {
+                  field: _vm.field,
+                  currentCollection: _vm.currentCollection
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "div",
+                { class: "flex mb-6", attrs: { id: "media-dropzone" } },
+                [
+                  _c(
+                    "div",
+                    { staticClass: "img-collection" },
+                    [
+                      _vm.files.length === 0
+                        ? _c("div", { staticClass: "empty-message" }, [
+                            _c("p", [
+                              _vm._v(
+                                "\n                        There are currently no media files in this library\n                    "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("p", [
+                              _vm._v(
+                                "\n                        Drag and drop files here to upload them\n                    "
+                              )
+                            ])
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm._l(
+                        _vm.files.filter(_vm.filterUploadedFiles),
+                        function(file) {
+                          return _c("uploaded-file", {
+                            key: file,
+                            attrs: {
+                              selected:
+                                _vm.selectedFiles.find(function(item) {
+                                  return (
+                                    item.processed &&
+                                    item.data.id === file.data.id
+                                  )
+                                }) !== void 0,
+                              active:
+                                file.processed &&
+                                _vm.activeFile &&
+                                file.data.id === _vm.activeFile.data.id,
+                              file: file.processed ? file.data : void 0,
+                              progress: file.uploading
+                                ? file.uploadProgress
+                                : -1
+                            },
+                            nativeOn: {
+                              click: function($event) {
+                                return _vm.toggleFileSelect(file)
+                              }
+                            }
+                          })
+                        }
+                      )
+                    ],
+                    2
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "image-editor" },
+                    [
+                      _vm.activeFile !== void 0
+                        ? _c("edit-image", {
+                            attrs: { file: _vm.activeFile.data }
+                          })
+                        : _vm._e()
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      class:
+                        "input-dropzone-wrap " +
+                        (_vm.draggingFile ? "visible" : "") +
+                        " " +
+                        (_vm.draggingFile && !_vm.draggingOverDropzone
+                          ? "pulse"
+                          : "")
+                    },
+                    [
+                      _c("p", [_vm._v("Drag and drop your files here!")]),
+                      _vm._v(" "),
+                      _c("input", {
+                        staticClass: "input-dropzone",
+                        attrs: { type: "file", name: "media" }
+                      })
+                    ]
+                  )
                 ]
               )
-            ])
-          ]),
+            ],
+            1
+          ),
           _vm._v(" "),
           _c("div", { attrs: { slot: "buttons" }, slot: "buttons" }, [
             _c("div", { staticClass: "ml-auto" }, [
@@ -12962,6 +12912,176 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
     require("vue-hot-reload-api")      .rerender("data-v-47dabd66", module.exports)
+  }
+}
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(0)
+/* script */
+var __vue_script__ = __webpack_require__(52)
+/* template */
+var __vue_template__ = __webpack_require__(53)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/js/components/MediaModalConstraints.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-d9b6dd1c", Component.options)
+  } else {
+    hotAPI.reload("data-v-d9b6dd1c", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 52 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+
+  props: ['field', 'currentCollection'],
+
+  methods: {
+    parseConstraintKey: function parseConstraintKey(key) {
+      return key.replace(/_/g, ' ');
+    },
+    parseConstraintValue: function parseConstraintValue(key, value) {
+
+      if (key === 'mime_types' && Array.isArray(value)) {
+        var newValue = value[0];
+
+        for (var valueKey in value) {
+          if (valueKey == 0) continue;
+          newValue += ', ' + value[valueKey];
+        }
+
+        return newValue;
+      }
+
+      var dimensions = ['height', 'width', 'min_height', 'min_width', 'max_height', 'max_width'];
+
+      if (dimensions.indexOf(key) !== -1) {
+        return value + 'px';
+      }
+
+      return value;
+    }
+  }
+
+});
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _vm.currentCollection &&
+    _vm.field.collections[_vm.currentCollection].constraints
+    ? _c(
+        "div",
+        { staticClass: "media-rules" },
+        [
+          _c("div", { staticClass: "media-rule-label" }, [
+            _vm._v("\n        Constraints\n    ")
+          ]),
+          _vm._v(" "),
+          _vm._l(
+            Object.keys(
+              _vm.field.collections[_vm.currentCollection].constraints
+            ),
+            function(constraintKey) {
+              return _c("div", { staticClass: "single-constraint" }, [
+                _c("span", { staticClass: "constraint-label" }, [
+                  _vm._v(
+                    "\n                " +
+                      _vm._s(_vm.parseConstraintKey(constraintKey)) +
+                      "\n            "
+                  )
+                ]),
+                _vm._v(" "),
+                _c("span", { staticClass: "value" }, [
+                  _vm._v(
+                    "\n            " +
+                      _vm._s(
+                        _vm.parseConstraintValue(
+                          constraintKey,
+                          _vm.field.collections[_vm.currentCollection]
+                            .constraints[constraintKey]
+                        )
+                      ) +
+                      "\n        "
+                  )
+                ])
+              ])
+            }
+          )
+        ],
+        2
+      )
+    : _vm._e()
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-d9b6dd1c", module.exports)
   }
 }
 

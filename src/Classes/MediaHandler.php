@@ -98,7 +98,7 @@ class MediaHandler
         $disk->put($storagePath . $filename, file_get_contents($request->file('file')->getRealPath()));
 
         $model = new Media([
-            'collection_name' => '',
+            'collection_name' => $request->get('collection') ?? '',
             'path' => $storagePath,
             'file_name' => $filename,
             'alt' => $request->get('alt') ?? '',

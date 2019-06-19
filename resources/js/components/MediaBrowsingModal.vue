@@ -24,20 +24,8 @@
                 </div>
             </div>
 
-            <div v-if="currentCollection && field.collections[currentCollection].constraints" class="media-rules">
-                <div class="media-rule-label">
-                    Constraints
-                </div>
-                <div v-for="constraintKey of Object.keys(field.collections[currentCollection].constraints)"
-                     class="single-constraint">
-                                        <span class="constraint-label">
-                                            {{ parseConstraintKey(constraintKey) }}
-                                        </span>
-                    <span class="value">
-                                            {{ parseConstraintValue(constraintKey, field.collections[currentCollection].constraints[constraintKey]) }}
-                                        </span>
-                </div>
-            </div>
+            <media-modal-constraints :field="field"
+                                     :currentCollection="currentCollection" />
 
             <div :class="`flex mb-6`" id="media-dropzone">
 
@@ -100,12 +88,14 @@
           return this.field.displayCollection || this.chosenCollection;
         },
         set: function (value) {
-          this.chosenCollection = value;
+          this.$emit('update:chosenCollection', value);
         }
       },
+
       displayCollection() {
         return this.field.displayCollection;
       },
+
       collectionField() {
         const {collections} = this.field;
         if (!collections || !Object.keys(collections).length) return false;
@@ -161,41 +151,13 @@
         this.$emit('update:isModalOpen', false);
       },
 
-
-      parseConstraintKey(key) {
-        return key.replace(/_/g, ' ');
-      },
-
-      parseConstraintValue(key, value) {
-
-        if (key === 'mime_types' && Array.isArray(value)) {
-          let newValue = value[0];
-
-          for (const valueKey in value) {
-            if (valueKey == 0) continue;
-            newValue += `, ${value[valueKey]}`;
-          }
-
-          return newValue;
-        }
-
-        const dimensions = ['height', 'width', 'min_height', 'min_width', 'max_height', 'max_width'];
-
-        if (dimensions.indexOf(key) !== -1) {
-          return `${value}px`;
-        }
-
-        return value;
-      },
-
       filterUploadedFiles(file) {
 
-        if (this.currentCollection) {
-          return file.data.collection_name === this.currentCollection;
+        if (file.uploading || !file.processed) {
+          return true;
         }
 
-        return true;
-
+        return !this.currentCollection || (file.data.collection_name && file.data.collection_name === this.currentCollection);
       },
 
       dropEventListener(e) {
@@ -208,6 +170,8 @@
         for (const fileKey of Object.keys(e.dataTransfer.files)) {
           this.files.unshift({
             fileInput: e.dataTransfer.files[fileKey],
+            collection: this.currentCollection || null,
+            data: {},
             uploadProgress: 0,
             uploading: false,
             processed: false
@@ -221,12 +185,9 @@
 
       dragEndListener(e) {
         e.preventDefault();
-
         this.endDrag = true;
-
         this.setEndDrag();
       },
-
 
       dragLeaveListener(e) {
         e.preventDefault();
@@ -241,14 +202,10 @@
 
       dragOverListener(e) {
         e.preventDefault();
-
         this.draggingFile = true;
-
         this.endDrag = false;
 
-        if (e.target.matches('.input-dropzone')) {
-          this.draggingOverDropzone = true;
-        }
+        if (e.target.matches('.input-dropzone')) this.draggingOverDropzone = true;
       },
 
       setEndDrag: debounce(function () {
@@ -298,6 +255,10 @@
           const form = new FormData();
 
           form.append('file', fileInfo.fileInput);
+
+          if (fileInfo.collection) {
+            form.append('collection', fileInfo.collection);
+          }
 
           fileInfo.uploading = true;
 
