@@ -26,12 +26,17 @@
     methods: {
 
       parseConstraintKey(key) {
+
+        if (key === 'mimetypes') {
+          return 'MIME Types'
+        }
+
         return key.replace(/_/g, ' ');
       },
 
       parseConstraintValue(key, value) {
 
-        if (key === 'mime_types' && Array.isArray(value)) {
+        if (key === 'mimetypes' && Array.isArray(value)) {
           let newValue = value[0];
 
           for (const valueKey in value) {

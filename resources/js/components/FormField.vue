@@ -1,10 +1,11 @@
 <template>
-    <default-field :field="field" :errors="errors">
+    <default-field :field="field" :errors="errors" fullWidthContent>
 
         <template slot="field">
 
             <div ref="modals">
                 <media-browsing-modal :field="field"
+                                      :multipleSelect="multipleSelect"
                                       :files.sync="files"
                                       :isModalOpen.sync="isModalOpen"
                                       :chosenCollection.sync="chosenCollection"
@@ -13,7 +14,7 @@
                                       :selectedFiles.sync="selectedFiles" />
             </div>
 
-            <media-preview v-if="selectedFiles.length !== 0" :files="selectedFiles" :multiple="multipleSelect"/>
+            <media-preview v-if="selectedFiles.length !== 0" hideName :changeOrder="handleChange" :files="selectedFiles" :multiple="multipleSelect"/>
 
             <div class="ml-auto">
                 <button type="button" v-on:click="openModal"
@@ -51,6 +52,21 @@
     },
 
     mounted() {
+
+      if (this.field.value && this.field.value !== '') {
+        axios.get('/api/media/find', {
+          params: {
+            ids: this.field.value.split(',')
+          },
+        }).then(response => {
+          this.selectedFiles = response.data.map(file => ({
+            data: file,
+            processed: true,
+            uploading: false,
+            uploadProgress: 0
+          }));
+        });
+      }
 
       if (!window.mediaLibrary) {
         window.mediaLibrary = {
@@ -131,7 +147,7 @@
        * Update the field's internal value.
        */
       handleChange(value) {
-        this.value = value;
+        this.selectedFiles = value;
       },
 
     },

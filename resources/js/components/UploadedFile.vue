@@ -8,47 +8,56 @@
         </div>
 
         <div class="thumbnail-container" v-if="file !== void 0">
-            <img draggable="false" :src="(file.image_sizes.thumbnail || file).url" />
+            <img draggable="false" :src="(file.image_sizes.thumbnail || file).url"/>
         </div>
 
         <div class="checked-box" v-if="selected">
-            <checkbox :checked="selected" />
+            <checkbox :checked="selected"/>
         </div>
+
+        <div class="uploaded-file-name" v-if="file.file_name && !hideName">
+            {{ file.file_name }}
+        </div>
+
     </div>
 </template>
 
 <script>
-    export default {
-        props: {
-            progress: {
-                type: Number,
-                default: -1,
-                required: false,
-            },
-            file: {
-                type: Object,
-                default: void 0,
-                required: false
-            },
-            active: {
-                type: Boolean,
-                default: false,
-                required: false
-            },
-            selected: {
-                type: Boolean,
-                default: false,
-                required: false
-            }
-        },
+  export default {
+    props: {
+      hideName: {
+        type: Boolean,
+        default: false,
+        required: false
+      },
+      progress: {
+        type: Number,
+        default: -1,
+        required: false,
+      },
+      file: {
+        type: Object,
+        default: void 0,
+        required: false
+      },
+      active: {
+        type: Boolean,
+        default: false,
+        required: false
+      },
+      selected: {
+        type: Boolean,
+        default: false,
+        required: false
+      }
+    },
 
-        data: () => ({
-            //
-        }),
+    data: () => ({
+      //
+    }),
 
-        computed: {
-        },
-    };
+    computed: {},
+  };
 </script>
 
 <style lang="scss">
@@ -70,17 +79,34 @@
         overflow: hidden;
         cursor: pointer;
 
+        .uploaded-file-name {
+            padding: 4px 15px;
+            font-size: 12px;
+            line-height: 16px;
+            background-color: rgba(#000, .75);
+            width: 100%;
+            overflow: hidden;
+            /*border-top-left-radius: 3px;*/
+            /*border-top-right-radius: 3px;*/
+            position: absolute;
+            bottom: 0;
+            color: #fff;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
         &:hover {
             box-shadow: 0 0 5px rgba(#4099de, .5);
             border-color: #4099de;
         }
 
         &.selected {
-            border: 3px solid #bacad6;
+            border: 4px solid #d6666d;
+            box-shadow: 0 0 10px rgba(#4099de, .5);
         }
 
         &.active {
-            border: 3px solid #4099de;
+            border: 4px solid #4099de;
         }
 
         .thumbnail-container {
@@ -98,7 +124,7 @@
             height: 100%;
             top: 0;
             left: 0;
-            object-fit: cover;
+            object-fit: contain;
         }
     }
 

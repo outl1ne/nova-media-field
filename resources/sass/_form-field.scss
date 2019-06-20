@@ -11,6 +11,13 @@
  }
 }
 
+.od-gallery-field {
+
+ > div:nth-child(2) {
+  width: 100%;
+ }
+}
+
 .media-rules {
  padding: 0 0 10px 0;
  display: flex;
@@ -84,7 +91,7 @@
  min-height: 300px;
 
  .img-collection {
-  width: calc(100% - 274px);
+  width: calc(100% - 250px);
   display: flex;
   margin-left: -5px;
   flex-wrap: wrap;

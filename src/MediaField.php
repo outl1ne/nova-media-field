@@ -8,7 +8,6 @@ use OptimistDigital\MediaField\Models\Media;
 
 class MediaField extends Field
 {
-
     /**
      * The field's component.
      *
@@ -19,6 +18,7 @@ class MediaField extends Field
     protected $multiple = false;
 
     protected $collection = null;
+
 
     /**
      * Set the number of rows used for the textarea.
@@ -50,6 +50,7 @@ class MediaField extends Field
     {
         return array_merge(parent::jsonSerialize(), [
             'multiple' => $this->multiple,
+            'order' => $this->multiple,
             'displayCollection' => $this->collection,
             'collections' => config('nova-media-field.collections')
         ]);

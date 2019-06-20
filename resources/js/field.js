@@ -1,4 +1,6 @@
+
 Nova.booting((Vue, router, store) => {
+
     Vue.component('media-preview', require('./components/MediaPreview'))
     Vue.component('edit-image', require('./components/EditImage'))
     Vue.component('uploaded-file', require('./components/UploadedFile'))

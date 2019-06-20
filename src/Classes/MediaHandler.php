@@ -4,6 +4,7 @@ namespace OptimistDigital\MediaField\Classes;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -11,6 +12,7 @@ use OptimistDigital\MediaField\Models\Media;
 
 class MediaHandler
 {
+    use ValidatesRequests;
 
     public static function normalizeFileName($filename) {
         return preg_replace( '/[^a-z0-9]+/', '-', strtolower($filename));

@@ -2,12 +2,13 @@
 
     <div :class="`preview-container ${multiple ? 'multiple-preview' : ''}`">
 
-        <div class="media-preview" v-if="files && files.length">
 
-            <uploaded-file v-if="multiple" v-for="file in files" v-bind:key="file" :file="file.data" />
+        <draggable v-if="files && files.length && multiple" class="media-preview" v-model="files" @start="drag=true" @end="onDrageEnd">
+            <uploaded-file v-if="multiple" v-for="file in files" v-bind:key="file" :file="file.data" :hideName="hideName"/>
+        </draggable>
 
-            <uploaded-file v-if="!multiple" :file="files[0].data" />
-
+        <div class="media-preview" v-if="files && files.length && !multiple">
+            <uploaded-file v-if="!multiple" :file="files[0].data" :hideName="hideName"/>
         </div>
 
     </div>
@@ -15,20 +16,45 @@
 </template>
 
 <script>
-    export default {
-        props: {
-            multiple: {
-                type: Boolean,
-                default: false,
-                required: false,
-            },
-            files: {
-                type: Array,
-                default: [],
-                required: false,
-            }
-        },
+  import draggable from 'vuedraggable'
+
+  export default {
+    props: {
+      hideName: false,
+      multiple: {
+        type: Boolean,
+        default: false,
+        required: false,
+      },
+      changeOrder: {
+        type: Function,
+        required: true,
+      },
+      files: {
+        type: Array,
+        default: [],
+        required: false,
+      }
+    },
+
+    data: () => {
+      return {
+        drag: false,
+        stateFile: this.files
+      }
+    },
+
+    components: {
+      draggable,
+    },
+
+    methods: {
+      onDrageEnd() {
+        this.drag = false;
+        this.changeOrder(this.files);
+      }
     }
+  };
 </script>
 
 <style lang="scss">
@@ -45,13 +71,13 @@
         &.multiple-preview {
             min-height: 105px;
             height: auto;
-            max-height: 205px;
+            max-height: 235px;
             width: 100%;
             overflow-y: auto;
         }
 
         &::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
             background-color: #fff;
             border-radius: 3px;
         }
@@ -70,18 +96,19 @@
             overflow: hidden;
             display: flex;
             flex-wrap: wrap;
-            max-height: 205px;
+            max-height: 235px;
         }
 
         .uploaded-file {
-            width: 90px;
-            height: 90px;
+            width: 104px;
+            height: 104px;
             margin: 2.5px;
-            border: 0;
+            border: 1px solid #bbbec0;
 
             &:hover {
-                border: 0;
+                border: 1px solid #bbbec0;
                 box-shadow: none;
+                cursor: all-scroll;
             }
 
             img {

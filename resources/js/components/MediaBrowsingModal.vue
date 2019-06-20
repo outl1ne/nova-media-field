@@ -75,7 +75,7 @@
 
   export default {
 
-    props: ['field', 'isModalOpen', 'chosenCollection', 'activeFile', 'selectedFiles', 'updateMedia', 'files'],
+    props: ['field', 'isModalOpen', 'chosenCollection', 'activeFile', 'selectedFiles', 'updateMedia', 'files', 'multipleSelect'],
 
     data: () => ({
       draggingOverDropzone: false,
@@ -112,23 +112,6 @@
       },
     },
 
-    mounted() {
-      if (this.field.value && this.field.value !== '') {
-        axios.get('/api/media/find', {
-          params: {
-            ids: this.field.value.split(',')
-          },
-        }).then(response => {
-          this.selectedFiles = response.data.map(file => ({
-            data: file,
-            processed: true,
-            uploading: false,
-            uploadProgress: 0
-          }));
-        });
-      }
-
-    },
 
     watch: {
       isModalOpen: function (newVal, oldVal) { // watch it
@@ -223,6 +206,8 @@
 
           if (!this.multipleSelect) {
             this.selectedFiles = [];
+
+            this.$emit('update:selectedFiles', this.selectedFiles);
             return;
           }
         }
@@ -234,6 +219,8 @@
 
           if (i > -1) {
             this.selectedFiles.splice(i, 1);
+            this.$emit('update:activeFile', this.activeFile);
+            this.$emit('update:selectedFiles', this.selectedFiles);
           }
 
           return;
@@ -242,6 +229,9 @@
         }
 
         this.activeFile = file;
+
+        this.$emit('update:selectedFiles', this.selectedFiles);
+        this.$emit('update:activeFile', this.activeFile);
       },
 
       uploadFiles() {
@@ -283,7 +273,20 @@
             this.$emit('update:files', this.files);
 
             this.updateMedia();
-          });
+          }).catch((error) => {
+
+            const response = error.response.data;
+
+            if (Array.isArray(response.errors.file)) {
+              Nova.$emit('error', response.errors.file[0]);
+            } else {
+              Nova.$emit('error', response.message);
+            }
+
+            window.mediaLibrary.files.splice(0, 1);
+
+            this.updateMedia();
+          })
         }
       },
 
