@@ -9,6 +9,7 @@ use League\Flysystem\FileNotFoundException;
 
 class Media extends Model
 {
+
     protected $table = 'media_library';
 
     protected $fillable = [
@@ -37,6 +38,10 @@ class Media extends Model
         }
 
         return $sizes;
+    }
+
+    public function getFilePathAttribute() {
+        return str_replace('public/', '', $this->path) . $this->file_name;
     }
 
     public function getDataAttribute($value) {

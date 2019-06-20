@@ -3,9 +3,12 @@
 namespace OptimistDigital\MediaField;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Image;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Resource;
 
-class MediaResource extends Resource {
+class Media extends Resource {
 
     public static $model = '\OptimistDigital\MediaField\Models\Media';
 
@@ -19,8 +22,10 @@ class MediaResource extends Resource {
     {
 
         return [
-            ID::make()->sortable(),
-            Text::make('Name', 'file_name')->rules('required'),
+            ID::make(),
+            Image::make('Preview', 'file_path')->rules('required'),
+            Text::make('Name', 'file_name')->readonly(),
+            Text::make('URL', 'mime_type')->readonly(),
         ];
     }
 }
