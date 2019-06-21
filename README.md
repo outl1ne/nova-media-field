@@ -34,6 +34,9 @@ composer require optimistdigital/nova-media-field
 
 ## Usage
 
+#### Field
+#### Field
+
 To use media field first define import
 ```
 use OptimistDigital\MediaField\MediaField;
@@ -54,4 +57,36 @@ MediaField::make('Profile image')->multiple()
 MediaField::make('Profile image')->collection(String $collectionName)
 
 ```
+
+
+#### Collections
+
+Collections are basically upload groups that can have their own set of upload rules.
+Collection configuration goes under media field config file under `collection` key
+
+```
+# config/nova-media-field.php
+
+[
+    'collections' => [
+        'banners' => [
+            'label' => 'Banners',
+            'constraints' => [
+                'mimetypes' => [
+                    'image/svg+xml',
+                    'image/svg'
+                ]
+            ],
+            'image_sizes' => [
+                'thumbnail'
+            ]
+        ]
+    ],
+]
+
+```
+
+- `label` - Display label for collection
+- `constraints` - Array of validation rules (Laravel rules work)
+- `image_sizes` - Sizes to generate (overrides default)
 
