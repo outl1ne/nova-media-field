@@ -7,7 +7,7 @@
             </div>
         </div>
 
-        <div class="thumbnail-container" v-if="file !== void 0">
+        <div class="thumbnail-container" v-if="file.image_sizes !== void 0">
             <img draggable="false" :src="(file.image_sizes.thumbnail || file).url"/>
         </div>
 
@@ -16,9 +16,8 @@
         </div>
 
         <div class="uploaded-file-name" v-if="file.file_name && !hideName">
-            {{ file.file_name }}
+            {{ file.file_name || '' }}
         </div>
-
     </div>
 </template>
 
@@ -51,6 +50,7 @@
         required: false
       }
     },
+
 
     data: () => ({
       //

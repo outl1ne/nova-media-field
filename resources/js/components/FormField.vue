@@ -77,7 +77,7 @@
 
         axios.get('/api/media', {
           params: {
-            limit: 16
+            limit: 128
           },
         }).then(response => {
           this.files = response.data.map(file => {

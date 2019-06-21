@@ -1268,7 +1268,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -1337,7 +1336,7 @@ var render = function() {
           ])
         : _vm._e(),
       _vm._v(" "),
-      _vm.file !== void 0
+      _vm.file.image_sizes !== void 0
         ? _c("div", { staticClass: "thumbnail-container" }, [
             _c("img", {
               attrs: {
@@ -1359,7 +1358,7 @@ var render = function() {
       _vm._v(" "),
       _vm.file.file_name && !_vm.hideName
         ? _c("div", { staticClass: "uploaded-file-name" }, [
-            _vm._v("\n        " + _vm._s(_vm.file.file_name) + "\n    ")
+            _vm._v("\n        " + _vm._s(_vm.file.file_name || "") + "\n    ")
           ])
         : _vm._e()
     ]
@@ -1795,8 +1794,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             uploading: false,
             processed: false
           });
-
-          this.$emit('update:files', this.files);
         }
       } catch (err) {
         _didIteratorError = true;
@@ -1812,6 +1809,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           }
         }
       }
+
+      this.$emit('update:files', this.files);
 
       this.uploadFiles();
     },
@@ -2114,7 +2113,7 @@ var render = function() {
                                 file.processed &&
                                 _vm.activeFile &&
                                 file.data.id === _vm.activeFile.data.id,
-                              file: file.processed ? file.data : void 0,
+                              file: file.processed ? file.data : {},
                               progress: file.uploading
                                 ? file.uploadProgress
                                 : -1
@@ -2749,7 +2748,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       axios.get('/api/media', {
         params: {
-          limit: 16
+          limit: 128
         }
       }).then(function (response) {
         _this.files = response.data.map(function (file) {

@@ -44,7 +44,7 @@
                                    :selected="selectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
                                    :active="file.processed && activeFile && file.data.id === activeFile.data.id"
                                    v-on:click.native="toggleFileSelect(file)" v-bind:key="file"
-                                   :file="file.processed ? file.data : void 0"
+                                   :file="file.processed ? file.data : {}"
                                    :progress="file.uploading ? file.uploadProgress : -1"/>
                 </div>
 
@@ -159,9 +159,9 @@
             uploading: false,
             processed: false
           });
-
-          this.$emit('update:files', this.files);
         }
+
+        this.$emit('update:files', this.files);
 
         this.uploadFiles();
       },
