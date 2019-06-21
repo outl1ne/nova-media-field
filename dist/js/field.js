@@ -2585,7 +2585,11 @@ var render = function() {
         { slot: "value" },
         [
           _c("media-preview", {
-            attrs: { files: _vm.files, multiple: _vm.multipleSelect }
+            attrs: {
+              ordering: false,
+              files: _vm.files,
+              multiple: _vm.multipleSelect
+            }
           })
         ],
         1
