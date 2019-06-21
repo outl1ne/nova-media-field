@@ -2,10 +2,13 @@
 
     <div :class="`preview-container ${multiple ? 'multiple-preview' : ''}`">
 
-
-        <draggable v-if="files && files.length && multiple" class="media-preview" v-model="files" @start="drag=true" @end="onDrageEnd">
+        <draggable v-if="files && files.length && multiple && ordering" class="media-preview" v-model="files" @start="drag=true" @end="onDrageEnd">
             <uploaded-file v-if="multiple" v-for="file in files" v-bind:key="file" :file="file.data" :hideName="hideName"/>
         </draggable>
+
+        <div v-if="files && files.length && multiple && !ordering" class="media-preview no-order">
+            <uploaded-file v-if="multiple" v-for="file in files" v-bind:key="file" :file="file.data" :hideName="hideName"/>
+        </div>
 
         <div class="media-preview" v-if="files && files.length && !multiple">
             <uploaded-file v-if="!multiple" :file="files[0].data" :hideName="hideName"/>
@@ -20,6 +23,11 @@
 
   export default {
     props: {
+      ordering: {
+        type: Boolean,
+        default: true,
+        required: false,
+      },
       hideName: false,
       multiple: {
         type: Boolean,
@@ -64,8 +72,8 @@
         border-radius: 4px;
         overflow: hidden;
         border: 1px solid #eef1f4;
-        height: 105px;
-        width: 105px;
+        height: 119px;
+        width: 119px;
         overflow: hidden;
 
         &.multiple-preview {
@@ -74,6 +82,17 @@
             max-height: 235px;
             width: 100%;
             overflow-y: auto;
+
+            .uploaded-file:hover {
+                cursor: all-scroll;
+            }
+
+            .no-order {
+
+                .uploaded-file:hover {
+                    cursor: inherit;
+                }
+            }
         }
 
         &::-webkit-scrollbar-track {
@@ -108,7 +127,6 @@
             &:hover {
                 border: 1px solid #bbbec0;
                 box-shadow: none;
-                cursor: all-scroll;
             }
 
             img {

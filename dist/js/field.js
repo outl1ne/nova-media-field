@@ -626,7 +626,7 @@ exports = module.exports = __webpack_require__(1)(false);
 
 
 // module
-exports.push([module.i, "\n.preview-container {\n  padding: 5px;\n  border-radius: 4px;\n  overflow: hidden;\n  border: 1px solid #eef1f4;\n  height: 105px;\n  width: 105px;\n  overflow: hidden;\n}\n.preview-container.multiple-preview {\n    min-height: 105px;\n    height: auto;\n    max-height: 235px;\n    width: 100%;\n    overflow-y: auto;\n}\n.preview-container::-webkit-scrollbar-track {\n    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);\n    background-color: #fff;\n    border-radius: 3px;\n}\n.preview-container::-webkit-scrollbar {\n    width: 6px;\n    border-radius: 3px;\n}\n.preview-container::-webkit-scrollbar-thumb {\n    background-color: rgba(0, 0, 0, 0.1);\n    border-radius: 3px;\n}\n.preview-container .media-preview {\n    overflow: hidden;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-wrap: wrap;\n        flex-wrap: wrap;\n    max-height: 235px;\n}\n.preview-container .uploaded-file {\n    width: 104px;\n    height: 104px;\n    margin: 2.5px;\n    border: 1px solid #bbbec0;\n}\n.preview-container .uploaded-file:hover {\n      border: 1px solid #bbbec0;\n      -webkit-box-shadow: none;\n              box-shadow: none;\n      cursor: all-scroll;\n}\n.preview-container .uploaded-file img {\n      -o-object-fit: cover;\n         object-fit: cover;\n}\n", ""]);
+exports.push([module.i, "\n.preview-container {\n  padding: 5px;\n  border-radius: 4px;\n  overflow: hidden;\n  border: 1px solid #eef1f4;\n  height: 119px;\n  width: 119px;\n  overflow: hidden;\n}\n.preview-container.multiple-preview {\n    min-height: 105px;\n    height: auto;\n    max-height: 235px;\n    width: 100%;\n    overflow-y: auto;\n}\n.preview-container.multiple-preview .uploaded-file:hover {\n      cursor: all-scroll;\n}\n.preview-container.multiple-preview .no-order .uploaded-file:hover {\n      cursor: inherit;\n}\n.preview-container::-webkit-scrollbar-track {\n    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);\n    background-color: #fff;\n    border-radius: 3px;\n}\n.preview-container::-webkit-scrollbar {\n    width: 6px;\n    border-radius: 3px;\n}\n.preview-container::-webkit-scrollbar-thumb {\n    background-color: rgba(0, 0, 0, 0.1);\n    border-radius: 3px;\n}\n.preview-container .media-preview {\n    overflow: hidden;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-wrap: wrap;\n        flex-wrap: wrap;\n    max-height: 235px;\n}\n.preview-container .uploaded-file {\n    width: 104px;\n    height: 104px;\n    margin: 2.5px;\n    border: 1px solid #bbbec0;\n}\n.preview-container .uploaded-file:hover {\n      border: 1px solid #bbbec0;\n      -webkit-box-shadow: none;\n              box-shadow: none;\n}\n.preview-container .uploaded-file img {\n      -o-object-fit: cover;\n         object-fit: cover;\n}\n", ""]);
 
 // exports
 
@@ -691,11 +691,19 @@ var _this = this;
 //
 //
 //
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
+    ordering: {
+      type: Boolean,
+      default: true,
+      required: false
+    },
     hideName: false,
     multiple: {
       type: Boolean,
@@ -744,7 +752,7 @@ var render = function() {
     "div",
     { class: "preview-container " + (_vm.multiple ? "multiple-preview" : "") },
     [
-      _vm.files && _vm.files.length && _vm.multiple
+      _vm.files && _vm.files.length && _vm.multiple && _vm.ordering
         ? _c(
             "draggable",
             {
@@ -763,6 +771,22 @@ var render = function() {
                 expression: "files"
               }
             },
+            _vm._l(_vm.files, function(file) {
+              return _vm.multiple
+                ? _c("uploaded-file", {
+                    key: file,
+                    attrs: { file: file.data, hideName: _vm.hideName }
+                  })
+                : _vm._e()
+            }),
+            1
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.files && _vm.files.length && _vm.multiple && !_vm.ordering
+        ? _c(
+            "div",
+            { staticClass: "media-preview no-order" },
             _vm._l(_vm.files, function(file) {
               return _vm.multiple
                 ? _c("uploaded-file", {
@@ -13122,6 +13146,7 @@ var render = function() {
           _vm.selectedFiles.length !== 0
             ? _c("media-preview", {
                 attrs: {
+                  ordering: _vm.field.ordering,
                   hideName: "",
                   changeOrder: _vm.handleChange,
                   files: _vm.selectedFiles,

@@ -23,7 +23,7 @@ class Media extends Resource {
 
         return [
             ID::make(),
-            Image::make('Preview', 'file_path')->rules('required'),
+            Image::make('Preview', 'file_path')->hideWhenUpdating()->hideWhenCreating(),
             Text::make('Name', 'file_name')->readonly(),
             Text::make('URL', 'mime_type')->readonly(),
         ];

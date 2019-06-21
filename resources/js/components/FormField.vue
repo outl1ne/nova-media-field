@@ -14,7 +14,7 @@
                                       :selectedFiles.sync="selectedFiles" />
             </div>
 
-            <media-preview v-if="selectedFiles.length !== 0" hideName :changeOrder="handleChange" :files="selectedFiles" :multiple="multipleSelect"/>
+            <media-preview :ordering="field.ordering" v-if="selectedFiles.length !== 0" hideName :changeOrder="handleChange" :files="selectedFiles" :multiple="multipleSelect"/>
 
             <div class="ml-auto">
                 <button type="button" v-on:click="openModal"
