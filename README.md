@@ -30,11 +30,11 @@ Under repositories in composer.json add following
 Then in your terminal run
 ```
 composer require optimistdigital/nova-media-field
+php artisan migrate
 ```
 
 ## Usage
 
-#### Field
 #### Field
 
 To use media field first define import
