@@ -59,10 +59,38 @@ MediaField::make('Profile image')->collection(String $collectionName)
 ```
 
 
+#### Image sizes
+
+Image sizes define conversions for uploaded images. These conversions can be configured
+under media field config file under `image_sizes` key.
+
+```
+# config/nova-media-field.php
+
+[
+    'image_sizes' => [
+        'thumbnail' => [
+            'width' => 150,
+            'height' => 150,
+            'crop' => true
+        ],
+        'medium' => [
+            'width' => 300
+        ]
+    ],
+]
+```
+
+- `crop` - Default: `false`, when `true` then image might be cropped if not fit for defined ratio. Requires width and height to be defined.
+- `width` - Width to resize the image
+- `height` - Height to resize the image
+
+Defining only one dimension (width or height) keeps the ratio.
+
 #### Collections
 
 Collections are basically upload groups that can have their own set of upload rules.
-Collection configuration goes under media field config file under `collection` key
+Collection configuration goes under media field config file under `collection` key.
 
 ```
 # config/nova-media-field.php
