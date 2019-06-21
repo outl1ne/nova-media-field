@@ -1700,17 +1700,34 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
 
-  props: ['field', 'isModalOpen', 'chosenCollection', 'activeFile', 'selectedFiles', 'updateMedia', 'files', 'multipleSelect'],
+  props: ['field', 'isModalOpen', 'chosenCollection', 'activeFile', 'selectedFiles', 'updateMedia', 'files', 'multipleSelect', 'loadingMediaFiles'],
 
   data: function data() {
     return {
       draggingOverDropzone: false,
-      draggingFile: false
+      draggingFile: false,
+      searchValue: ''
     };
   },
 
@@ -1767,6 +1784,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
       if (file.uploading || !file.processed) {
         return true;
+      }
+
+      if (this.searchValue.length !== 0) {
+        return file.data.file_name && file.data.file_name.match(this.searchValue);
       }
 
       return !this.currentCollection || file.data.collection_name && file.data.collection_name === this.currentCollection;
@@ -2028,40 +2049,70 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "collection-select" },
-                    [
-                      _c("span", [_vm._v("Collection")]),
+                  _c("div", { staticClass: "collection-select" }, [
+                    _c("div", [
+                      _c("span", [_vm._v("Search")]),
                       _vm._v(" "),
-                      _c(
-                        "select-control",
-                        {
-                          staticClass: "w-full form-control form-select",
-                          attrs: {
-                            id: _vm.collectionField.attribute,
-                            dusk: _vm.collectionField.attribute,
-                            fieldName: _vm.collectionField.fieldName,
-                            options: _vm.collectionField.options,
-                            disabled: _vm.displayCollection != null
-                          },
-                          model: {
-                            value: _vm.currentCollection,
-                            callback: function($$v) {
-                              _vm.currentCollection = $$v
-                            },
-                            expression: "currentCollection"
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.searchValue,
+                            expression: "searchValue"
                           }
-                        },
-                        [
-                          _c("option", { attrs: { value: "", selected: "" } }, [
-                            _vm._v(_vm._s(_vm.__("All collections")))
-                          ])
-                        ]
-                      )
-                    ],
-                    1
-                  )
+                        ],
+                        staticClass:
+                          "w-full form-control form-input form-input-bordered",
+                        attrs: { id: "search", dusk: "search" },
+                        domProps: { value: _vm.searchValue },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.searchValue = $event.target.value
+                          }
+                        }
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      [
+                        _c("span", [_vm._v("Collection")]),
+                        _vm._v(" "),
+                        _c(
+                          "select-control",
+                          {
+                            staticClass: "w-full form-control form-select",
+                            attrs: {
+                              id: _vm.collectionField.attribute,
+                              dusk: _vm.collectionField.attribute,
+                              fieldName: _vm.collectionField.fieldName,
+                              options: _vm.collectionField.options,
+                              disabled: _vm.displayCollection != null
+                            },
+                            model: {
+                              value: _vm.currentCollection,
+                              callback: function($$v) {
+                                _vm.currentCollection = $$v
+                              },
+                              expression: "currentCollection"
+                            }
+                          },
+                          [
+                            _c(
+                              "option",
+                              { attrs: { value: "", selected: "" } },
+                              [_vm._v(_vm._s(_vm.__("All collections")))]
+                            )
+                          ]
+                        )
+                      ],
+                      1
+                    )
+                  ])
                 ]
               ),
               _vm._v(" "),
@@ -2072,99 +2123,109 @@ var render = function() {
                 }
               }),
               _vm._v(" "),
-              _c(
-                "div",
-                { class: "flex mb-6", attrs: { id: "media-dropzone" } },
-                [
-                  _c(
+              !_vm.loadingMediaFiles
+                ? _c(
                     "div",
-                    { staticClass: "img-collection" },
+                    { class: "flex mb-6", attrs: { id: "media-dropzone" } },
                     [
-                      _vm.files.length === 0
-                        ? _c("div", { staticClass: "empty-message" }, [
-                            _c("p", [
-                              _vm._v(
-                                "\n                        There are currently no media files in this library\n                    "
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("p", [
-                              _vm._v(
-                                "\n                        Drag and drop files here to upload them\n                    "
-                              )
-                            ])
-                          ])
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _vm._l(
-                        _vm.files.filter(_vm.filterUploadedFiles),
-                        function(file) {
-                          return _c("uploaded-file", {
-                            key: file,
-                            attrs: {
-                              selected:
-                                _vm.selectedFiles.find(function(item) {
-                                  return (
-                                    item.processed &&
-                                    item.data.id === file.data.id
+                      _c(
+                        "div",
+                        { staticClass: "img-collection" },
+                        [
+                          _vm.files.length === 0
+                            ? _c("div", { staticClass: "empty-message" }, [
+                                _c("p", [
+                                  _vm._v(
+                                    "\n                        There are currently no media files in this library\n                    "
                                   )
-                                }) !== void 0,
-                              active:
-                                file.processed &&
-                                _vm.activeFile &&
-                                file.data.id === _vm.activeFile.data.id,
-                              file: file.processed ? file.data : {},
-                              progress: file.uploading
-                                ? file.uploadProgress
-                                : -1
-                            },
-                            nativeOn: {
-                              click: function($event) {
-                                return _vm.toggleFileSelect(file)
-                              }
+                                ]),
+                                _vm._v(" "),
+                                _c("p", [
+                                  _vm._v(
+                                    "\n                        Drag and drop files here to upload them\n                    "
+                                  )
+                                ])
+                              ])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm._l(
+                            _vm.files.filter(_vm.filterUploadedFiles),
+                            function(file) {
+                              return _c("uploaded-file", {
+                                key: file,
+                                attrs: {
+                                  selected:
+                                    _vm.selectedFiles.find(function(item) {
+                                      return (
+                                        item.processed &&
+                                        item.data.id === file.data.id
+                                      )
+                                    }) !== void 0,
+                                  active:
+                                    file.processed &&
+                                    _vm.activeFile &&
+                                    file.data.id === _vm.activeFile.data.id,
+                                  file: file.processed ? file.data : {},
+                                  progress: file.uploading
+                                    ? file.uploadProgress
+                                    : -1
+                                },
+                                nativeOn: {
+                                  click: function($event) {
+                                    return _vm.toggleFileSelect(file)
+                                  }
+                                }
+                              })
                             }
-                          })
-                        }
-                      )
-                    ],
-                    2
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    { staticClass: "image-editor" },
-                    [
-                      _vm.activeFile !== void 0
-                        ? _c("edit-image", {
-                            attrs: { file: _vm.activeFile.data }
-                          })
-                        : _vm._e()
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "div",
-                    {
-                      class:
-                        "input-dropzone-wrap " +
-                        (_vm.draggingFile ? "visible" : "") +
-                        " " +
-                        (_vm.draggingFile && !_vm.draggingOverDropzone
-                          ? "pulse"
-                          : "")
-                    },
-                    [
-                      _c("p", [_vm._v("Drag and drop your files here!")]),
+                          )
+                        ],
+                        2
+                      ),
                       _vm._v(" "),
-                      _c("input", {
-                        staticClass: "input-dropzone",
-                        attrs: { type: "file", name: "media" }
-                      })
+                      _c(
+                        "div",
+                        { staticClass: "image-editor" },
+                        [
+                          _vm.activeFile !== void 0
+                            ? _c("edit-image", {
+                                attrs: { file: _vm.activeFile.data }
+                              })
+                            : _vm._e()
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        {
+                          class:
+                            "input-dropzone-wrap " +
+                            (_vm.draggingFile ? "visible" : "") +
+                            " " +
+                            (_vm.draggingFile && !_vm.draggingOverDropzone
+                              ? "pulse"
+                              : "")
+                        },
+                        [
+                          _c("p", [_vm._v("Drag and drop your files here!")]),
+                          _vm._v(" "),
+                          _c("input", {
+                            staticClass: "input-dropzone",
+                            attrs: { type: "file", name: "media" }
+                          })
+                        ]
+                      )
                     ]
                   )
-                ]
-              )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.loadingMediaFiles
+                ? _c("div", { staticClass: "loader-container" }, [
+                    _c("div", { staticClass: "loader" }),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "small-loader " })
+                  ])
+                : _vm._e()
             ],
             1
           ),
@@ -2698,6 +2759,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
 
 
 
@@ -2713,7 +2775,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       isModalOpen: false,
       activeFile: void 0,
       selectedFiles: [],
-      chosenCollection: null
+      chosenCollection: null,
+      loadingMediaFiles: true
     };
   },
 
@@ -2744,6 +2807,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     }
 
     if (!window.mediaLibrary) {
+      this.loadingMediaFiles = true;
+
       window.mediaLibrary = {
         files: [],
         loaded: false,
@@ -2787,6 +2852,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
   methods: {
     updateFiles: function updateFiles() {
+      this.loadingMediaFiles = false;
       this.files = [].concat(_toConsumableArray(window.mediaLibrary.files));
     },
 
@@ -13110,6 +13176,7 @@ var render = function() {
                   chosenCollection: _vm.chosenCollection,
                   activeFile: _vm.activeFile,
                   updateMedia: _vm.updateMedia,
+                  loadingMediaFiles: _vm.loadingMediaFiles,
                   selectedFiles: _vm.selectedFiles
                 },
                 on: {
@@ -13133,6 +13200,12 @@ var render = function() {
                   },
                   "update:active-file": function($event) {
                     _vm.activeFile = $event
+                  },
+                  "update:loadingMediaFiles": function($event) {
+                    _vm.loadingMediaFiles = $event
+                  },
+                  "update:loading-media-files": function($event) {
+                    _vm.loadingMediaFiles = $event
                   },
                   "update:selectedFiles": function($event) {
                     _vm.selectedFiles = $event

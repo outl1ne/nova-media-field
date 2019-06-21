@@ -11,6 +11,7 @@
                                       :chosenCollection.sync="chosenCollection"
                                       :activeFile.sync="activeFile"
                                       :updateMedia="updateMedia"
+                                      :loadingMediaFiles.sync="loadingMediaFiles"
                                       :selectedFiles.sync="selectedFiles" />
             </div>
 
@@ -42,7 +43,8 @@
       isModalOpen: false,
       activeFile: void 0,
       selectedFiles: [],
-      chosenCollection: null
+      chosenCollection: null,
+      loadingMediaFiles: true
     }),
 
     computed: {
@@ -69,6 +71,8 @@
       }
 
       if (!window.mediaLibrary) {
+        this.loadingMediaFiles = true;
+
         window.mediaLibrary = {
           files: [],
           loaded: false,
@@ -112,6 +116,7 @@
     methods: {
 
       updateFiles() {
+        this.loadingMediaFiles = false;
         this.files = [...window.mediaLibrary.files];
       },
 

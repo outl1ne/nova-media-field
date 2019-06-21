@@ -10,24 +10,35 @@
                 </h2>
 
                 <div class="collection-select">
-                    <span>Collection</span>
-                    <select-control
-                            :id="collectionField.attribute"
-                            :dusk="collectionField.attribute"
-                            :fieldName="collectionField.fieldName"
-                            :options="collectionField.options"
-                            v-model="currentCollection"
-                            :disabled="displayCollection != null"
-                            class="w-full form-control form-select">
-                        <option value="" selected>{{ __('All collections') }}</option>
-                    </select-control>
+                    <div>
+                        <span>Search</span>
+                        <input
+                            class="w-full form-control form-input form-input-bordered"
+                            id="search"
+                            dusk="search"
+                            v-model="searchValue"
+                        />
+                    </div>
+                    <div>
+                        <span>Collection</span>
+                        <select-control
+                                :id="collectionField.attribute"
+                                :dusk="collectionField.attribute"
+                                :fieldName="collectionField.fieldName"
+                                :options="collectionField.options"
+                                v-model="currentCollection"
+                                :disabled="displayCollection != null"
+                                class="w-full form-control form-select">
+                            <option value="" selected>{{ __('All collections') }}</option>
+                        </select-control>
+                    </div>
                 </div>
             </div>
 
             <media-modal-constraints :field="field"
                                      :currentCollection="currentCollection" />
 
-            <div :class="`flex mb-6`" id="media-dropzone">
+            <div :class="`flex mb-6`" id="media-dropzone" v-if="!loadingMediaFiles">
 
                 <div class="img-collection">
 
@@ -58,6 +69,11 @@
                 </div>
 
             </div>
+
+            <div class="loader-container" v-if="loadingMediaFiles">
+                <div class="loader" />
+                <div class="small-loader " />
+            </div>
         </div>
         <div slot="buttons">
             <div class="ml-auto">
@@ -75,11 +91,12 @@
 
   export default {
 
-    props: ['field', 'isModalOpen', 'chosenCollection', 'activeFile', 'selectedFiles', 'updateMedia', 'files', 'multipleSelect'],
+    props: ['field', 'isModalOpen', 'chosenCollection', 'activeFile', 'selectedFiles', 'updateMedia', 'files', 'multipleSelect', 'loadingMediaFiles'],
 
     data: () => ({
       draggingOverDropzone: false,
       draggingFile: false,
+      searchValue: '',
     }),
 
     computed: {
@@ -138,6 +155,10 @@
 
         if (file.uploading || !file.processed) {
           return true;
+        }
+
+        if (this.searchValue.length !== 0) {
+          return file.data.file_name && (file.data.file_name.match(this.searchValue));
         }
 
         return !this.currentCollection || (file.data.collection_name && file.data.collection_name === this.currentCollection);
