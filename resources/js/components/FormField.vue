@@ -33,6 +33,10 @@
   import {FormField, HandlesValidationErrors} from 'laravel-nova';
   import debounce from './../debounce';
 
+  function isString (value) {
+    return typeof value === 'string' || value instanceof String;
+  }
+
   export default {
     mixins: [FormField, HandlesValidationErrors],
 
@@ -58,7 +62,7 @@
       if (this.field.value && this.field.value !== '') {
         axios.get('/api/media/find', {
           params: {
-            ids: this.field.value.split(',')
+            ids: isString(this.field.value) ? this.field.value.split(',') : this.field.value
           },
         }).then(response => {
           this.selectedFiles = response.data.map(file => ({

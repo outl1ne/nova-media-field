@@ -115,4 +115,42 @@ class MediaHandler
         return $model;
     }
 
+    public static function createFromFile($filePath) : Model {
+
+        if (!realpath($filePath)) throw new Exception('Invalid file path!');
+
+        $disk = Storage::disk('local');
+
+        $diskPath = $disk->getDriver()->getAdapter()->getPathPrefix();
+
+        $storagePath = MediaHandler::getUploadPath();
+
+        $origFilename = pathinfo(basename($filePath), PATHINFO_FILENAME);
+        $extension = pathinfo(basename($filePath), PATHINFO_EXTENSION);
+
+        $filename = basename($filePath);
+
+        $i = 1;
+        while($disk->exists($storagePath . $filename)) {
+            $filename = $origFilename . '-' . $i . '.' . $extension;
+            $i++;
+        }
+
+        $disk->put($storagePath . $filename, file_get_contents(realpath($filePath)));
+
+        $model = new Media([
+            'collection_name' => '',
+            'path' => $storagePath,
+            'file_name' => $filename,
+            'alt' => '',
+            'mime_type' => finfo_file(finfo_open(FILEINFO_MIME_TYPE), $diskPath . $storagePath . $filename),
+            'file_size' => filesize($diskPath . $storagePath . $filename),
+            'image_sizes' => json_encode(MediaHandler::generateImageSizes($diskPath . $storagePath . $filename)),
+            'data' => '{}',
+        ]);
+
+        $model->save();
+
+        return $model;
+    }
 }
