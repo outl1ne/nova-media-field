@@ -30,7 +30,8 @@ class Media extends Model
         return env('APP_URL') . Storage::url($this->path . $this->file_name);
     }
 
-    public function getImageSizesAttribute($value) {
+    public function getImageSizesAttribute($value)
+    {
         $sizes = json_decode($value, true);
 
         foreach ($sizes as $key => $size) {
@@ -40,15 +41,18 @@ class Media extends Model
         return $sizes;
     }
 
-    public function getFilePathAttribute() {
+    public function getFilePathAttribute()
+    {
         return str_replace('public/', '', $this->path) . $this->file_name;
     }
 
-    public function getDataAttribute($value) {
+    public function getDataAttribute($value)
+    {
         return json_decode($value, true);
     }
 
-    public function getDimensionsAttribute() {
+    public function getDimensionsAttribute()
+    {
 
 
         $disk = Storage::disk('local');
@@ -64,6 +68,21 @@ class Media extends Model
         return [
             'width' => $image->width(),
             'height' => $image->height()
+        ];
+    }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->id,
+            'collection_name' => $this->collection_name,
+            'path' => $this->path,
+            'file_name' => $this->file_name,
+            'alt' => $this->alt,
+            'mime_type' => $this->mime_type,
+            'file_size' => $this->file_size,
+            'image_sizes' => $this->image_sizes,
+            'data' => $this->data,
         ];
     }
 
