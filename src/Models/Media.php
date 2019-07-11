@@ -23,7 +23,7 @@ class Media extends Model
         'data',
     ];
 
-    protected $appends = ['url', 'dimensions'];
+    protected $appends = ['url'];
 
     public function getUrlAttribute()
     {
@@ -49,41 +49,6 @@ class Media extends Model
     public function getDataAttribute($value)
     {
         return json_decode($value, true);
-    }
-
-    public function getDimensionsAttribute()
-    {
-
-
-        $disk = Storage::disk('local');
-
-        $image = null;
-
-        try {
-            $image = Image::make($disk->get($this->path . $this->file_name));
-        } catch (\Exception $e) {
-            return null;
-        }
-
-        return [
-            'width' => $image->width(),
-            'height' => $image->height()
-        ];
-    }
-
-    public function toArray()
-    {
-        return [
-            'id' => $this->id,
-            'collection_name' => $this->collection_name,
-            'path' => $this->path,
-            'file_name' => $this->file_name,
-            'alt' => $this->alt,
-            'mime_type' => $this->mime_type,
-            'file_size' => $this->file_size,
-            'image_sizes' => $this->image_sizes,
-            'data' => $this->data,
-        ];
     }
 
 }
