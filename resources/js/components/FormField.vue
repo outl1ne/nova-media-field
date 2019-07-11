@@ -114,6 +114,8 @@
         this.files = [...window.mediaLibrary.files];
       }
 
+      this.updateMedia();
+
       window.mediaLibrary.onload.push(this.updateFiles);
     },
 
