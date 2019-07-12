@@ -5,7 +5,7 @@
         <div slot="container">
             <div class="modal-header flex flex-wrap justify-between mb-6">
                 <h2 class="text-90 font-normal text-xl">
-                    Media library
+                    Browse media library
                     {{ currentCollection ? `(${field.collections[currentCollection].label})` : '' }}
                 </h2>
 
@@ -64,8 +64,11 @@
                 </div>
 
                 <div :class="`input-dropzone-wrap ${draggingFile || (showUploadArea && listenUploadArea) ? 'visible' : ''} ${draggingFile && !draggingOverDropzone ? 'pulse' : ''}`">
-                    <p>Drag and drop your files here!</p>
-                    <input type="file" name="media" class="input-dropzone">
+                    <p>
+                        <svg class="fill-current w-4 h-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
+                    </p>
+                    <p>To upload files you can simply drag and drop them in the area or click it to open file browser.</p>
+                    <input type="file" ref="uploadFiles" name="media" class="input-dropzone" @change="fileBrowserSelectListener" multiple>
                 </div>
 
             </div>
@@ -75,16 +78,33 @@
                 <div class="small-loader " />
             </div>
         </div>
-        <slot slot="buttons">
-            <button type="button" @click.prevent="closeModalAndSave"
-                    class="btn btn-default btn-primary mr-3">
-                {{ __('Apply and close') }}
+        <div slot="buttons" class="w-full flex">
+            <button type="button"
+                    v-if="!(showUploadArea && listenUploadArea) || draggingFile"
+                    v-on:click="openModalWithUpload"
+                    class="btn btn-default btn-primary whitespace-no-wrap">
+                {{ __('Upload file') }}
             </button>
-            <button type="button" @click.prevent="closeModal"
-                    class="btn btn-default btn-danger">
-                {{ __('Close') }}
+            <button type="button"
+                    v-if="!(!(showUploadArea && listenUploadArea) || draggingFile)"
+                    v-on:click="showMediaLibrary"
+                    class="btn btn-default btn-primary whitespace-no-wrap">
+                {{ __('Back to library') }}
             </button>
-        </slot>
+
+            <div class="flex w-full justify-end">
+                <button type="button"
+                        v-if="!(showUploadArea && listenUploadArea) || draggingFile"
+                        @click.prevent="closeModalAndSave"
+                        class="btn btn-default btn-primary mr-3">
+                    {{ __('Apply and close') }}
+                </button>
+                <button type="button" @click.prevent="closeModal"
+                        class="btn btn-default btn-danger">
+                    {{ __('Close') }}
+                </button>
+            </div>
+        </div>
     </od-modal>
 </template>
 
@@ -195,6 +215,31 @@
         return !this.currentCollection || (file.data.collection_name && file.data.collection_name === this.currentCollection);
       },
 
+      fileBrowserSelectListener(e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.draggingFile = false;
+        this.draggingOverDropzone = false;
+
+        for (const fileKey of Object.keys(this.$refs.uploadFiles.files)) {
+          this.files.unshift({
+            fileInput: this.$refs.uploadFiles.files[fileKey],
+            collection: this.currentCollection || null,
+            data: {},
+            uploadProgress: 0,
+            uploading: false,
+            processed: false
+          });
+        }
+
+        this.listenUploadArea = false;
+        this.$emit('update:files', this.files);
+        this.uploadFiles();
+
+      },
+
       dropEventListener(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -211,12 +256,10 @@
             uploading: false,
             processed: false
           });
-
-          this.listenUploadArea = false;
         }
 
+        this.listenUploadArea = false;
         this.$emit('update:files', this.files);
-
         this.uploadFiles();
       },
 
@@ -352,6 +395,18 @@
         window.removeEventListener('dragleave', this.dragLeaveListener);
         window.removeEventListener('dragend', this.dragEndListener);
         window.removeEventListener('drop', this.dropEventListener);
+      },
+
+      openModalWithUpload() {
+        this.listenUploadArea = true;
+        this.$emit('update:isModalOpen', true);
+        this.$emit('update:showUploadArea', true);
+      },
+
+      showMediaLibrary() {
+        this.listenUploadArea = false;
+        this.$emit('update:isModalOpen', true);
+        this.$emit('update:showUploadArea', false);
       },
     }
   };

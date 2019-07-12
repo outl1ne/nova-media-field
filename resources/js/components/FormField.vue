@@ -11,7 +11,7 @@
                                       :chosenCollection.sync="chosenCollection"
                                       :activeFile.sync="activeFile"
                                       :updateMedia="updateMedia"
-                                      :showUploadArea="showUploadArea"
+                                      :showUploadArea.sync="showUploadArea"
                                       :loadingMediaFiles.sync="loadingMediaFiles"
                                       :selectedFiles.sync="selectedFiles" />
             </div>
@@ -27,14 +27,7 @@
                         v-on:click="openModal"
                         class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3">
                       <span>
-                            {{ selectedFiles.length ? __('Change media') : __('Browse media') }}
-                      </span>
-                </button>
-                <button type="button"
-                        v-on:click="openModalWithUpload"
-                        class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3">
-                      <span>
-                            {{ __('Upload') }}
+                            {{ __('Media library') }}
                       </span>
                 </button>
                 <button type="button"
@@ -42,7 +35,7 @@
                         v-on:click="clearSelectedFiles"
                         class="btn btn-default btn-danger inline-flex items-center relative ml-auto mr-3">
                       <span>
-                            {{ multipleSelect && selectedFiles.length > 1 ? __('Clear all') : __('Clear') }}
+                            {{ __('Clear') }}
                       </span>
                 </button>
             </div>
@@ -163,11 +156,6 @@
         this.showUploadArea = false;
       },
 
-
-      openModalWithUpload() {
-        this.isModalOpen = true;
-        this.showUploadArea = true;
-      },
 
       /*
        * Set the initial, internal value for the field.
