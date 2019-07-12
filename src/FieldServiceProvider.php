@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Nova\Nova;
 use Laravel\Nova\Events\ServingNova;
 use Illuminate\Support\ServiceProvider;
+use OptimistDigital\MediaField\Classes\MediaHandler;
 
 class FieldServiceProvider extends ServiceProvider
 {
@@ -38,7 +39,6 @@ class FieldServiceProvider extends ServiceProvider
             Nova::style('media-field', __DIR__.'/../dist/css/field.css');
         });
 
-
         Nova::resources([
             Media::class,
         ]);
@@ -51,6 +51,8 @@ class FieldServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(MediaHandler::class, function() {
+            return new MediaHandler();
+        });
     }
 }

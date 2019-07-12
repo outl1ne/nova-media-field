@@ -12,7 +12,7 @@ return [
     'collections' => [
     ],
 
-    'storage' => 'disk',
+    'storage_driver' => config('filesystems.default'),
 
     'storage_path' => 'public/media/'
 ];
