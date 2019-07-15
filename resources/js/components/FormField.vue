@@ -11,17 +11,31 @@
                                       :chosenCollection.sync="chosenCollection"
                                       :activeFile.sync="activeFile"
                                       :updateMedia="updateMedia"
+                                      :showUploadArea.sync="showUploadArea"
                                       :loadingMediaFiles.sync="loadingMediaFiles"
                                       :selectedFiles.sync="selectedFiles" />
             </div>
 
             <media-preview :ordering="field.ordering" v-if="selectedFiles.length !== 0" hideName :changeOrder="handleChange" :files="selectedFiles" :multiple="multipleSelect"/>
 
+            <p class="py-6" style="padding-top: 9px;" v-if="selectedFiles.length === 0">
+                {{ __('No media selected') }}
+            </p>
+
             <div class="ml-auto">
-                <button type="button" v-on:click="openModal"
+                <button type="button"
+                        v-on:click="openModal"
                         class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3">
                       <span>
-                            {{ __('Browse or upload media') }}
+                            {{ __('Media library') }}
+                      </span>
+                </button>
+                <button type="button"
+                        v-if="selectedFiles.length"
+                        v-on:click="clearSelectedFiles"
+                        class="btn btn-default btn-danger inline-flex items-center relative ml-auto mr-3">
+                      <span>
+                            {{ __('Clear') }}
                       </span>
                 </button>
             </div>
@@ -48,7 +62,8 @@
       activeFile: void 0,
       selectedFiles: [],
       chosenCollection: null,
-      loadingMediaFiles: true
+      loadingMediaFiles: true,
+      showUploadArea: false,
     }),
 
     computed: {
@@ -114,6 +129,8 @@
         this.files = [...window.mediaLibrary.files];
       }
 
+      this.updateMedia();
+
       window.mediaLibrary.onload.push(this.updateFiles);
     },
 
@@ -136,7 +153,9 @@
 
       openModal() {
         this.isModalOpen = true;
+        this.showUploadArea = false;
       },
+
 
       /*
        * Set the initial, internal value for the field.
@@ -157,6 +176,11 @@
        */
       handleChange(value) {
         this.selectedFiles = value;
+      },
+
+      clearSelectedFiles() {
+        this.activeFile = void 0;
+        this.selectedFiles = [];
       },
 
     },

@@ -5,7 +5,7 @@
         <div slot="container">
             <div class="modal-header flex flex-wrap justify-between mb-6">
                 <h2 class="text-90 font-normal text-xl">
-                    Media library
+                    Browse media library
                     {{ currentCollection ? `(${field.collections[currentCollection].label})` : '' }}
                 </h2>
 
@@ -52,20 +52,23 @@
                     </div>
 
                     <uploaded-file v-for="file in files.filter(filterUploadedFiles)"
-                                   :selected="selectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
-                                   :active="file.processed && activeFile && file.data.id === activeFile.data.id"
+                                   :selected="stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
+                                   :active="file.processed && stateActiveFile && file.data.id === stateActiveFile.data.id"
                                    v-on:click.native="toggleFileSelect(file)" v-bind:key="file"
                                    :file="file.processed ? file.data : {}"
                                    :progress="file.uploading ? file.uploadProgress : -1"/>
                 </div>
 
                 <div class="image-editor">
-                    <edit-image v-if="activeFile !== void 0" :file="activeFile.data"/>
+                    <edit-image v-if="stateActiveFile !== void 0" :file="stateActiveFile.data"/>
                 </div>
 
-                <div :class="`input-dropzone-wrap ${draggingFile ? 'visible' : ''} ${draggingFile && !draggingOverDropzone ? 'pulse' : ''}`">
-                    <p>Drag and drop your files here!</p>
-                    <input type="file" name="media" class="input-dropzone">
+                <div :class="`input-dropzone-wrap ${draggingFile || (showUploadArea && listenUploadArea) ? 'visible' : ''} ${draggingFile && !draggingOverDropzone ? 'pulse' : ''}`">
+                    <p>
+                        <svg class="fill-current w-4 h-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
+                    </p>
+                    <p>To upload files you can simply drag and drop them in the area or click it to open file browser.</p>
+                    <input type="file" ref="uploadFiles" name="media" class="input-dropzone" @change="fileBrowserSelectListener" multiple>
                 </div>
 
             </div>
@@ -75,10 +78,29 @@
                 <div class="small-loader " />
             </div>
         </div>
-        <div slot="buttons">
-            <div class="ml-auto">
+        <div slot="buttons" class="w-full flex">
+            <button type="button"
+                    v-if="!(showUploadArea && listenUploadArea) || draggingFile"
+                    v-on:click="openModalWithUpload"
+                    class="btn btn-default btn-primary whitespace-no-wrap">
+                {{ __('Upload file') }}
+            </button>
+            <button type="button"
+                    v-if="!(!(showUploadArea && listenUploadArea) || draggingFile)"
+                    v-on:click="showMediaLibrary"
+                    class="btn btn-default btn-primary whitespace-no-wrap">
+                {{ __('Back to library') }}
+            </button>
+
+            <div class="flex w-full justify-end">
+                <button type="button"
+                        v-if="!(showUploadArea && listenUploadArea) || draggingFile"
+                        @click.prevent="closeModalAndSave"
+                        class="btn btn-default btn-primary mr-3">
+                    {{ __('Apply and close') }}
+                </button>
                 <button type="button" @click.prevent="closeModal"
-                        class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3">
+                        class="btn btn-default btn-danger">
                     {{ __('Close') }}
                 </button>
             </div>
@@ -91,12 +113,26 @@
 
   export default {
 
-    props: ['field', 'isModalOpen', 'chosenCollection', 'activeFile', 'selectedFiles', 'updateMedia', 'files', 'multipleSelect', 'loadingMediaFiles'],
+    props: [
+      'field',
+      'isModalOpen',
+      'chosenCollection',
+      'activeFile',
+      'selectedFiles',
+      'updateMedia',
+      'files',
+      'multipleSelect',
+      'loadingMediaFiles',
+      'showUploadArea'
+    ],
 
     data: () => ({
       draggingOverDropzone: false,
       draggingFile: false,
       searchValue: '',
+      listenUploadArea: false,
+      stateActiveFile: void 0,
+      stateSelectedFiles: []
     }),
 
     computed: {
@@ -133,7 +169,13 @@
     watch: {
       isModalOpen: function (newVal, oldVal) { // watch it
 
+        if (this.showUploadArea) {
+          this.listenUploadArea = true;
+        }
+
         if (newVal) {
+          this.stateActiveFile = this.activeFile ? {...this.activeFile} : void 0;
+          this.stateSelectedFiles = Array.isArray(this.selectedFiles) ? [...this.selectedFiles] : [];
           this.addEventListeners();
         } else {
           this.clearEventListeners();
@@ -148,6 +190,15 @@
       },
 
       closeModal() {
+        this.listenUploadArea = false;
+        this.$emit('update:isModalOpen', false);
+      },
+
+      closeModalAndSave() {
+        console.log('close and save');
+        this.listenUploadArea = false;
+        this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
+        this.$emit('update:activeFile', {...this.stateActiveFile});
         this.$emit('update:isModalOpen', false);
       },
 
@@ -162,6 +213,31 @@
         }
 
         return !this.currentCollection || (file.data.collection_name && file.data.collection_name === this.currentCollection);
+      },
+
+      fileBrowserSelectListener(e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        this.draggingFile = false;
+        this.draggingOverDropzone = false;
+
+        for (const fileKey of Object.keys(this.$refs.uploadFiles.files)) {
+          this.files.unshift({
+            fileInput: this.$refs.uploadFiles.files[fileKey],
+            collection: this.currentCollection || null,
+            data: {},
+            uploadProgress: 0,
+            uploading: false,
+            processed: false
+          });
+        }
+
+        this.listenUploadArea = false;
+        this.$emit('update:files', this.files);
+        this.uploadFiles();
+
       },
 
       dropEventListener(e) {
@@ -182,8 +258,8 @@
           });
         }
 
+        this.listenUploadArea = false;
         this.$emit('update:files', this.files);
-
         this.uploadFiles();
       },
 
@@ -222,37 +298,33 @@
 
       toggleFileSelect(file) {
 
-        if (this.activeFile && this.activeFile.data.id === file.data.id) {
-          this.activeFile = void 0;
+        if (this.stateActiveFile && this.stateActiveFile.data.id === file.data.id) {
+          this.stateActiveFile = void 0;
 
           if (!this.multipleSelect) {
-            this.selectedFiles = [];
-
-            this.$emit('update:selectedFiles', this.selectedFiles);
+            this.stateSelectedFiles = [];
+            // this.$emit('update:stateSelectedFiles', this.stateSelectedFiles);
             return;
           }
         }
 
-        if (this.multipleSelect && !this.selectedFiles.find(item => item.processed && item.data.id === file.data.id)) {
-          this.selectedFiles.push(file);
-        } else if (this.multipleSelect && this.selectedFiles.find(item => item.processed && item.data.id === file.data.id)) {
-          const i = this.selectedFiles.findIndex(item => item.processed && +item.data.id === +file.data.id);
+        if (this.multipleSelect && !this.stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id)) {
+          this.stateSelectedFiles.push(file);
+        } else if (this.multipleSelect && this.stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id)) {
+          const i = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +file.data.id);
 
           if (i > -1) {
-            this.selectedFiles.splice(i, 1);
-            this.$emit('update:activeFile', this.activeFile);
-            this.$emit('update:selectedFiles', this.selectedFiles);
+            this.stateSelectedFiles.splice(i, 1);
+            // this.$emit('update:stateActiveFile', this.stateActiveFile);
+            // this.$emit('update:stateSelectedFiles', this.stateSelectedFiles);
           }
 
           return;
         } else if (!this.multipleSelect) {
-          this.selectedFiles = [file];
+          this.stateSelectedFiles = [file];
         }
 
-        this.activeFile = file;
-
-        this.$emit('update:selectedFiles', this.selectedFiles);
-        this.$emit('update:activeFile', this.activeFile);
+        this.stateActiveFile = file;
       },
 
       uploadFiles() {
@@ -323,6 +395,18 @@
         window.removeEventListener('dragleave', this.dragLeaveListener);
         window.removeEventListener('dragend', this.dragEndListener);
         window.removeEventListener('drop', this.dropEventListener);
+      },
+
+      openModalWithUpload() {
+        this.listenUploadArea = true;
+        this.$emit('update:isModalOpen', true);
+        this.$emit('update:showUploadArea', true);
+      },
+
+      showMediaLibrary() {
+        this.listenUploadArea = false;
+        this.$emit('update:isModalOpen', true);
+        this.$emit('update:showUploadArea', false);
       },
     }
   };

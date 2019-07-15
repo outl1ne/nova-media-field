@@ -14,16 +14,62 @@ class MediaHandler
 {
     use ValidatesRequests;
 
-    public static function normalizeFileName($filename) {
-        return preg_replace( '/[^a-z0-9]+/', '-', strtolower($filename));
+    /**
+     * Create new media resource using laravel's Request class
+     *
+     * @param Request $request
+     * @param string $key Used to access Request file upload value
+     * @return Media
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public static function createFromRequest(Request $request, $key = 'file') : Media
+    {
+        /** @var MediaHandler $instance */
+        $instance = app()->make(MediaHandler::class);
+        return $instance->storeFile([
+            'name' => $request->file($key)->getClientOriginalName(),
+            'path' => $request->file($key)->getRealPath(),
+            'collection' => $request->get('collection') ?? '',
+            'alt' => $request->get('alt') ?? ''
+        ], $instance->getDisk());
     }
 
-    public static function generateImageSizes($file) {
+    /**
+     * Creates new media resource from existing file
+     *
+     * @param $file Full path to file
+     * @return Media
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public static function createFromFile($filepath) : Media
+    {
+        /** @var MediaHandler $instance */
+        $instance = app()->make(MediaHandler::class);
+        return $instance->storeFile($filepath, $instance->getDisk());
+    }
 
-        /** @var Image $Image */
+    /**
+     * URL friendly file name
+     *
+     * @param $filename
+     * @return string
+     */
+    protected function normalizeFileName($filename) : string
+    {
+        return preg_replace('/[^a-z0-9]+/', '-', strtolower($filename));
+    }
 
-        $origName = pathinfo($file, PATHINFO_FILENAME);
-        $extension =  pathinfo($file, PATHINFO_EXTENSION);
+    /**
+     * @param $file Binary file data
+     * @param $path Path on disk
+     * @param $disk Saving destination
+     * @return array
+     */
+    protected function generateImageSizes($file, $path, $disk) : array
+    {
+
+        $origName = pathinfo($path, PATHINFO_FILENAME);
+        $extension = pathinfo($path, PATHINFO_EXTENSION);
 
         $sizes = [];
         foreach (config('nova-media-field.image_sizes') as $sizeName => $config) {
@@ -32,42 +78,47 @@ class MediaHandler
 
             $crop = isset($config['crop']) && $config['crop'];
 
-           if (isset($config['width']) && !isset($config['height'])) {
-               $img->resize($config['width'], null, function ($constraint) {
-                   $constraint->aspectRatio();
-               });
-           } else if (!isset($config['width']) && isset($config['height'])) {
-               $img->resize(null, $config['height'], function ($constraint) {
-                   $constraint->aspectRatio();
-               });
-           } else if (isset($config['width']) && isset($config['height']) && $crop) {
-               $img->fit($config['width'], $config['height']);
-           } else if (isset($config['width']) && isset($config['height'])) {
-               $img->resize($config['width'], $config['height']);
-           }
+            if (isset($config['width']) && !isset($config['height'])) {
+                $img->resize($config['width'], null, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+            } else if (!isset($config['width']) && isset($config['height'])) {
+                $img->resize(null, $config['height'], function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+            } else if (isset($config['width']) && isset($config['height']) && $crop) {
+                $img->fit($config['width'], $config['height']);
+            } else if (isset($config['width']) && isset($config['height'])) {
+                $img->resize($config['width'], $config['height']);
+            }
 
-           $sizeFileName = $origName . '-' . $img->getWidth() . 'px-' . $img->getHeight() . 'px.' . $extension;
+            $sizedFilename = $origName . '-' . $img->getWidth() . 'px-' . $img->getHeight() . 'px.' . $extension;
 
-           try {
-               $img->save(dirname($file) . '/'. $sizeFileName);
+            try {
+                $disk->put(dirname($path) . '/' . $sizedFilename, $img->encode($extension)->__toString());
 
-               $sizes[$sizeName] = [
-                   'file_name' => $sizeFileName,
-                   'file_size' => filesize(dirname($file) . '/'. $sizeFileName),
-                   'width' => $img->getWidth(),
-                   'height' => $img->getHeight(),
-               ];
-           } catch (\Intervention\Image\Exception\NotSupportedException $e) {
-               break;
-           }
+                $sizes[$sizeName] = [
+                    'file_name' => $sizedFilename,
+                    'file_size' => $disk->size(dirname($path) . '/' . $sizedFilename),
+                    'width' => $img->getWidth(),
+                    'height' => $img->getHeight(),
+                ];
+            } catch (\Intervention\Image\Exception\NotSupportedException $e) {
+                continue;
+            }
         }
 
         return $sizes;
     }
 
-    public static function getUploadPath() : string {
-
-        $disk = Storage::disk('local');
+    /**
+     * Returns current upload path defined by year and month. Creates directories if they dont exist.
+     *
+     * @param $disk
+     * @return string
+     */
+    protected function getUploadPath($disk): string
+    {
 
         $subPath = config('nova-media-field.storage_path') . date('Y') . '/' . date('m') . '/';
 
@@ -78,74 +129,86 @@ class MediaHandler
         return $subPath;
     }
 
-    public static function createFromRequest(Request $request) : Model {
-
-        $disk = Storage::disk('local');
-
-        $diskPath = $disk->getDriver()->getAdapter()->getPathPrefix();
-
-        $storagePath = MediaHandler::getUploadPath();
-
-        $origFilename = MediaHandler::normalizeFileName(pathinfo($request->file('file')->getClientOriginalName(), PATHINFO_FILENAME));
-        $extension = $request->file('file')->getClientOriginalExtension();
-
-        $filename = $origFilename . '.' . $extension;
-
-        $i = 1;
-        while($disk->exists($storagePath . $filename)) {
-            $filename = $origFilename . '-' . $i . '.' . $extension;
-            $i++;
-        }
-
-        $disk->put($storagePath . $filename, file_get_contents($request->file('file')->getRealPath()));
-
-        $model = new Media([
-            'collection_name' => $request->get('collection') ?? '',
-            'path' => $storagePath,
-            'file_name' => $filename,
-            'alt' => $request->get('alt') ?? '',
-            'mime_type' => $request->file('file')->getClientMimeType(),
-            'file_size' => filesize($diskPath . $storagePath . $filename),
-            'image_sizes' => json_encode(MediaHandler::generateImageSizes($diskPath . $storagePath . $filename)),
-            'data' => '{}',
-        ]);
-
-        $model->save();
-
-        return $model;
+    /**
+     * Returns disk where to upload media
+     *
+     * @return \Illuminate\Contracts\Filesystem\Filesystem
+     */
+    protected function getDisk()
+    {
+        return Storage::disk(config('nova-media-field.storage_driver'));
     }
 
-    public static function createFromFile($filePath) : Model {
+    /**
+     * Validates if file input can be used to store a file. Returns extracted data from file input
+     *
+     * @param $fileData
+     * @return array
+     * @throws \Exception
+     */
+    protected function validateFileInput($fileData)
+    {
+        if (is_array($fileData) && !(isset($fileData['name']) && isset($fileData['path']))) {
+            throw new \Exception('Cannot store file, missing file name or path!');
+        } else if (is_string($fileData) && !file_exists($fileData)) {
+            throw new \Exception('Cannot store file, invalid file path!');
+        }
 
-        if (!realpath($filePath)) throw new Exception('Invalid file path!');
+        if (is_array($fileData)) {
+            $filename = $fileData['name'];
+            $tmpName = basename($fileData['path']);
+            $tmpPath = rtrim(dirname($fileData['path']), '/') . '/';
+            $collection = $fileData['collection'] ?? '';
+            $alt = $fileData['alt'] ?? '';
+        } else if (is_string($fileData)) {
+            $filename = basename($fileData);
+            $tmpName = $filename;
+            $tmpPath = rtrim(dirname($fileData), '/') . '/';
+            $collection = '';
+            $alt = '';
+        }
 
-        $disk = Storage::disk('local');
+        return [$filename, $tmpName, $tmpPath, $collection, $alt];
+    }
 
-        $diskPath = $disk->getDriver()->getAdapter()->getPathPrefix();
+    /**
+     * Stores file on specified disk, creates new resource based on file input and returns it.
+     *
+     * @param $fileData
+     * @param $disk
+     * @return Media
+     * @throws \Exception
+     */
+    protected function storeFile($fileData, $disk): Media
+    {
 
-        $storagePath = MediaHandler::getUploadPath();
+        [$filename, $tmpName, $tmpPath, $collection, $alt] = $this->validateFileInput($fileData);
 
-        $origFilename = pathinfo(basename($filePath), PATHINFO_FILENAME);
-        $extension = pathinfo(basename($filePath), PATHINFO_EXTENSION);
+        $storagePath = ltrim($this->getUploadPath($disk), '/');
 
-        $filename = basename($filePath);
+        $origFilename = $this->normalizeFileName(pathinfo($filename, PATHINFO_FILENAME));
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+
+        $newFilename = $origFilename . '.' . $extension;
 
         $i = 1;
-        while($disk->exists($storagePath . $filename)) {
-            $filename = $origFilename . '-' . $i . '.' . $extension;
+        while ($disk->exists($storagePath . $newFilename)) {
+            $newFilename = $origFilename . '-' . $i . '.' . $extension;
             $i++;
         }
 
-        $disk->put($storagePath . $filename, file_get_contents(realpath($filePath)));
+        $disk->put($storagePath . $newFilename, file_get_contents($tmpPath . $tmpName));
+
+        $generatedImages = $this->generateImageSizes(file_get_contents($tmpPath . $tmpName), $storagePath . $newFilename, $disk);
 
         $model = new Media([
-            'collection_name' => '',
+            'collection_name' => $collection,
             'path' => $storagePath,
-            'file_name' => $filename,
-            'alt' => '',
-            'mime_type' => finfo_file(finfo_open(FILEINFO_MIME_TYPE), $diskPath . $storagePath . $filename),
-            'file_size' => filesize($diskPath . $storagePath . $filename),
-            'image_sizes' => json_encode(MediaHandler::generateImageSizes($diskPath . $storagePath . $filename)),
+            'file_name' => $newFilename,
+            'alt' => $alt,
+            'mime_type' => $disk->getMimeType($storagePath . $newFilename),
+            'file_size' => $disk->size($storagePath . $newFilename),
+            'image_sizes' => json_encode($generatedImages),
             'data' => '{}',
         ]);
 

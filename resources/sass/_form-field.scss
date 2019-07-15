@@ -188,11 +188,16 @@
   top: 0;
   left: 0;
   display: flex;
+  flex-flow: column;
   justify-content: center;
   align-content: center;
   align-items: center;
   opacity: 0;
   visibility: hidden;
+
+  svg {
+   margin-bottom: 10px;
+  }
 
   p {
    text-align: center;
@@ -222,5 +227,9 @@
   position: absolute;
   top: 0;
   left: 0;
+ }
+
+ input {
+  cursor: pointer;
  }
 }
