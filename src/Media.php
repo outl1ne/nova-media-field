@@ -9,6 +9,7 @@ use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Resource;
 use OptimistDigital\MediaField\Filters\Collection;
 use OptimistDigital\MediaField\MediaField;
+use OptimistDigital\MediaField\UrlField;
 
 class Media extends Resource {
 
@@ -26,7 +27,7 @@ class Media extends Resource {
             ID::make(),
             Image::make('Preview', 'file_path')->hideWhenUpdating()->hideWhenCreating(),
             Text::make('Name', 'file_name')->readonly(),
-            Text::make('Url', 'url')->readonly(),
+            UrlField::make('Url', 'url')->readonly(),
             Text::make('Collection', 'collection_name')->readonly(),
         ];
     }
