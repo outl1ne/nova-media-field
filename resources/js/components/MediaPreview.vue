@@ -1,17 +1,18 @@
 <template>
 
     <div :class="`preview-container ${multiple ? 'multiple-preview' : ''}`">
+        <media-edit-modal :isModalOpen.sync="isModalOpen" :file="editingFile" />
 
         <draggable v-if="files && files.length && multiple && ordering" class="media-preview" v-model="files" @start="drag=true" @end="onDrageEnd">
-            <uploaded-file v-if="multiple" v-for="file in files" v-bind:key="file" :file="file.data" :hideName="hideName"/>
+            <uploaded-file @click="onClick(file)" v-for="file in files" v-bind:key="file" :file="file.data" :hideName="hideName"/>
         </draggable>
 
         <div v-if="files && files.length && multiple && !ordering" class="media-preview no-order">
-            <uploaded-file v-if="multiple" v-for="file in files" v-bind:key="file" :file="file.data" :hideName="hideName"/>
+            <uploaded-file @click="onClick(file)" v-for="file in files" v-bind:key="file" :file="file.data" :hideName="hideName"/>
         </div>
 
         <div class="media-preview" v-if="files && files.length && !multiple">
-            <uploaded-file v-if="!multiple" :file="files[0].data" :hideName="hideName"/>
+            <uploaded-file @click="onClick(file)" v-if="!multiple" :file="files[0].data" :hideName="hideName"/>
         </div>
 
     </div>
@@ -42,13 +43,16 @@
         type: Array,
         default: [],
         required: false,
-      }
+      },
+      field: {}
     },
 
     data: () => {
       return {
         drag: false,
-        stateFile: this.files
+        stateFile: this.files,
+        editingFile: null,
+        isModalOpen: false,
       }
     },
 
@@ -60,6 +64,12 @@
       onDrageEnd() {
         this.drag = false;
         this.changeOrder(this.files);
+      },
+      onClick(file) {
+        if (this.field) {
+          this.editingFile = file;
+          this.isModalOpen = true;
+        }
       }
     }
   };

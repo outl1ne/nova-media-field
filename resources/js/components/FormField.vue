@@ -4,7 +4,7 @@
         <template slot="field">
 
             <div ref="modals">
-                <media-browsing-modal :field="field"
+              <media-browsing-modal :field="field"
                                       :multipleSelect="multipleSelect"
                                       :files.sync="files"
                                       :isModalOpen.sync="isModalOpen"
@@ -16,15 +16,22 @@
                                       :selectedFiles.sync="selectedFiles" />
             </div>
 
-            <media-preview :ordering="field.ordering" v-if="selectedFiles.length !== 0" hideName :changeOrder="handleChange" :files="selectedFiles" :multiple="multipleSelect"/>
-
-            <p class="py-6" style="padding-top: 9px;" v-if="selectedFiles.length === 0">
+            <media-preview
+              v-if="selectedFiles.length > 0"
+              :ordering="field.ordering"
+              hideName
+              :changeOrder="handleChange"
+              :files="selectedFiles"
+              :multiple="multipleSelect"
+              :field="field"
+            />
+            <p class="py-6" style="padding-top: 9px;" v-else>
                 {{ __('No media selected') }}
             </p>
 
             <div class="ml-auto">
                 <button type="button"
-                        v-on:click="openModal"
+                        v-on:click="openMediaBrowsingModal"
                         class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3">
                       <span>
                             {{ __('Media library') }}
@@ -151,11 +158,10 @@
         }
       }, 1000),
 
-      openModal() {
+      openMediaBrowsingModal() {
         this.isModalOpen = true;
         this.showUploadArea = false;
       },
-
 
       /*
        * Set the initial, internal value for the field.

@@ -20,6 +20,17 @@
             </div>
         </div>
 
+         <div class="form-field">
+            <div>
+                <label class="text-80 leading-tight">
+                    Title
+                </label>
+            </div>
+            <div>
+                <input type="text" v-on:input="onDataUpdate" v-model="file.title" class="w-full form-control form-input form-input-bordered" />
+            </div>
+        </div>
+
         <div class="form-field">
             <div>
                 <label class="text-80 leading-tight">
@@ -81,6 +92,7 @@
                 axios.post( '/api/media/update',
                     {
                         id: file.id,
+                        title: file.title,
                         alt: file.alt
                     }
                 )

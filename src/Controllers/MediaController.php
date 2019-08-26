@@ -33,6 +33,7 @@ class MediaController extends Controller
             $media = Media::whereId($request->get('id'))->firstOrFail();
         }
 
+        $media->title = $request->get('title');
         $media->alt = $request->get('alt');
 
         $media->save();

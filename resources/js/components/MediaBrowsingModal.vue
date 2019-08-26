@@ -51,7 +51,7 @@
                         </p>
                     </div>
 
-                    <uploaded-file v-for="file in files.filter(filterUploadedFiles)"
+                    <uploaded-file v-for="file in files.filter(filterUploadedFiles).sort(sortUploadedFiles)"
                                    :selected="stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
                                    :active="file.processed && stateActiveFile && file.data.id === stateActiveFile.data.id"
                                    v-on:click.native="toggleFileSelect(file)" v-bind:key="file"
@@ -195,15 +195,13 @@
       },
 
       closeModalAndSave() {
-        console.log('close and save');
         this.listenUploadArea = false;
         this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
-        this.$emit('update:activeFile', {...this.stateActiveFile});
+        this.$emit('update:activeFile', this.stateActiveFile ? {...this.stateActiveFile} : void 0);
         this.$emit('update:isModalOpen', false);
       },
 
       filterUploadedFiles(file) {
-
         if (file.uploading || !file.processed) {
           return true;
         }
@@ -213,6 +211,16 @@
         }
 
         return !this.currentCollection || (file.data.collection_name && file.data.collection_name === this.currentCollection);
+      },
+
+      sortUploadedFiles(a, b) {
+        for (const selectedFile of this.selectedFiles) {
+          if (selectedFile.data.id === a.data.id) {
+            return -1;
+          }
+        }
+
+        return 1;
       },
 
       fileBrowserSelectListener(e) {

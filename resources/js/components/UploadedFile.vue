@@ -1,5 +1,5 @@
 <template>
-    <div :class="`uploaded-file ${active ? 'active' : ''} ${selected ? 'selected' : ''}`">
+    <div :class="`uploaded-file ${active ? 'active' : ''} ${selected ? 'selected' : ''}`" @click="onClick">
 
         <div v-if="progress !== -1" class="upload-progress">
             <div class="progress-bar">
@@ -57,6 +57,12 @@
     }),
 
     computed: {},
+
+    methods: {
+        onClick() {
+            this.$emit('click');
+        },
+    }
   };
 </script>
 

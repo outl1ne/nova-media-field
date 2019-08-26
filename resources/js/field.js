@@ -8,4 +8,5 @@ Nova.booting((Vue, router, store) => {
   Vue.component('index-media-field', require('./components/IndexField'));
   Vue.component('detail-media-field', require('./components/DetailField'));
   Vue.component('form-media-field', require('./components/FormField'));
+  Vue.component('media-edit-modal', require('./components/MediaEditModal'));
 });
