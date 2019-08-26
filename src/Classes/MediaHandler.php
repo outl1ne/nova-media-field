@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Exception\NotReadableException;
 use Intervention\Image\Facades\Image;
 use OptimistDigital\MediaField\Models\Media;
 
@@ -46,6 +47,17 @@ class MediaHandler
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
         return $instance->storeFile($filepath, $instance->getDisk());
+    }
+
+    protected function isReadableImage($file) : bool
+    {
+        try {
+            Image::make($file);
+        } catch (NotReadableException $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -181,7 +193,6 @@ class MediaHandler
      */
     protected function storeFile($fileData, $disk): Media
     {
-
         [$filename, $tmpName, $tmpPath, $collection, $alt] = $this->validateFileInput($fileData);
 
         $storagePath = ltrim($this->getUploadPath($disk), '/');
@@ -199,8 +210,6 @@ class MediaHandler
 
         $disk->put($storagePath . $newFilename, file_get_contents($tmpPath . $tmpName));
 
-        $generatedImages = $this->generateImageSizes(file_get_contents($tmpPath . $tmpName), $storagePath . $newFilename, $disk);
-
         $model = new Media([
             'collection_name' => $collection,
             'path' => $storagePath,
@@ -208,9 +217,14 @@ class MediaHandler
             'alt' => $alt,
             'mime_type' => $disk->getMimeType($storagePath . $newFilename),
             'file_size' => $disk->size($storagePath . $newFilename),
-            'image_sizes' => json_encode($generatedImages),
+            'image_sizes' => '{}',
             'data' => '{}',
         ]);
+
+        if ($this->isReadableImage($storagePath . $newFilename)) {
+            $generatedImages = $this->generateImageSizes(file_get_contents($tmpPath . $tmpName), $storagePath . $newFilename, $disk);
+            $model->image_sizes = json_encode($generatedImages);
+        }
 
         $model->save();
 

@@ -3,7 +3,10 @@
 
         <div class="form-field">
             <div class="thumbnail-container">
-                <img :src="file.url" />
+                <img :src="file.url" v-if="file.mime_type.indexOf('image') === 0" />
+                <video v-if="file.mime_type.indexOf('video') === 0" controls>
+                    <source :src="file.url" :type="file.mime_type">
+                </video>
             </div>
         </div>
 
@@ -97,6 +100,11 @@
         position: relative;
         width: 100%;
         height: 120px;
+        margin-bottom: 15px;
+
+        video {
+            width: 100%;
+        }
     }
 
     img {
