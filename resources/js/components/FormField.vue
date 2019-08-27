@@ -14,7 +14,8 @@
                                       :showUploadArea.sync="showUploadArea"
                                       :loadingMediaFiles.sync="loadingMediaFiles"
                                       :selectedFiles.sync="selectedFiles"
-                                      @loadImages="fetchFiles" />
+                                      @loadImages="fetchFiles"
+                                      @search="searchValue => fetchFiles(searchValue)" />
             </div>
 
             <media-preview
@@ -168,17 +169,27 @@
         this.selectedFiles = [];
       },
 
-      async fetchFiles() {
+      async fetchFiles(searchValue = null) {
+        const changedFromSearchToOverall = window.mediaLibrary.previousSearchValue !== searchValue;
+        window.mediaLibrary.previousSearchValue = searchValue;
+        if (!changedFromSearchToOverall && window.mediaLibrary.currentPage + 1 > window.mediaLibrary.totalPages) {
+          return;
+        }
+
+        if (changedFromSearchToOverall) {
+           window.mediaLibrary.currentPage = 0;
+        }
+
         window.mediaLibrary.fetching = true;
         const response = await axios.get('/api/media', {
           params: {
+            search: searchValue,
             page: window.mediaLibrary.currentPage + 1,
           },
         });
 
-        window.mediaLibrary.currentPage++;
         const { data } = response.data;
-        const newFiles = data.map(file => {
+        let newFiles = data.map(file => {
           return {
             uploading: false,
             processed: true,
@@ -186,13 +197,20 @@
           };
         });
 
-        window.mediaLibrary.files = [...window.mediaLibrary.files, ...newFiles];
-        this.files = [...window.mediaLibrary.files];
+        if (changedFromSearchToOverall) {
+          newFiles = [...newFiles];
+          window.mediaLibrary.currentPage++;
+        } else {
+          newFiles = [...newFiles, ...window.mediaLibrary.files];
+          window.mediaLibrary.currentPage++;
+        }
+
+        window.mediaLibrary.totalPages = Math.ceil(response.data.total / response.data.per_page);
+        window.mediaLibrary.files = [...newFiles];
+        this.files = [...newFiles];
 
         this.updateMedia();
         window.mediaLibrary.fetching = false;
-
-        return data;
       },
     },
   };

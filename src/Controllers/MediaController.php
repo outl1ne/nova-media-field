@@ -42,11 +42,13 @@ class MediaController extends Controller
     }
 
     public function getFiles(Request $request) {
-
         $query = Media::query();
 
-        if ($request->has('limit')) {
-            $query->take($request->get('limit'));
+        if ($request->has('search')) {
+           $query
+            ->where('file_name', 'like', '%' . $request->get('search') . '%')
+            ->orWhere('alt', 'like', '%' . $request->get('search') . '%')
+            ->orWhere('title', 'like', '%' . $request->get('search') . '%');
         }
 
         return response()->json($query->latest()->paginate(30));

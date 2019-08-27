@@ -742,6 +742,7 @@ var _this = this;
       this.changeOrder(this.files);
     },
     onClick: function onClick(file) {
+      console.log('clicked', file);
       if (this.field) {
         this.editingFile = file;
         this.isModalOpen = true;
@@ -6568,16 +6569,14 @@ var render = function() {
             "div",
             { staticClass: "media-preview" },
             [
-              !_vm.multiple
-                ? _c("uploaded-file", {
-                    attrs: { file: _vm.files[0].data, hideName: _vm.hideName },
-                    on: {
-                      click: function($event) {
-                        return _vm.onClick(_vm.file)
-                      }
-                    }
-                  })
-                : _vm._e()
+              _c("uploaded-file", {
+                attrs: { file: _vm.files[0].data, hideName: _vm.hideName },
+                on: {
+                  click: function($event) {
+                    return _vm.onClick(_vm.files[0])
+                  }
+                }
+              })
             ],
             1
           )
@@ -7583,8 +7582,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       searchValue: '',
       listenUploadArea: false,
       stateActiveFile: void 0,
-      stateSelectedFiles: [],
-      scrollThreshold: 300
+      stateSelectedFiles: []
     };
   },
 
@@ -7643,6 +7641,17 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   },
 
   methods: {
+    onSearchInput: function onSearchInput(event) {
+      var oldValue = this.searchValue;
+      var newValue = event.target.value;
+
+      this.searchValue = newValue;
+      if (oldValue === '' || oldValue !== '' && newValue === '') {
+        this.$refs.imgCollectionRef.scrollTop = 0;
+      }
+
+      this.$emit('search', this.searchValue);
+    },
     openModal: function openModal() {
       this.$emit('update:isModalOpen', true);
     },
@@ -7659,10 +7668,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     filterUploadedFiles: function filterUploadedFiles(file) {
       if (file.uploading || !file.processed) {
         return true;
-      }
-
-      if (this.searchValue.length !== 0) {
-        return file.data.file_name && file.data.file_name.match(this.searchValue);
       }
 
       return !this.currentCollection || file.data.collection_name && file.data.collection_name === this.currentCollection;
@@ -7809,7 +7814,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     scrollEventListener: function scrollEventListener(e) {
       if (window.mediaLibrary.fetching) return;
 
-      if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight - 200) {
+      if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight - 300) {
         this.$emit('loadImages');
       }
     },
@@ -8016,26 +8021,10 @@ var render = function() {
                       _c("span", [_vm._v("Search")]),
                       _vm._v(" "),
                       _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.searchValue,
-                            expression: "searchValue"
-                          }
-                        ],
                         staticClass:
                           "w-full form-control form-input form-input-bordered",
                         attrs: { id: "search", dusk: "search" },
-                        domProps: { value: _vm.searchValue },
-                        on: {
-                          input: function($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.searchValue = $event.target.value
-                          }
-                        }
+                        on: { input: _vm.onSearchInput }
                       })
                     ]),
                     _vm._v(" "),
@@ -8093,6 +8082,7 @@ var render = function() {
                       _c(
                         "div",
                         {
+                          ref: "imgCollectionRef",
                           staticClass: "img-collection",
                           on: { scroll: _vm.scrollEventListener }
                         },
@@ -8861,6 +8851,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
 
 
 
@@ -9009,24 +9000,40 @@ function isString(value) {
     },
     fetchFiles: function () {
       var _ref = _asyncToGenerator( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee() {
-        var response, data, newFiles;
+        var searchValue = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+        var changedFromSearchToOverall, response, data, newFiles;
         return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                changedFromSearchToOverall = window.mediaLibrary.previousSearchValue !== searchValue;
+
+                window.mediaLibrary.previousSearchValue = searchValue;
+
+                if (!(!changedFromSearchToOverall && window.mediaLibrary.currentPage + 1 > window.mediaLibrary.totalPages)) {
+                  _context.next = 4;
+                  break;
+                }
+
+                return _context.abrupt('return');
+
+              case 4:
+
+                if (changedFromSearchToOverall) {
+                  window.mediaLibrary.currentPage = 0;
+                }
+
                 window.mediaLibrary.fetching = true;
-                _context.next = 3;
+                _context.next = 8;
                 return axios.get('/api/media', {
                   params: {
+                    search: searchValue,
                     page: window.mediaLibrary.currentPage + 1
                   }
                 });
 
-              case 3:
+              case 8:
                 response = _context.sent;
-
-
-                window.mediaLibrary.currentPage++;
                 data = response.data.data;
                 newFiles = data.map(function (file) {
                   return {
@@ -9037,15 +9044,22 @@ function isString(value) {
                 });
 
 
-                window.mediaLibrary.files = [].concat(_toConsumableArray(window.mediaLibrary.files), _toConsumableArray(newFiles));
-                this.files = [].concat(_toConsumableArray(window.mediaLibrary.files));
+                if (changedFromSearchToOverall) {
+                  newFiles = [].concat(_toConsumableArray(newFiles));
+                  window.mediaLibrary.currentPage++;
+                } else {
+                  newFiles = [].concat(_toConsumableArray(newFiles), _toConsumableArray(window.mediaLibrary.files));
+                  window.mediaLibrary.currentPage++;
+                }
+
+                window.mediaLibrary.totalPages = Math.ceil(response.data.total / response.data.per_page);
+                window.mediaLibrary.files = [].concat(_toConsumableArray(newFiles));
+                this.files = [].concat(_toConsumableArray(newFiles));
 
                 this.updateMedia();
                 window.mediaLibrary.fetching = false;
 
-                return _context.abrupt('return', data);
-
-              case 12:
+              case 17:
               case 'end':
                 return _context.stop();
             }
@@ -19362,7 +19376,10 @@ var render = function() {
                   "update:selected-files": function($event) {
                     _vm.selectedFiles = $event
                   },
-                  loadImages: _vm.fetchFiles
+                  loadImages: _vm.fetchFiles,
+                  search: function(searchValue) {
+                    return _vm.fetchFiles(searchValue)
+                  }
                 }
               })
             ],

@@ -16,7 +16,7 @@
                             class="w-full form-control form-input form-input-bordered"
                             id="search"
                             dusk="search"
-                            v-model="searchValue"
+                            @input="onSearchInput"
                         />
                     </div>
                     <div>
@@ -40,7 +40,7 @@
 
             <div :class="`flex mb-6`" id="media-dropzone" v-if="!loadingMediaFiles">
 
-                <div class="img-collection" @scroll="scrollEventListener">
+                <div class="img-collection" @scroll="scrollEventListener" ref="imgCollectionRef">
 
                     <div class="empty-message" v-if="files.length === 0">
                         <p>
@@ -134,7 +134,6 @@
         listenUploadArea: false,
         stateActiveFile: void 0,
         stateSelectedFiles: [],
-        scrollThreshold: 300,
       };
     },
 
@@ -192,6 +191,18 @@
 
     methods: {
 
+      onSearchInput(event) {
+        const oldValue = this.searchValue;
+        const newValue = event.target.value;
+
+        this.searchValue = newValue;
+        if (oldValue === '' || (oldValue !== '' && newValue === '')) {
+          this.$refs.imgCollectionRef.scrollTop = 0;
+        }
+
+        this.$emit('search', this.searchValue);
+      },
+
       openModal() {
         this.$emit('update:isModalOpen', true);
       },
@@ -211,10 +222,6 @@
       filterUploadedFiles(file) {
         if (file.uploading || !file.processed) {
           return true;
-        }
-
-        if (this.searchValue.length !== 0) {
-          return file.data.file_name && (file.data.file_name.match(this.searchValue));
         }
 
         return !this.currentCollection || (file.data.collection_name && file.data.collection_name === this.currentCollection);
@@ -306,7 +313,7 @@
       scrollEventListener(e) {
         if (window.mediaLibrary.fetching) return;
 
-        if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight - 200) {
+        if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight - 300) {
           this.$emit('loadImages');
         }
       },

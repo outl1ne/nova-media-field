@@ -12,7 +12,7 @@
         </div>
 
         <div class="media-preview" v-if="files && files.length && !multiple">
-            <uploaded-file @click="onClick(file)" v-if="!multiple" :file="files[0].data" :hideName="hideName"/>
+            <uploaded-file @click="onClick(files[0])" :file="files[0].data" :hideName="hideName"/>
         </div>
 
     </div>
@@ -66,6 +66,7 @@
         this.changeOrder(this.files);
       },
       onClick(file) {
+        console.log('clicked', file);
         if (this.field) {
           this.editingFile = file;
           this.isModalOpen = true;
