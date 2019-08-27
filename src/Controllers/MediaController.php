@@ -49,6 +49,6 @@ class MediaController extends Controller
             $query->take($request->get('limit'));
         }
 
-        return response()->json($query->latest()->get());
+        return response()->json($query->latest()->paginate(30));
     }
 }

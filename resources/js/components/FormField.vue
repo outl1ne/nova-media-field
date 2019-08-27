@@ -13,7 +13,8 @@
                                       :updateMedia="updateMedia"
                                       :showUploadArea.sync="showUploadArea"
                                       :loadingMediaFiles.sync="loadingMediaFiles"
-                                      :selectedFiles.sync="selectedFiles" />
+                                      :selectedFiles.sync="selectedFiles"
+                                      @loadImages="fetchFiles" />
             </div>
 
             <media-preview
@@ -63,15 +64,17 @@
 
     props: ['resourceName', 'resourceId', 'field'],
 
-    data: () => ({
-      files: [],
-      isModalOpen: false,
-      activeFile: void 0,
-      selectedFiles: [],
-      chosenCollection: null,
-      loadingMediaFiles: true,
-      showUploadArea: false,
-    }),
+    data() {
+      return {
+        files: [],
+        isModalOpen: false,
+        activeFile: void 0,
+        selectedFiles: [],
+        chosenCollection: null,
+        loadingMediaFiles: true,
+        showUploadArea: false,
+      };
+    },
 
     computed: {
       multipleSelect() {
@@ -102,36 +105,12 @@
         window.mediaLibrary = {
           files: [],
           loaded: false,
-          onload: []
+          onload: [],
+          currentPage: 0,
         };
 
-        axios.get('/api/media', {
-          params: {
-            limit: 128
-          },
-        }).then(response => {
-          this.files = response.data.map(file => {
-            return {
-              uploading: false,
-              processed: true,
-              data: file
-            };
-          });
-
-          window.mediaLibrary.files = response.data.map(file => {
-            return {
-              uploading: false,
-              processed: true,
-              data: file
-            };
-          });
-
-          this.files = [...window.mediaLibrary.files];
-
-          window.mediaLibrary.loaded = true;
-
-          this.updateMedia();
-        });
+        this.fetchFiles();
+        window.mediaLibrary.loaded = true;
       } else if (window.mediaLibrary.loaded) {
         this.files = [...window.mediaLibrary.files];
       }
@@ -189,6 +168,32 @@
         this.selectedFiles = [];
       },
 
+      async fetchFiles() {
+        window.mediaLibrary.fetching = true;
+        const response = await axios.get('/api/media', {
+          params: {
+            page: window.mediaLibrary.currentPage + 1,
+          },
+        });
+
+        window.mediaLibrary.currentPage++;
+        const { data } = response.data;
+        const newFiles = data.map(file => {
+          return {
+            uploading: false,
+            processed: true,
+            data: file
+          };
+        });
+
+        window.mediaLibrary.files = [...window.mediaLibrary.files, ...newFiles];
+        this.files = [...window.mediaLibrary.files];
+
+        this.updateMedia();
+        window.mediaLibrary.fetching = false;
+
+        return data;
+      },
     },
   };
 </script>

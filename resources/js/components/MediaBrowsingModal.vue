@@ -40,7 +40,7 @@
 
             <div :class="`flex mb-6`" id="media-dropzone" v-if="!loadingMediaFiles">
 
-                <div class="img-collection">
+                <div class="img-collection" @scroll="scrollEventListener">
 
                     <div class="empty-message" v-if="files.length === 0">
                         <p>
@@ -51,12 +51,12 @@
                         </p>
                     </div>
 
-                    <uploaded-file v-for="file in files.filter(filterUploadedFiles).sort(sortUploadedFiles)"
-                                   :selected="stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
-                                   :active="file.processed && stateActiveFile && file.data.id === stateActiveFile.data.id"
-                                   v-on:click.native="toggleFileSelect(file)" v-bind:key="file"
-                                   :file="file.processed ? file.data : {}"
-                                   :progress="file.uploading ? file.uploadProgress : -1"/>
+                    <uploaded-file v-for="file in fileList"
+                                  :selected="stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
+                                  :active="file.processed && stateActiveFile && file.data.id === stateActiveFile.data.id"
+                                  v-on:click.native="toggleFileSelect(file)" v-bind:key="file"
+                                  :file="file.processed ? file.data : {}"
+                                  :progress="file.uploading ? file.uploadProgress : -1" />
                 </div>
 
                 <div class="image-editor">
@@ -123,19 +123,26 @@
       'files',
       'multipleSelect',
       'loadingMediaFiles',
-      'showUploadArea'
+      'showUploadArea',
     ],
 
-    data: () => ({
-      draggingOverDropzone: false,
-      draggingFile: false,
-      searchValue: '',
-      listenUploadArea: false,
-      stateActiveFile: void 0,
-      stateSelectedFiles: []
-    }),
+    data() {
+      return {
+        draggingOverDropzone: false,
+        draggingFile: false,
+        searchValue: '',
+        listenUploadArea: false,
+        stateActiveFile: void 0,
+        stateSelectedFiles: [],
+        scrollThreshold: 300,
+      };
+    },
 
     computed: {
+      fileList() {
+        return this.files.filter(this.filterUploadedFiles).sort(this.sortUploadedFiles);
+      },
+
       currentCollection: {
         get: function () {
           return this.field.displayCollection || this.chosenCollection;
@@ -294,6 +301,14 @@
         this.endDrag = false;
 
         if (e.target.matches('.input-dropzone')) this.draggingOverDropzone = true;
+      },
+
+      scrollEventListener(e) {
+        if (window.mediaLibrary.fetching) return;
+
+        if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight - 200) {
+          this.$emit('loadImages');
+        }
       },
 
       setEndDrag: debounce(function () {
