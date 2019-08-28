@@ -8,7 +8,8 @@
         </div>
 
         <div class="thumbnail-container" v-if="file.image_sizes !== void 0">
-            <img draggable="false" :src="(file.image_sizes.thumbnail || file).url"/>
+            <img draggable="false" :src="fileThumbnail"/>
+            <thumbnail-video-icon icon="video-icon" class="thumbnail-placeholder" v-if="!fileThumbnail" />
         </div>
 
         <div class="checked-box" v-if="selected">
@@ -56,13 +57,18 @@
       //
     }),
 
-    computed: {},
-
     methods: {
         onClick() {
             this.$emit('click');
         },
-    }
+    },
+
+    computed: {
+        fileThumbnail() {
+            if (this.file.mime_type.indexOf('video') === 0) return this.file.data.thumbnail || false
+            return (this.file.image_sizes.thumbnail || this.file).url
+        }
+    },
   };
 </script>
 
@@ -124,13 +130,22 @@
             object-fit: cover;
         }
 
-        img {
+        img, svg {
             position: absolute;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
             object-fit: contain;
+        }
+
+        svg.thumbnail-placeholder {
+            top: calc(50% - 13px);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: .2;
+            width: 100%;
+            max-width: 75px;
         }
     }
 
