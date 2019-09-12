@@ -3,7 +3,6 @@
 namespace OptimistDigital\MediaField\Classes;
 
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +20,7 @@ class MediaHandler
      * @param Request $request
      * @param string $key Used to access Request file upload value
      * @return Media
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Exception
      */
     public static function createFromRequest(Request $request, $key = 'file') : Media
     {
@@ -41,6 +40,7 @@ class MediaHandler
      * @param $file Full path to file
      * @return Media
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Exception
      */
     public static function createFromFile($filepath) : Media
     {
@@ -221,7 +221,7 @@ class MediaHandler
             'data' => '{}',
         ]);
 
-        if ($this->isReadableImage($storagePath . $newFilename)) {
+        if ($this->isReadableImage($tmpPath . $tmpName)) {
             $generatedImages = $this->generateImageSizes(file_get_contents($tmpPath . $tmpName), $storagePath . $newFilename, $disk);
             $model->image_sizes = json_encode($generatedImages);
         }
