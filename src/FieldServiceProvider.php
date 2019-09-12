@@ -7,6 +7,7 @@ use Laravel\Nova\Nova;
 use Laravel\Nova\Events\ServingNova;
 use Illuminate\Support\ServiceProvider;
 use OptimistDigital\MediaField\Classes\MediaHandler;
+use OptimistDigital\MediaField\Commands\RegenerateThumbnails;
 
 class FieldServiceProvider extends ServiceProvider
 {
@@ -43,6 +44,10 @@ class FieldServiceProvider extends ServiceProvider
 
         Nova::resources([
             Media::class,
+        ]);
+
+        $this->commands([
+            RegenerateThumbnails::class,
         ]);
     }
 

@@ -49,7 +49,7 @@ class MediaHandler
         return $instance->storeFile($filepath, $instance->getDisk());
     }
 
-    protected function isReadableImage($file) : bool
+    public function isReadableImage($file) : bool
     {
         try {
             Image::make($file);
@@ -77,7 +77,7 @@ class MediaHandler
      * @param $disk Saving destination
      * @return array
      */
-    protected function generateImageSizes($file, $path, $disk) : array
+    public function generateImageSizes($file, $path, $disk) : array
     {
 
         $origName = pathinfo($path, PATHINFO_FILENAME);
