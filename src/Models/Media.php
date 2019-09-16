@@ -4,11 +4,10 @@ namespace OptimistDigital\MediaField\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
-use League\Flysystem\FileNotFoundException;
 
 class Media extends Model
 {
+    protected static $formatFunction = null;
 
     protected $table = 'media_library';
 
@@ -51,4 +50,22 @@ class Media extends Model
         return json_decode($value, true);
     }
 
+    public static function format($formatFunction)
+    {
+        self::$formatFunction = $formatFunction;
+    }
+
+    public function toArray()
+    {
+        if (!is_callable(self::$formatFunction)) {
+            return parent::toArray();
+        }
+
+        return call_user_func(self::$formatFunction, $this);
+    }
+
+    public function __toArray()
+    {
+        return parent::toArray();
+    }
 }
