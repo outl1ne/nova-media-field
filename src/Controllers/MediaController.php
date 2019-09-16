@@ -20,7 +20,13 @@ class MediaController extends Controller
 
         if (is_array($request->get('ids'))) {
             $ids = implode(',', $request->get('ids'));
-            return response()->json(Media::whereIn('id', $request->get('ids'))->orderByRaw("FIELD (id, $ids)")->get());
+            $media = Media::whereIn('id', $request->get('ids'))
+                ->orderByRaw("FIELD (id, $ids)")
+                ->get()
+                ->map(function(Media $media) {
+                    return $media->__toArray();
+                });
+            return response()->json($media, 200);
         }
 
         return response()->json(['Media files not found'], 404);
@@ -38,7 +44,7 @@ class MediaController extends Controller
 
         $media->save();
 
-        return response()->json($media);
+        return response()->json($media->__toArray());
     }
 
     public function getFiles(Request $request) {
@@ -51,6 +57,11 @@ class MediaController extends Controller
             ->orWhere('title', 'like', '%' . $request->get('search') . '%');
         }
 
-        return response()->json($query->latest()->paginate(30));
+        $paginator = $query->latest()->paginate(30);
+        $paginator->getCollection()->transform(function($media) {
+            return $media->__toArray();
+        });
+
+        return response()->json($paginator, 200);
     }
 }
