@@ -66,7 +66,6 @@
         this.changeOrder(this.files);
       },
       onClick(file) {
-        console.log('clicked', file);
         if (this.field) {
           this.editingFile = file;
           this.isModalOpen = true;

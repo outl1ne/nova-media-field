@@ -9,7 +9,7 @@
 
         <div class="thumbnail-container" v-if="file.image_sizes !== void 0">
             <img draggable="false" :src="fileThumbnail"/>
-            <thumbnail-video-icon icon="video-icon" class="thumbnail-placeholder" v-if="!fileThumbnail" />
+            <thumbnail-video-icon icon="video-icon" class="thumbnail-placeholder" v-if="!fileThumbnail"/>
         </div>
 
         <div class="checked-box" v-if="selected">
@@ -58,16 +58,17 @@
     }),
 
     methods: {
-        onClick() {
-            this.$emit('click');
-        },
+      onClick() {
+        this.$emit('click');
+      },
     },
 
     computed: {
-        fileThumbnail() {
-            if (this.file.mime_type.indexOf('video') === 0) return this.file.data.thumbnail || false
-            return (this.file.image_sizes.thumbnail || this.file).url
-        }
+      fileThumbnail() {
+        if (!Object.keys(this.file).length) return '';
+        if (this.file.mime_type.indexOf('video') === 0) return this.file.data.thumbnail || '';
+        return (this.file.image_sizes.thumbnail || this.file).url;
+      }
     },
   };
 </script>
@@ -78,6 +79,8 @@
         position: absolute;
         top: 5px;
         right: 5px;
+        width: 30px;
+        height: 30px;
     }
 
     .uploaded-file {

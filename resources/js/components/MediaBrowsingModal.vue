@@ -139,7 +139,7 @@
 
     computed: {
       fileList() {
-        return this.files.filter(this.filterUploadedFiles).sort(this.sortUploadedFiles);
+        return this.files.sort(this.sortByDate).sort(this.sortUploadedFiles);
       },
 
       currentCollection: {
@@ -226,7 +226,13 @@
 
         return !this.currentCollection || (file.data.collection_name && file.data.collection_name === this.currentCollection);
       },
-
+      sortByDate(a, b) {
+        if (Date.parse(a.data.created_at) < Date.parse(b.data.created_at))
+            return 1;
+        if (Date.parse(a.data.created_at) > Date.parse(b.data.created_at))
+            return -1;
+        return 0;
+      },
       sortUploadedFiles(a, b) {
         for (const selectedFile of this.selectedFiles) {
           if (selectedFile.data.id === a.data.id) {
@@ -234,7 +240,7 @@
           }
         }
 
-        return 1;
+        return 0;
       },
 
       fileBrowserSelectListener(e) {
@@ -393,7 +399,7 @@
               data: response.data
             });
 
-            this.$emit('update:files', this.files);
+            this.$emit('update:files', window.mediaLibrary.files);
 
             this.updateMedia();
           }).catch((error) => {

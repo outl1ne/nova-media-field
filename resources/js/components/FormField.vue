@@ -97,6 +97,10 @@
             uploading: false,
             uploadProgress: 0
           }));
+          if (window.mediaLibrary.loaded) {
+            window.mediaLibrary.files = [...window.mediaLibrary.files, ...this.selectedFiles.filter(item => !window.mediaLibrary.files.find(file => file.data.id === item.data.id))];
+            this.updateMedia();
+          }
         });
       }
 
@@ -136,7 +140,7 @@
             }
           }
         }
-      }, 1000),
+      }, 200),
 
       openMediaBrowsingModal() {
         this.isModalOpen = true;
@@ -198,19 +202,16 @@
         });
 
         if (changedFromSearchToOverall) {
-          newFiles = [...newFiles];
           window.mediaLibrary.currentPage++;
         } else {
-          newFiles = [...newFiles, ...window.mediaLibrary.files];
           window.mediaLibrary.currentPage++;
         }
 
         window.mediaLibrary.totalPages = Math.ceil(response.data.total / response.data.per_page);
-        window.mediaLibrary.files = [...newFiles];
-        this.files = [...newFiles];
+        window.mediaLibrary.files = [...window.mediaLibrary.files, ...newFiles.filter(item => !window.mediaLibrary.files.find(file => file.data.id === item.data.id))];
+        window.mediaLibrary.fetching = false;
 
         this.updateMedia();
-        window.mediaLibrary.fetching = false;
       },
     },
   };

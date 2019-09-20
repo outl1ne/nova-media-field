@@ -13,7 +13,7 @@ class MediaController extends Controller
 {
 
     public function uploadFile(StoreMediaRequest $request) {
-        return response()->json(MediaHandler::createFromRequest($request));
+        return response()->json(MediaHandler::createFromRequest($request)->__toArray());
     }
 
     public function findFiles(Request $request) {
