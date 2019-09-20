@@ -4,7 +4,7 @@
         <template slot="field">
 
             <div ref="modals">
-              <media-browsing-modal :field="field"
+                <media-browsing-modal :field="field"
                                       :multipleSelect="multipleSelect"
                                       :files.sync="files"
                                       :isModalOpen.sync="isModalOpen"
@@ -15,17 +15,17 @@
                                       :loadingMediaFiles.sync="loadingMediaFiles"
                                       :selectedFiles.sync="selectedFiles"
                                       @loadImages="fetchFiles"
-                                      @search="searchValue => fetchFiles(searchValue)" />
+                                      @search="searchValue => fetchFiles(searchValue)"/>
             </div>
 
             <media-preview
-              v-if="selectedFiles.length > 0"
-              :ordering="field.ordering"
-              hideName
-              :changeOrder="handleChange"
-              :files="selectedFiles"
-              :multiple="multipleSelect"
-              :field="field"
+                    v-if="selectedFiles.length > 0"
+                    :ordering="field.ordering"
+                    hideName
+                    :changeOrder="handleChange"
+                    :files="selectedFiles"
+                    :multiple="multipleSelect"
+                    :field="field"
             />
             <p class="py-6" style="padding-top: 9px;" v-else>
                 {{ __('No media selected') }}
@@ -56,7 +56,7 @@
   import {FormField, HandlesValidationErrors} from 'laravel-nova';
   import debounce from './../debounce';
 
-  function isString (value) {
+  function isString(value) {
     return typeof value === 'string' || value instanceof String;
   }
 
@@ -75,6 +75,20 @@
         loadingMediaFiles: true,
         showUploadArea: false,
       };
+    },
+
+    watch: {
+      selectedFiles: function(value) {
+        if (!value || !Array.isArray(value) || !window.mediaLibrary.loadedFiles) return;
+        window.mediaLibrary.loadedFiles = [...window.mediaLibrary.loadedFiles, ...value.filter(item => !window.mediaLibrary.loadedFiles.find(file => file.data.id === item.data.id))];
+      },
+      isModalOpen: function (value) {
+        if (!value && window.mediaLibrary.loadedFiles && window.mediaLibrary.loadedFiles.length) {
+          window.mediaLibrary.files = [...window.mediaLibrary.loadedFiles];
+          window.mediaLibrary.loadedFiles = null;
+          this.updateMedia();
+        }
+      }
     },
 
     computed: {
@@ -181,7 +195,7 @@
         }
 
         if (changedFromSearchToOverall) {
-           window.mediaLibrary.currentPage = 0;
+          window.mediaLibrary.currentPage = 0;
         }
 
         window.mediaLibrary.fetching = true;
@@ -192,7 +206,7 @@
           },
         });
 
-        const { data } = response.data;
+        const {data} = response.data;
         let newFiles = data.map(file => {
           return {
             uploading: false,
@@ -207,8 +221,20 @@
           window.mediaLibrary.currentPage++;
         }
 
+        if (searchValue) {
+          if (!window.mediaLibrary.loadedFiles) {
+            window.mediaLibrary.loadedFiles = [...window.mediaLibrary.files];
+          }
+          window.mediaLibrary.files = [...newFiles];
+        } else {
+          if (window.mediaLibrary.loadedFiles && window.mediaLibrary.loadedFiles.length) {
+            window.mediaLibrary.files = [...window.mediaLibrary.loadedFiles];
+            window.mediaLibrary.loadedFiles = null;
+          }
+          window.mediaLibrary.files = [...window.mediaLibrary.files, ...newFiles.filter(item => !window.mediaLibrary.files.find(file => file.data.id === item.data.id))];
+        }
+
         window.mediaLibrary.totalPages = Math.ceil(response.data.total / response.data.per_page);
-        window.mediaLibrary.files = [...window.mediaLibrary.files, ...newFiles.filter(item => !window.mediaLibrary.files.find(file => file.data.id === item.data.id))];
         window.mediaLibrary.fetching = false;
 
         this.updateMedia();
