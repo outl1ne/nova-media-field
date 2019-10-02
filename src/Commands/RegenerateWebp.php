@@ -27,10 +27,11 @@ class RegenerateWebp extends Command
         foreach ($medias as $media) {
             $imagePath = $rootPath . $media->path . $media->file_name;
             if ($handler->isReadableImage($imagePath)) {
+                $path = dirname($media->path . $media->file_name);
                 $origFile = file_get_contents($imagePath);
-                $origName = $media->file_name;
-                $origFilename = pathinfo($origName, PATHINFO_FILENAME);
-                $webpImagePath = "$rootPath.$media->path.$origFilename.webp";
+                $origFilename = pathinfo($media->file_name, PATHINFO_FILENAME);
+                $webpImagePath = "$path/$origFilename.webp";
+
 
                 // Re-save original file
                 $webpImg = Image::make($origFile)->encode('webp', 80);
