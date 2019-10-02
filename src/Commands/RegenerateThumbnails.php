@@ -6,11 +6,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Classes\MediaHandler;
 use OptimistDigital\MediaField\Models\Media;
-use OptimistDigital\MenuBuilder\Models\Menu;
-use OptimistDigital\NovaEcommerce\Models\Product;
-use OptimistDigital\NovaLocaleManager\Models\Locale;
-use OptimistDigital\NovaPageManager\Models\Page;
-use OptimistDigital\NovaPageManager\Models\Region;
 
 class RegenerateThumbnails extends Command
 {
