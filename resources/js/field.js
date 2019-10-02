@@ -10,4 +10,15 @@ Nova.booting((Vue, router, store) => {
   Vue.component('form-media-field', require('./components/FormField'));
   Vue.component('media-edit-modal', require('./components/MediaEditModal'));
   Vue.component('thumbnail-video-icon', require('./icons/VideoIcon'));
+  Vue.component('media-resource-table', require('./components/tables/ResourceTable'))
+  Vue.component('media-resource-table-row', require('./components/tables/ResourceTableRow'))
+  Vue.component('media-index-button', require('./components/IndexButton'))
+
+  router.addRoutes([
+    {
+      name: 'media-library',
+      path: '/media-library',
+      component: require('./views/MediaView'),
+    },
+  ]);
 });

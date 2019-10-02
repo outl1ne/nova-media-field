@@ -5,18 +5,19 @@
         <div slot="container">
             <div class="modal-header flex flex-wrap justify-between mb-6">
                 <h2 class="text-90 font-normal text-xl">
-                    Browse media library
+                    <span v-if="!uploadOnly">Browse media library</span>
+                    <span v-if="uploadOnly">Upload media</span>
                     {{ currentCollection ? `(${field.collections[currentCollection].label})` : '' }}
                 </h2>
 
-                <div class="collection-select">
+                <div class="collection-select" v-if="!uploadOnly">
                     <div>
                         <span>Search</span>
                         <input
-                            class="w-full form-control form-input form-input-bordered"
-                            id="search"
-                            dusk="search"
-                            @input="onSearchInput"
+                                class="w-full form-control form-input form-input-bordered"
+                                id="search"
+                                dusk="search"
+                                @input="onSearchInput"
                         />
                     </div>
                     <div>
@@ -36,13 +37,13 @@
             </div>
 
             <media-modal-constraints :field="field"
-                                     :currentCollection="currentCollection" />
+                                     :currentCollection="currentCollection"/>
 
             <div :class="`flex mb-6`" id="media-dropzone" v-if="!loadingMediaFiles">
 
                 <div class="img-collection" @scroll="scrollEventListener" ref="imgCollectionRef">
 
-                    <div class="empty-message" v-if="files.length === 0">
+                    <div class="empty-message" v-if="files.length === 0 && !uploadOnly">
                         <p>
                             There are currently no media files in this library
                         </p>
@@ -51,12 +52,18 @@
                         </p>
                     </div>
 
+                    <div class="empty-message" v-if="files.length === 0 && uploadOnly">
+                        <p>
+                            Drag and drop files here to upload them
+                        </p>
+                    </div>
+
                     <uploaded-file v-for="file in fileList"
-                                  :selected="stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
-                                  :active="file.processed && stateActiveFile && file.data.id === stateActiveFile.data.id"
-                                  v-on:click.native="toggleFileSelect(file)" v-bind:key="file"
-                                  :file="file.processed ? file.data : {}"
-                                  :progress="file.uploading ? file.uploadProgress : -1" />
+                                   :selected="stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
+                                   :active="file.processed && stateActiveFile && file.data.id === stateActiveFile.data.id"
+                                   v-on:click.native="toggleFileSelect(file)" v-bind:key="file"
+                                   :file="file.processed ? file.data : {}"
+                                   :progress="file.uploading ? file.uploadProgress : -1"/>
                 </div>
 
                 <div class="image-editor">
@@ -65,36 +72,41 @@
 
                 <div :class="`input-dropzone-wrap ${draggingFile || (showUploadArea && listenUploadArea) ? 'visible' : ''} ${draggingFile && !draggingOverDropzone ? 'pulse' : ''}`">
                     <p>
-                        <svg class="fill-current w-4 h-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
+                        <svg class="fill-current w-4 h-4 mx-auto" xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 20 20">
+                            <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
+                        </svg>
                     </p>
-                    <p>To upload files you can simply drag and drop them in the area or click it to open file browser.</p>
-                    <input type="file" ref="uploadFiles" name="media" class="input-dropzone" @change="fileBrowserSelectListener" multiple>
+                    <p>To upload files you can simply drag and drop them in the area or click it to open file
+                        browser.</p>
+                    <input type="file" ref="uploadFiles" name="media" class="input-dropzone"
+                           @change="fileBrowserSelectListener" multiple>
                 </div>
 
             </div>
 
             <div class="loader-container" v-if="loadingMediaFiles">
-                <div class="loader" />
-                <div class="small-loader " />
+                <div class="loader"/>
+                <div class="small-loader "/>
             </div>
         </div>
         <div slot="buttons" class="w-full flex">
             <button type="button"
-                    v-if="!(showUploadArea && listenUploadArea) || draggingFile"
+                    v-if="uploadOnly && !(showUploadArea && listenUploadArea) || !(showUploadArea && listenUploadArea) || draggingFile"
                     v-on:click="openModalWithUpload"
                     class="btn btn-default btn-primary whitespace-no-wrap">
-                {{ __('Upload file') }}
+                {{ __('Upload files') }}
             </button>
             <button type="button"
                     v-if="!(!(showUploadArea && listenUploadArea) || draggingFile)"
                     v-on:click="showMediaLibrary"
                     class="btn btn-default btn-primary whitespace-no-wrap">
-                {{ __('Back to library') }}
+                {{ __('Back') }}
             </button>
 
             <div class="flex w-full justify-end">
                 <button type="button"
-                        v-if="!(showUploadArea && listenUploadArea) || draggingFile"
+                        v-if="(!(showUploadArea && listenUploadArea) || draggingFile) && !uploadOnly"
                         @click.prevent="closeModalAndSave"
                         class="btn btn-default btn-primary mr-3">
                     {{ __('Apply and close') }}
@@ -124,6 +136,7 @@
       'multipleSelect',
       'loadingMediaFiles',
       'showUploadArea',
+      'uploadOnly'
     ],
 
     data() {
@@ -228,9 +241,9 @@
       },
       sortByDate(a, b) {
         if (Date.parse(a.data.created_at) < Date.parse(b.data.created_at))
-            return 1;
+          return 1;
         if (Date.parse(a.data.created_at) > Date.parse(b.data.created_at))
-            return -1;
+          return -1;
         return 0;
       },
       sortUploadedFiles(a, b) {
@@ -265,7 +278,6 @@
         this.listenUploadArea = false;
         this.$emit('update:files', this.files);
         this.uploadFiles();
-
       },
 
       dropEventListener(e) {
@@ -393,16 +405,26 @@
             }
           ).then(response => {
 
-            window.mediaLibrary.files.unshift({
-              uploading: false,
-              processed: true,
-              data: response.data
-            });
+            if (this.uploadOnly) {
+              this.$emit('updateFiles', {
+                uploading: false,
+                processed: true,
+                data: response.data
+              });
+            } else {
+              window.mediaLibrary.files.unshift({
+                uploading: false,
+                processed: true,
+                data: response.data
+              });
 
-            this.$emit('update:files', window.mediaLibrary.files);
+              this.$emit('update:files', window.mediaLibrary.files);
 
-            this.updateMedia();
+              this.updateMedia();
+            }
           }).catch((error) => {
+
+            if (!error.response) return;
 
             const response = error.response.data;
 
@@ -415,7 +437,7 @@
             window.mediaLibrary.files.splice(0, 1);
 
             this.updateMedia();
-          })
+          });
         }
       },
 

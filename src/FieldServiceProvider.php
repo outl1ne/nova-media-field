@@ -49,6 +49,15 @@ class FieldServiceProvider extends ServiceProvider
         $this->commands([
             RegenerateThumbnails::class,
         ]);
+
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'nova-media');
+    }
+
+    public function tools() {
+        dd('sdad');
+        return [
+            new NovaMediaLibrary
+        ];
     }
 
     /**
