@@ -19,6 +19,8 @@ Features:
  
 ## Installation
 
+#### Field installation
+
 Under repositories in composer.json add following
 ```
 {
@@ -31,6 +33,21 @@ Then in your terminal run
 ```
 composer require optimistdigital/nova-media-field
 php artisan migrate
+```
+
+#### Media Library resource views
+
+In your `NovaServiceProvider` class add or update `tools` method
+
+```
+use OptimistDigital\MediaField\NovaMediaLibrary;
+
+public function tools()
+{
+    return [
+        new \OptimistDigital\MediaField\NovaMediaLibrary,
+    ];
+}
 ```
 
 ## Usage
