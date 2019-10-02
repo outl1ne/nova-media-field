@@ -35,6 +35,9 @@ class Media extends Model
 
         foreach ($sizes as $key => $size) {
             $sizes[$key]['url'] = env('APP_URL') . Storage::url($this->path . $size['file_name']);
+            if (config('nova-media-field.webp_enabled', true) && isset($size['webp_name'])) {
+                $sizes[$key]['webp_url'] = env('APP_URL') . Storage::url($this->path . $size['webp_name']);
+            }
         }
 
         return $sizes;

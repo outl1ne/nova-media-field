@@ -9,8 +9,9 @@ return [
         ]
     ],
 
-    'collections' => [
-    ],
+    'webp_enabled' => true,
+
+    'collections' => [],
 
     'storage_driver' => config('filesystems.default'),
 

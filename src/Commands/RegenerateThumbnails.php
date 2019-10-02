@@ -54,8 +54,8 @@ class RegenerateThumbnails extends Command
         $totalCount = $medias->count();
         $rootPath = storage_path('app/');
         foreach ($medias as $media) {
-            if ($handler->isReadableImage($rootPath. $media->path . $media->file_name)) {
-                $generatedImages = $handler->generateImageSizes(file_get_contents($rootPath. $media->path . $media->file_name), $media->path . $media->file_name, Storage::disk('local'));
+            if ($handler->isReadableImage($rootPath . $media->path . $media->file_name)) {
+                $generatedImages = $handler->generateImageSizes(file_get_contents($rootPath . $media->path . $media->file_name), $media->path . $media->file_name, Storage::disk('local'));
                 $media->image_sizes = json_encode($generatedImages);
                 $media->save();
             }
