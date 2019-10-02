@@ -22,11 +22,16 @@ class Media extends Model
         'data',
     ];
 
-    protected $appends = ['url'];
+    protected $appends = ['url', 'webp_url'];
 
     public function getUrlAttribute()
     {
         return env('APP_URL') . Storage::url($this->path . $this->file_name);
+    }
+
+    public function getWebpUrlAttribute()
+    {
+        return env('APP_URL') . Storage::url($this->path . $this->webp_name);
     }
 
     public function getImageSizesAttribute($value)
