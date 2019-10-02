@@ -15,7 +15,6 @@ class RegenerateWebp extends Command
     public function handle()
     {
         $medias = Media::all();
-        $webpEnabled = config('nova-media-field.webp_enabled', true);
 
         /** @var MediaHandler $handler */
         $handler = app()->make(MediaHandler::class);
@@ -46,6 +45,6 @@ class RegenerateWebp extends Command
             $this->info("Re-generated $updateCount/$totalCount WebP images.\r");
         }
 
-        $this->info("\n\Regeneration done.\n\n");
+        $this->info("\n\nRegeneration done.\n\n");
     }
 }
