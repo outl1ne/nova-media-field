@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use OptimistDigital\MediaField\Classes\MediaHandler;
 use OptimistDigital\MediaField\Commands\OptimizeOriginals;
 use OptimistDigital\MediaField\Commands\RegenerateThumbnails;
+use OptimistDigital\MediaField\Commands\RegenerateWebp;
 
 class FieldServiceProvider extends ServiceProvider
 {
@@ -51,6 +52,7 @@ class FieldServiceProvider extends ServiceProvider
         $this->commands([
             RegenerateThumbnails::class,
             OptimizeOriginals::class,
+            RegenerateWebp::class,
         ]);
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'nova-media');

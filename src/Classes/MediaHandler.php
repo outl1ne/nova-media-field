@@ -245,7 +245,7 @@ class MediaHandler
         return $model;
     }
 
-    protected function _createUniqueFilename($disk, $storagePath, $filename, $extension)
+    public function createUniqueFilename($disk, $storagePath, $filename, $extension)
     {
         $uniqueFilename = $filename . '.' . $extension;
         $i = 1;
