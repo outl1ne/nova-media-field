@@ -15,6 +15,8 @@ class Media extends Resource {
 
     public static $model = '\OptimistDigital\MediaField\Models\Media';
 
+    public static $displayInNavigation = false;
+
     /**
      * Get the fields displayed by the resource.
      *
@@ -31,6 +33,7 @@ class Media extends Resource {
             Text::make('Collection', 'collection_name')->readonly(),
         ];
     }
+
 
     /**
      * Get the filters available for the resource.

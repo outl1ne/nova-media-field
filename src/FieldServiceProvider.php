@@ -53,12 +53,6 @@ class FieldServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'nova-media');
     }
 
-    public function tools() {
-        dd('sdad');
-        return [
-            new NovaMediaLibrary
-        ];
-    }
 
     /**
      * Register any application services.

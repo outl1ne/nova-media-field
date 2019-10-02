@@ -18,7 +18,15 @@
             />
         </div>
 
-        <heading :level="1" class="mb-3" v-html="headingTitle" />
+        <div class="flex">
+            <heading :level="1" class="mb-3 flex-1">
+                Media Library
+            </heading>
+            <div class="flex items-center" :class="{ 'mb-6': !viaResource }">
+                <custom-index-toolbar v-if="!viaResource" :resource-name="resourceName" />
+                <media-index-button :field="{...field, multiple: false}" :multiple="false" :onUploadFinished="() => getResources()" />
+            </div>
+        </div>
 
         <div class="flex">
             <!-- Search -->
@@ -28,7 +36,6 @@
                     :class="{ 'mb-6': resourceInformation.searchable && !viaHasOne }"
             >
                 <icon type="search" class="absolute search-icon-center ml-3 text-70" />
-
                 <input
                         data-testid="search-input"
                         dusk="search"
@@ -41,10 +48,6 @@
                 />
             </div>
 
-            <div class="w-full flex items-center" :class="{ 'mb-6': !viaResource }">
-                <custom-index-toolbar v-if="!viaResource" :resource-name="resourceName" />
-                <media-index-button :field="{...field, multiple: false}" :multiple="false" :onUploadFinished="() => getResources()" />
-            </div>
         </div>
 
         <card>
