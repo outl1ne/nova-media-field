@@ -213,11 +213,11 @@ class MediaHandler
         $origFile = file_get_contents($tmpPath . $tmpName);
         $file = Image::make($origFile)->encode($origExtension, 80);
 
-        $newFilename = $this->_createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
+        $newFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
         $disk->put($storagePath . $newFilename, $file);
 
         if ($webpEnabled) {
-            $webpFilename = $this->_createUniqueFilename($disk, $storagePath, $origFilename, 'webp');
+            $webpFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, 'webp');
             $webpImg = Image::make($file)->encode('webp', 80);
             $disk->put($storagePath . $webpFilename, $webpImg);
         }
