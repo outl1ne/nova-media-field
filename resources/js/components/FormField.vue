@@ -165,7 +165,9 @@
        * Set the initial, internal value for the field.
        */
       setInitialValue() {
-        this.value = this.field.value || '';
+        const ids = this.field.value.split(',');
+        const validatedIds = ids.filter(id => !isNaN(id))
+        this.value = validatedIds.join(',') || '';
       },
 
       /**
