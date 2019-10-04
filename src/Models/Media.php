@@ -15,9 +15,11 @@ class Media extends Model
         'collection_name',
         'path',
         'file_name',
+        'webp_name',
         'alt',
         'mime_type',
         'file_size',
+        'webp_size',
         'image_sizes',
         'data',
     ];
