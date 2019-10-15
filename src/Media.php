@@ -17,6 +17,8 @@ class Media extends Resource {
 
     public static $displayInNavigation = false;
 
+    public static $search = ['collection_name', 'path', 'file_name', 'mime_type'];
+
     /**
      * Get the fields displayed by the resource.
      *
