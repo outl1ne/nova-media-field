@@ -21,7 +21,6 @@
             <media-preview
                     v-if="selectedFiles.length > 0"
                     :ordering="field.ordering"
-                    hideName
                     :changeOrder="handleChange"
                     :files="selectedFiles"
                     :multiple="multipleSelect"

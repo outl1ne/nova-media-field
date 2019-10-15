@@ -95,8 +95,8 @@
         cursor: pointer;
 
         .uploaded-file-name {
-            padding: 4px 15px;
-            font-size: 12px;
+            padding: 4px 5px;
+            font-size: 11px;
             line-height: 16px;
             background-color: rgba(#000, .75);
             width: 100%;
