@@ -48,15 +48,23 @@ class RegenerateThumbnails extends Command
         $updateCount = 0;
         $totalCount = $medias->count();
         $rootPath = storage_path('app/');
+        $this->output->write("\n");
         foreach ($medias as $media) {
             if ($handler->isReadableImage($rootPath . $media->path . $media->file_name)) {
-                $generatedImages = $handler->generateImageSizes(file_get_contents($rootPath . $media->path . $media->file_name), $media->path . $media->file_name, Storage::disk('local'));
-                $media->image_sizes = json_encode($generatedImages);
-                $media->save();
+                try {
+                    $generatedImages = $handler->generateImageSizes(file_get_contents($rootPath . $media->path . $media->file_name), $media->path . $media->file_name, Storage::disk('local'));
+                    $media->image_sizes = json_encode($generatedImages);
+                    $media->save();
+                } catch (\Exception $e) {
+                    $msg = $e->getMessage();
+                    error_log($msg);
+                    $this->output->write("<error>" . " $msg \n\n" . "</error>");
+                    continue;
+                }
             }
 
             $updateCount++;
-            $this->info("Updated $updateCount/$totalCount entities \r");
+            $this->output->write("<info>" . " Updated $updateCount/$totalCount entities \r" . "</info>");
         }
 
         $this->info("\n\nRegeneration done\n\n");
