@@ -1,5 +1,7 @@
 <template>
-    <div :class="`uploaded-file ${active ? 'active' : ''} ${selected ? 'selected' : ''}`" @click="onClick">
+    <div :class="`uploaded-file ${active ? 'active' : ''} ${selected ? 'selected' : ''}`"
+         :style="compactStyles"
+         @click="onClick">
 
         <div v-if="progress !== -1" class="upload-progress">
             <div class="progress-bar">
@@ -45,6 +47,11 @@
         default: false,
         required: false
       },
+      dimensions: {
+        type: Array,
+        default: null,
+        required: false
+      },
       selected: {
         type: Boolean,
         default: false,
@@ -61,6 +68,12 @@
       onClick() {
         this.$emit('click');
       },
+      compactWidth() {
+        return Array.isArray(this.dimensions) && this.dimensions[0];
+      },
+      compactHeight() {
+        return Array.isArray(this.dimensions) && (this.dimensions[1] || this.dimensions[0]);
+      }
     },
 
     computed: {
@@ -68,7 +81,13 @@
         if (!Object.keys(this.file).length) return '';
         if (this.file.mime_type.indexOf('video') === 0) return this.file.data.thumbnail || '';
         return (this.file.image_sizes.thumbnail || this.file).url;
-      }
+      },
+      compactStyles() {
+        return {
+          width: `${this.compactWidth()}px`,
+          height: `${this.compactHeight()}px`
+        }
+      },
     },
   };
 </script>

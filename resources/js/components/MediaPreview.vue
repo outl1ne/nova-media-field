@@ -1,18 +1,36 @@
 <template>
 
-    <div :class="`preview-container ${multiple ? 'multiple-preview' : ''}`">
-        <media-edit-modal :isModalOpen.sync="isModalOpen" :file="editingFile" />
+    <div :class="`preview-container ${multiple ? 'multiple-preview' : ''}`"
+         :style="compactPreviewStyles">
+        <media-edit-modal :isModalOpen.sync="isModalOpen" :file="editingFile"/>
 
-        <draggable v-if="files && files.length && multiple && ordering" class="media-preview" v-model="files" @start="drag=true" @end="onDrageEnd">
-            <uploaded-file @click="onClick(file)" v-for="file in files" v-bind:key="file" :file="file.data" :hideName="hideName"/>
+        <draggable v-if="files && files.length && multiple && ordering"
+                   class="media-preview"
+                   v-model="files"
+                   @start="drag=true"
+                   @end="onDrageEnd">
+            <uploaded-file @click="onClick(file)"
+                           v-for="file in files"
+                           v-bind:key="file"
+                           :file="file.data"
+                           :dimensions="field.detailThumbnailSize"
+                           :hideName="hideName || Array.isArray(field.detailThumbnailSize)"/>
         </draggable>
 
         <div v-if="files && files.length && multiple && !ordering" class="media-preview no-order">
-            <uploaded-file @click="onClick(file)" v-for="file in files" v-bind:key="file" :file="file.data" :hideName="hideName"/>
+            <uploaded-file @click="onClick(file)"
+                           v-for="file in files"
+                           v-bind:key="file"
+                           :file="file.data"
+                           :dimensions="field.detailThumbnailSize"
+                           :hideName="hideName || Array.isArray(field.detailThumbnailSize)"/>
         </div>
 
         <div class="media-preview" v-if="files && files.length && !multiple">
-            <uploaded-file @click="onClick(files[0])" :file="files[0].data" :hideName="hideName"/>
+            <uploaded-file @click="onClick(files[0])"
+                           :file="files[0].data"
+                           :dimensions="field.detailThumbnailSize"
+                           :hideName="hideName || Array.isArray(field.detailThumbnailSize)"/>
         </div>
 
     </div>
@@ -20,7 +38,7 @@
 </template>
 
 <script>
-  import draggable from 'vuedraggable'
+  import draggable from 'vuedraggable';
 
   export default {
     props: {
@@ -44,7 +62,7 @@
         default: [],
         required: false,
       },
-      field: {}
+      field: {},
     },
 
     data: () => {
@@ -53,7 +71,7 @@
         stateFile: this.files,
         editingFile: null,
         isModalOpen: false,
-      }
+      };
     },
 
     components: {
@@ -70,7 +88,19 @@
           this.editingFile = file;
           this.isModalOpen = true;
         }
+      },
+      compactHeight() {
+        return Array.isArray(this.dimensions) && (this.dimensions[1] || this.dimensions[0]);
       }
+    },
+
+    computed: {
+      compactPreviewStyles() {
+        if (!Array.isArray(this.field.detailThumbnailSize)) return null;
+        return {
+          ['min-height']: `${this.compactHeight() + 18}px`,
+        }
+      },
     }
   };
 </script>
@@ -84,7 +114,6 @@
         border: 1px solid #eef1f4;
         height: 119px;
         width: 119px;
-        overflow: hidden;
 
         &.multiple-preview {
             min-height: 105px;
@@ -125,7 +154,6 @@
             overflow: hidden;
             display: flex;
             flex-wrap: wrap;
-            max-height: 235px;
         }
 
         .uploaded-file {
