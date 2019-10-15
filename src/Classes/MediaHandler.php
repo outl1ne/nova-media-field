@@ -209,6 +209,12 @@ class MediaHandler
         $origFilename = $this->normalizeFileName(pathinfo($filename, PATHINFO_FILENAME));
         $origExtension = pathinfo($filename, PATHINFO_EXTENSION);
 
+        // If WebP is uploaded, save as PNG instead for browser compatibility
+        if (in_array($origExtension, ['webp'])) $origExtension = 'png';
+
+        // If image is not any of common formats, save it as JPG
+        if (!in_array($origExtension, ['jpg', 'jpeg', 'png', 'gif'])) $origExtension = 'jpg';
+
         // Encode original
         $origFile = file_get_contents($tmpPath . $tmpName);
         $file = Image::make($origFile)->encode($origExtension, 80);
