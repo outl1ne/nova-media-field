@@ -53,7 +53,7 @@ public function tools()
 
 ## Usage
 
-#### Field
+### Nova Media Field
 
 To use media field first define import
 
@@ -83,9 +83,9 @@ MediaField::make('Profile image')->compact($width, $height = null)
 
 ```
 
-#### Image sizes
+### Image thumbnails
 
-Image sizes define conversions for uploaded images. These conversions can be configured
+Image thumbnails define different conversions for uploaded images. These conversions can be configured
 under media field config file under `image_sizes` key.
 
 ```
@@ -134,7 +134,7 @@ To regenerate your missing WebP files you can run
 php artisan media:regenerate-webp
 ```
 
-#### Collections
+### Collections
 
 Collections are basically upload groups that can have their own set of upload rules.
 Collection configuration goes under media field config file under `collection` key.
