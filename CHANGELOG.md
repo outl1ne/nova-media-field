@@ -1,12 +1,58 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## 0.1.0 - 2017-03-06
 
-### Added
+## 0.1.17 - 2019-10-16
+
+#### Manual changes required
+- run `php artisan migrate` to add columns that are required for WebP
+
+#### Added
+- Upload button on resource index page
+- Search on upload index page
+- WebP support
+- Method to modify thumbnail sizes on nova admin
+- Method to format Media model serialization
+
+
+## 0.1.9 - 2019-10-02
+
+#### Updated
+- UI changes in media library modal
+- Selected files are now rendered at top when opening modal
+- Upload Media button added to resource view that opens stripped media modal for file upload
+- Custom formatter option for media model to decrease response size
+
+#### Removed
+- Media nav item from under nova resource navigation
+
+#### Added
+- Custom resource view.
+- Blade template for nova navigation
+- Display resource view in Nova navigation
+
+#####  Display resource view in Nova navigation
+In your `NovaServiceProvider` class add or update `tools` method
+
+```
+use OptimistDigital\MediaField\NovaMediaLibrary;
+
+public function tools()
+{
+    return [
+        new \OptimistDigital\MediaField\NovaMediaLibrary,
+    ];
+}
+```
+
+
+## 0.1.0 - 2019-8-28
+
+#### Manual changes required
+- run `php artisan migrate` to add the new title field
+
+#### Added
 - Pagination
 - Title field
 - Media edit modal
 
-### Breaking
-- run `php artisan migrate` to add the new title field

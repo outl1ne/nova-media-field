@@ -13,7 +13,8 @@ Features:
 - Multiple file selection (ex gallery)
 - Drag and drop reordering of selected files
 - Collections
-- Thumbnail generation with custom sizes
+- Thumbnail generator with custom sizes (with command)
+- WebP generator (with command)
 
 ## Installation
 
@@ -35,7 +36,7 @@ composer require optimistdigital/nova-media-field
 php artisan migrate
 ```
 
-#### Media Library resource views
+#### Register Media tool
 
 In your `NovaServiceProvider` class add or update `tools` method
 
@@ -76,6 +77,10 @@ MediaField::make('Profile image')->multiple()
 // Set fixed collection for field to use
 MediaField::make('Profile image')->collection(String $collectionName)
 
+// Make thumbnails on admin certain size. $height is inherited from $width
+// when null
+MediaField::make('Profile image')->compact($width, $height = null)
+
 ```
 
 #### Image sizes
@@ -106,6 +111,29 @@ under media field config file under `image_sizes` key.
 
 Defining only one dimension (width or height) keeps the ratio.
 
+##### WebP support
+
+By default WebP support is enabled in nova media config file. On image upload
+the WebP will be generated automatically for you. If you have activated
+or plan to activate it later then you can use commands below to regenerate
+missing thumbnails and WebP files.
+
+##### Regenerate thumbnails
+
+To regenerate your thumbnails you can run
+
+```
+php artisan media:regenerate-thumbnails
+```
+
+##### Regenerate WebP files
+
+To regenerate your missing WebP files you can run
+
+```
+php artisan media:regenerate-webp
+```
+
 #### Collections
 
 Collections are basically upload groups that can have their own set of upload rules.
@@ -134,5 +162,5 @@ Collection configuration goes under media field config file under `collection` k
 ```
 
 - `label` - Display label for collection
-- `constraints` - Array of validation rules (Laravel rules work)
+- `constraints` - Array of validation rules (like in Request validation)
 - `image_sizes` - Sizes to generate (overrides default)

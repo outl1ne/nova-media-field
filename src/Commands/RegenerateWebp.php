@@ -10,7 +10,7 @@ use Intervention\Image\Facades\Image;
 class RegenerateWebp extends Command
 {
     protected $signature = 'media:regenerate-webp';
-    protected $description = 'Saves a webp copy of the original files.';
+    protected $description = 'Saves a WebP copy of the original files.';
 
     public function handle()
     {
