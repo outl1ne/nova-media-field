@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 
+## 0.1.19 - 2019-10-17
+
+#### Updated
+- Field UI when in compact mode + add default thumbnail size
+- Media modal UI
+
+
 ## 0.1.17 - 2019-10-16
 
 #### Manual changes required
