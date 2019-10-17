@@ -2,7 +2,7 @@
     <default-field :field="field" :errors="errors" fullWidthContent>
 
         <template slot="field">
-            <div :class="`${isCompact && 'compact-form'}`">
+            <div :class="`${isCompact && 'compact-form'} ${isMultiple && 'multi-file-upload'}`">
                 <div ref="modals">
                     <media-browsing-modal :field="field"
                                           :multipleSelect="multipleSelect"
@@ -26,24 +26,25 @@
                         :multiple="multipleSelect"
                         :field="field"
                 />
-                <p class="py-6" style="padding-top: 9px;" v-else>
+
+                <p :class="`${!isCompact && 'py-6'}`" :style="`padding-top: ${!isCompact && 9}px;`" v-else>
                     {{ __('No media selected') }}
                 </p>
 
                 <div class="field-buttons ml-auto">
-                    <button type="button"
-                            v-on:click="openMediaBrowsingModal"
-                            class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3">
-                          <span>
-                                {{ __('Media library') }}
-                          </span>
-                    </button>
                     <button type="button"
                             v-if="selectedFiles.length"
                             v-on:click="clearSelectedFiles"
                             class="btn btn-default btn-danger inline-flex items-center relative ml-auto mr-3">
                           <span>
                                 {{ __('Clear') }}
+                          </span>
+                    </button>
+                    <button type="button"
+                            v-on:click="openMediaBrowsingModal"
+                            class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3">
+                          <span>
+                                {{ __('Media library') }}
                           </span>
                     </button>
                 </div>
@@ -54,28 +55,38 @@
 
 <style lang="scss">
 
+
     .compact-form {
         display: flex;
         align-items: center;
 
         .preview-container {
             margin-bottom: 0;
+            width: auto;
+            height: auto;
+            max-width: 400px;
+
+            .thumbnail-container {
+                height: 100%;
+            }
 
             &.multiple-preview {
                 max-height: 130px;
             }
         }
 
-        .field-buttons {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            padding: 0 0 0 15px;
-            min-width: 300px;
+        &:not(.multi-file-upload) {
 
-            button {
-                margin: 5px auto;
+            .preview-container {
+                border: 0;
+                padding: 0;
+                max-width: 100%;
             }
+        }
+
+        .field-buttons {
+            min-width: 300px;
+            margin-left: 20px;
         }
     }
 
@@ -126,6 +137,9 @@
       },
       isCompact() {
         return Array.isArray(this.field.detailThumbnailSize) && this.field.detailThumbnailSize[0];
+      },
+      isMultiple() {
+        return this.field.multiple || false;
       }
     },
 

@@ -26,7 +26,7 @@ class MediaField extends Field
      * @param null $height - Inherited from width when null
      * @return $this
      */
-    public function compact($width, $height = null) {
+    public function compact($width = 36, $height = null) {
         $this->detailThumbnailSize = [$width, $height];
         return $this;
     }

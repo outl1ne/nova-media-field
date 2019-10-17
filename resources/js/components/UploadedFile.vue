@@ -103,9 +103,9 @@
     }
 
     .uploaded-file {
-        width: 150px;
+        width: 125px;
         height: 150px;
-        border: 1px solid #bacad6;
+        border: 1px solid transparent;
         border-radius: 5px;
         position: relative;
         box-shadow: 0 0 5px rgba(#4099de, 0);
@@ -117,16 +117,15 @@
             padding: 4px 5px;
             font-size: 11px;
             line-height: 16px;
-            background-color: rgba(#000, .75);
             width: 100%;
             overflow: hidden;
-            /*border-top-left-radius: 3px;*/
-            /*border-top-right-radius: 3px;*/
             position: absolute;
             bottom: 0;
-            color: #fff;
+            color: #4099de;
             white-space: nowrap;
             text-overflow: ellipsis;
+            font-weight: bold;
+            text-align: center;
         }
 
         &:hover {
@@ -144,12 +143,11 @@
         }
 
         .thumbnail-container {
-            position: absolute;
+            position: relative;
             width: 100%;
-            height: 100%;
+            height: calc(100% - 25px);
             top: 0;
             left: 0;
-            object-fit: cover;
         }
 
         img, svg {

@@ -160,7 +160,7 @@
             width: 104px;
             height: 104px;
             margin: 2.5px;
-            border: 1px solid #bbbec0;
+            border: 1px solid transparent;
 
             &:hover {
                 border: 1px solid #bbbec0;

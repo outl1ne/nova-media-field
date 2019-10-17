@@ -15,22 +15,22 @@
         <div class="form-field">
             <div>
                 <label class="text-80 leading-tight">
+                    File name
+                </label>
+            </div>
+            <div class="file-name">
+                {{ file.file_name }}
+            </div>
+        </div>
+
+        <div class="form-field">
+            <div>
+                <label class="text-80 leading-tight">
                     URL
                 </label>
             </div>
             <div>
                 <input type="text" readonly="readonly" class="w-full form-control form-input form-input-bordered" :value="file.url">
-            </div>
-        </div>
-
-         <div class="form-field">
-            <div>
-                <label class="text-80 leading-tight">
-                    Title
-                </label>
-            </div>
-            <div>
-                <input type="text" v-on:input="onDataUpdate" v-model="file.title" class="w-full form-control form-input form-input-bordered" />
             </div>
         </div>
 
@@ -43,21 +43,6 @@
             <div>
                 <textarea v-on:input="onDataUpdate" v-model="file.alt" rows="3" class="w-full form-control form-input form-input-bordered py-3 h-auto"></textarea>
             </div>
-        </div>
-
-        <div class="label-field">
-            <label class="text-80 leading-tight">
-                <span>File size:</span>
-                <span>{{ parseInt(file.file_size / 1000 , 10) }} kb</span>
-            </label>
-            <label class="text-80 leading-tight">
-                <span>Mime type:</span>
-                <span>{{ file.mime_type }}</span>
-            </label>
-            <label v-if="file.dimensions" class="text-80 leading-tight">
-                <span>Dimensions:</span>
-                <span>{{ file.dimensions.width }} x {{ file.dimensions.height }}</span>
-            </label>
         </div>
 
         <div class="label-field">
@@ -107,6 +92,10 @@
 
 <style lang="scss" scoped>
 
+    .file-name {
+        font-weight: bold;
+        color: #4099de;
+    }
 
     .thumbnail-container {
         position: relative;
