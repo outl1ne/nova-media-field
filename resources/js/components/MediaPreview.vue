@@ -62,7 +62,11 @@
         default: [],
         required: false,
       },
-      field: {},
+      field: {
+        type: Object,
+        default: {},
+        required: true,
+      },
     },
 
     data: () => {
@@ -96,7 +100,7 @@
 
     computed: {
       compactPreviewStyles() {
-        if (!Array.isArray(this.field.detailThumbnailSize)) return null;
+        if (!this.field || !Array.isArray(this.field.detailThumbnailSize)) return null;
         return {
           ['min-height']: `${this.compactHeight() + 18}px`,
         }
