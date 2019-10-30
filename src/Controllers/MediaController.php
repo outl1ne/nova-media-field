@@ -13,7 +13,7 @@ class MediaController extends Controller
 {
 
     public function uploadFile(StoreMediaRequest $request) {
-        return response()->json(MediaHandler::createFromRequest($request)->__toArray());
+        return response()->json(MediaHandler::createFromRequest($request));
     }
 
     public function findFiles(Request $request) {
@@ -22,10 +22,7 @@ class MediaController extends Controller
             $ids = implode(',', $request->get('ids'));
             $media = Media::whereIn('id', $request->get('ids'))
                 ->orderByRaw("FIELD (id, $ids)")
-                ->get()
-                ->map(function(Media $media) {
-                    return $media->__toArray();
-                });
+                ->get();
             return response()->json($media, 200);
         }
 
@@ -44,7 +41,7 @@ class MediaController extends Controller
 
         $media->save();
 
-        return response()->json($media->__toArray());
+        return response()->json($media);
     }
 
     public function getFiles(Request $request) {
@@ -58,9 +55,7 @@ class MediaController extends Controller
         }
 
         $paginator = $query->latest()->paginate(30);
-        $paginator->getCollection()->transform(function($media) {
-            return $media->__toArray();
-        });
+        $paginator->getCollection();
 
         return response()->json($paginator, 200);
     }

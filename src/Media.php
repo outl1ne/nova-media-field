@@ -15,7 +15,7 @@ class Media extends Resource {
 
     public static $model = '\OptimistDigital\MediaField\Models\Media';
 
-    public static $displayInNavigation = false;
+    public static $displayInNavigation = true;
 
     public static $search = ['collection_name', 'path', 'file_name', 'mime_type'];
 

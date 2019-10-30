@@ -7,8 +7,6 @@ use Illuminate\Support\Facades\Storage;
 
 class Media extends Model
 {
-    protected static $formatFunction = null;
-
     protected $table = 'media_library';
 
     protected $fillable = [
@@ -58,24 +56,5 @@ class Media extends Model
     public function getDataAttribute($value)
     {
         return json_decode($value, true);
-    }
-
-    public static function format($formatFunction)
-    {
-        self::$formatFunction = $formatFunction;
-    }
-
-    public function toArray()
-    {
-        if (!is_callable(self::$formatFunction)) {
-            return parent::toArray();
-        }
-
-        return call_user_func(self::$formatFunction, $this);
-    }
-
-    public function __toArray()
-    {
-        return parent::toArray();
     }
 }
