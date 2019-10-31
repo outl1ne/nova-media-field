@@ -244,7 +244,7 @@
                             :relationship-type="relationshipType"
                             :update-selection-status="updateSelectionStatus"
                             @order="orderByField"
-                            @delete="deleteResources"
+                            @delete="deleteResourcesFn"
                             @restore="restoreResources"
                             ref="resourceTable"
                     />
@@ -426,6 +426,24 @@
 
       openMediaLibraryModal() {
 
+      },
+
+      deleteResourcesFn(data) {
+        if (window.mediaLibrary && window.mediaLibrary && window.mediaLibrary.files.length) {
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].id) {
+              const value = data[i].id.value
+              const itemIndex = window.mediaLibrary.files.findIndex(item => +item.data.id === +value)
+              window.mediaLibrary.files.splice(itemIndex, 1);
+            }
+          }
+          for (const cb of window.mediaLibrary.onload) {
+            if (this.updateFiles !== cb) {
+              cb();
+            }
+          }
+        }
+        this.deleteResources(data);
       },
 
       /**
