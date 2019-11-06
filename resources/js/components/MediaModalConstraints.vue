@@ -1,15 +1,15 @@
 <template>
-    <div v-if="currentCollection && field.collections[currentCollection].constraints" class="media-rules">
+    <div v-if="currentCollection && currentCollectionData.constraints && currentCollectionData.constraints.length" class="media-rules">
         <div class="media-rule-label">
             Constraints
         </div>
-        <div v-for="constraintKey of Object.keys(field.collections[currentCollection].constraints)"
+        <div v-for="constraintKey of Object.keys(currentCollectionData.constraints)"
              class="single-constraint">
                 <span class="constraint-label">
                     {{ parseConstraintKey(constraintKey) }}
                 </span>
             <span class="value">
-                {{ parseConstraintValue(constraintKey, field.collections[currentCollection].constraints[constraintKey]) }}
+                {{ parseConstraintValue(constraintKey,currentCollectionData.constraints[constraintKey]) }}
             </span>
         </div>
 
@@ -21,7 +21,7 @@
 
   export default {
 
-    props: ['field', 'currentCollection'],
+    props: ['field', 'currentCollectionData', 'currentCollection'],
 
     methods: {
 

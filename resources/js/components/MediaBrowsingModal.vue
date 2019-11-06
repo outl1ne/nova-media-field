@@ -7,7 +7,7 @@
                 <h2 class="text-90 font-normal text-xl">
                     <span v-if="!uploadOnly">Browse media library</span>
                     <span v-if="uploadOnly">Upload media</span>
-                    {{ currentCollection ? `(${field.collections[currentCollection].label})` : '' }}
+                    {{ currentCollection ? `(${currentCollectionData.label})` : '' }}
                 </h2>
 
                 <div class="collection-select" v-if="!uploadOnly">
@@ -37,6 +37,7 @@
             </div>
 
             <media-modal-constraints :field="field"
+                                     :currentCollectionData="currentCollectionData"
                                      :currentCollection="currentCollection"/>
 
             <div :class="`flex mb-6`" id="media-dropzone" v-if="!loadingMediaFiles">
@@ -58,7 +59,7 @@
                         </p>
                     </div>
 
-                    <uploaded-file v-for="file in fileList"
+                    <uploaded-file v-for="file in fileList.filter(filterUploadedFiles)"
                                    :selected="stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
                                    :active="file.processed && stateActiveFile && file.data.id === stateActiveFile.data.id"
                                    v-on:click.native="toggleFileSelect(file)" v-bind:key="file"
@@ -161,6 +162,19 @@
         },
         set: function (value) {
           this.$emit('update:chosenCollection', value);
+        }
+      },
+
+      currentCollectionData: {
+        get: function () {
+          if (!this.currentCollection) return null;
+          if (this.field.collections[this.currentCollection]) return this.field.collections[this.currentCollection];
+
+          return {
+            label: this.currentCollection.replace('_', ' ').replace('-', ' '),
+            name: this.currentCollection,
+            constraints: [],
+          };
         }
       },
 
