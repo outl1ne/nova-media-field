@@ -23,61 +23,60 @@
 </template>
 
 <script>
-  import {FormField, HandlesValidationErrors} from 'laravel-nova';
-  import debounce from './../debounce';
+import { FormField, HandlesValidationErrors } from 'laravel-nova';
+import debounce from './../debounce';
 
-  function isString(value) {
-    return typeof value === 'string' || value instanceof String;
-  }
+function isString(value) {
+  return typeof value === 'string' || value instanceof String;
+}
 
-  export default {
-    mixins: [FormField, HandlesValidationErrors],
+export default {
+  mixins: [FormField, HandlesValidationErrors],
 
-    props: ['field', 'onUploadFinished'],
+  props: ['field', 'onUploadFinished'],
 
-    data() {
-      return {
-        files: [],
-        isModalOpen: false,
-        activeFile: void 0,
-        selectedFiles: [],
-        chosenCollection: null,
-        loadingMediaFiles: false,
-        showUploadArea: true,
-      };
-    },
+  data() {
+    return {
+      files: [],
+      isModalOpen: false,
+      activeFile: void 0,
+      selectedFiles: [],
+      chosenCollection: null,
+      loadingMediaFiles: false,
+      showUploadArea: true,
+    };
+  },
 
-    watch: {
-      isModalOpen: function (value) {
-        if (!value) {
-          this.files = [];
-        }
+  watch: {
+    isModalOpen: function(value) {
+      if (!value) {
+        this.files = [];
       }
     },
+  },
 
-    computed: {
-      multipleSelect() {
-        return this.field.multiple;
-      }
+  computed: {
+    multipleSelect() {
+      return this.field.multiple;
+    },
+  },
+
+  methods: {
+    updateFiles(file) {
+      this.loadingMediaFiles = false;
+      this.files.splice(this.files.map(file => file.uploading).indexOf(true), 1);
+      this.files.push(file);
+      this.updateMedia();
     },
 
-    methods: {
+    updateMedia: debounce(function() {
+      this.onUploadFinished();
+      this.$toasted.show('Files have been successfully uploaded!', { type: 'success' });
+    }, 1000),
 
-      updateFiles(file) {
-        this.loadingMediaFiles = false;
-        this.files.splice(this.files.map(file => file.uploading).indexOf(true), 1);
-        this.files.push(file);
-        this.updateMedia();
-      },
-
-      updateMedia: debounce(function() {
-        this.onUploadFinished();
-        this.$toasted.show('Files have been successfully uploaded!', { type: 'success' });
-      }, 1000),
-
-      openMediaBrowsingModal() {
-        this.isModalOpen = true;
-      }
+    openMediaBrowsingModal() {
+      this.isModalOpen = true;
     },
-  };
+  },
+};
 </script>

@@ -76,7 +76,6 @@ export default {
   data: () => {
     return {
       drag: false,
-      stateFile: this.files,
       editingFile: null,
       isModalOpen: false,
     };
