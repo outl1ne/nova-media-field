@@ -23,35 +23,33 @@
     </div>
 
     <div class="form-field">
-      <div>
-        <label class="text-80 leading-tight">
-          URL
-        </label>
-      </div>
-      <div>
-        <input
-          type="text"
-          readonly="readonly"
-          class="w-full form-control form-input form-input-bordered"
-          :value="file.url"
-        />
-      </div>
+      <label class="text-80 leading-tight">URL</label>
+      <input
+        type="text"
+        readonly="readonly"
+        class="w-full form-control form-input form-input-bordered"
+        :value="file.url"
+      />
     </div>
 
     <div class="form-field">
-      <div>
-        <label class="text-80 leading-tight">
-          Alt text
-        </label>
-      </div>
-      <div>
-        <textarea
-          v-on:input="onDataUpdate"
-          v-model="file.alt"
-          rows="3"
-          class="w-full form-control form-input form-input-bordered py-3 h-auto"
-        ></textarea>
-      </div>
+      <label class="text-80 leading-tight">Title</label>
+      <input
+        type="text"
+        class="w-full form-control form-input form-input-bordered"
+        v-on:input="onDataUpdate"
+        v-model="file.title"
+      />
+    </div>
+
+    <div class="form-field">
+      <label class="text-80 leading-tight">Alt text</label>
+      <textarea
+        v-on:input="onDataUpdate"
+        v-model="file.alt"
+        rows="3"
+        class="w-full form-control form-input form-input-bordered py-3 h-auto"
+      ></textarea>
     </div>
 
     <div class="label-field">
@@ -84,7 +82,7 @@ export default {
       this.updateImageData(this.file);
     },
 
-    updateImageData: debounce(function(file) {
+    updateImageData: debounce(file => {
       axios.post('/api/media/update', {
         id: file.id,
         title: file.title,
