@@ -1,25 +1,25 @@
 <template>
-    <div>
-        <div ref="modals">
-            <media-browsing-modal :field="field"
-                                  :multipleSelect="multipleSelect"
-                                  :files.sync="files"
-                                  :uploadOnly="true"
-                                  :isModalOpen.sync="isModalOpen"
-                                  :chosenCollection.sync="chosenCollection"
-                                  :activeFile.sync="activeFile"
-                                  :showUploadArea.sync="showUploadArea"
-                                  @updateFiles="updateFiles"
-                                  :loadingMediaFiles.sync="loadingMediaFiles"
-                                  :selectedFiles.sync="selectedFiles" />
-        </div>
-
-            <button type="button"
-                    v-on:click="openMediaBrowsingModal"
-                    class="btn btn-default btn-primary whitespace-no-wrap">
-                {{ __('Upload media') }}
-            </button>
+  <div>
+    <div ref="modals">
+      <media-browsing-modal
+        :field="field"
+        :multipleSelect="multipleSelect"
+        :files.sync="files"
+        :uploadOnly="true"
+        :isModalOpen.sync="isModalOpen"
+        :chosenCollection.sync="chosenCollection"
+        :activeFile.sync="activeFile"
+        :showUploadArea.sync="showUploadArea"
+        @updateFiles="updateFiles"
+        :loadingMediaFiles.sync="loadingMediaFiles"
+        :selectedFiles.sync="selectedFiles"
+      />
     </div>
+
+    <button type="button" v-on:click="openMediaBrowsingModal" class="btn btn-default btn-primary whitespace-no-wrap">
+      {{ __('Upload media') }}
+    </button>
+  </div>
 </template>
 
 <script>

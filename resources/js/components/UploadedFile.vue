@@ -125,7 +125,6 @@ export default {
   }
 
   &:hover {
-
     .thumbnail-container {
       box-shadow: 0 0 5px rgba(#4099de, 0.5);
       border-color: #4099de;
@@ -133,7 +132,6 @@ export default {
   }
 
   &.selected {
-
     .thumbnail-container {
       border: 4px solid #d6666d;
       box-shadow: 0 0 10px rgba(#4099de, 0.5);
@@ -141,7 +139,6 @@ export default {
   }
 
   &.active {
-
     .thumbnail-container {
       border: 4px solid #4099de;
     }

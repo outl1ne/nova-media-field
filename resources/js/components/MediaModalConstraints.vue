@@ -1,61 +1,55 @@
 <template>
-    <div v-if="currentCollection && currentCollectionData.constraints && currentCollectionData.constraints.length" class="media-rules">
-        <div class="media-rule-label">
-            Constraints
-        </div>
-        <div v-for="constraintKey of Object.keys(currentCollectionData.constraints)"
-             class="single-constraint">
-                <span class="constraint-label">
-                    {{ parseConstraintKey(constraintKey) }}
-                </span>
-            <span class="value">
-                {{ parseConstraintValue(constraintKey,currentCollectionData.constraints[constraintKey]) }}
-            </span>
-        </div>
-
+  <div
+    v-if="currentCollection && currentCollectionData.constraints && currentCollectionData.constraints.length"
+    class="media-rules"
+  >
+    <div class="media-rule-label">
+      Constraints
     </div>
-
+    <div v-for="constraintKey of Object.keys(currentCollectionData.constraints)" class="single-constraint">
+      <span class="constraint-label">
+        {{ parseConstraintKey(constraintKey) }}
+      </span>
+      <span class="value">
+        {{ parseConstraintValue(constraintKey, currentCollectionData.constraints[constraintKey]) }}
+      </span>
+    </div>
+  </div>
 </template>
 
 <script>
+export default {
+  props: ['field', 'currentCollectionData', 'currentCollection'],
 
-  export default {
+  methods: {
+    parseConstraintKey(key) {
+      if (key === 'mimetypes') {
+        return 'MIME Types';
+      }
 
-    props: ['field', 'currentCollectionData', 'currentCollection'],
+      return key.replace(/_/g, ' ');
+    },
 
-    methods: {
+    parseConstraintValue(key, value) {
+      if (key === 'mimetypes' && Array.isArray(value)) {
+        let newValue = value[0];
 
-      parseConstraintKey(key) {
-
-        if (key === 'mimetypes') {
-          return 'MIME Types'
+        for (const valueKey in value) {
+          if (valueKey == 0) continue;
+          newValue += `, ${value[valueKey]}`;
         }
 
-        return key.replace(/_/g, ' ');
-      },
+        return newValue;
+      }
 
-      parseConstraintValue(key, value) {
+      const dimensions = ['height', 'width', 'min_height', 'min_width', 'max_height', 'max_width'];
 
-        if (key === 'mimetypes' && Array.isArray(value)) {
-          let newValue = value[0];
+      if (dimensions.indexOf(key) !== -1) {
+        return `${value}px`;
+      }
 
-          for (const valueKey in value) {
-            if (valueKey == 0) continue;
-            newValue += `, ${value[valueKey]}`;
-          }
-
-          return newValue;
-        }
-
-        const dimensions = ['height', 'width', 'min_height', 'min_width', 'max_height', 'max_width'];
-
-        if (dimensions.indexOf(key) !== -1) {
-          return `${value}px`;
-        }
-
-        return value;
-      },
-    }
-
-  };
+      return value;
+    },
+  },
+};
 </script>

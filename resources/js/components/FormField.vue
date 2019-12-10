@@ -1,56 +1,61 @@
 <template>
-    <default-field :field="field" :errors="errors" fullWidthContent>
+  <default-field :field="field" :errors="errors" fullWidthContent>
+    <template slot="field">
+      <div :class="`${isCompact && 'compact-form'} ${isMultiple && 'multi-file-upload'}`">
+        <div ref="modals">
+          <media-browsing-modal
+            :field="field"
+            :multipleSelect="multipleSelect"
+            :files.sync="files"
+            :isModalOpen.sync="isModalOpen"
+            :chosenCollection.sync="chosenCollection"
+            :activeFile.sync="activeFile"
+            :updateMedia="updateMedia"
+            :showUploadArea.sync="showUploadArea"
+            :loadingMediaFiles.sync="loadingMediaFiles"
+            :selectedFiles.sync="selectedFiles"
+            @loadImages="fetchFiles"
+            @search="searchValue => fetchFiles(searchValue)"
+          />
+        </div>
 
-        <template slot="field">
-            <div :class="`${isCompact && 'compact-form'} ${isMultiple && 'multi-file-upload'}`">
-                <div ref="modals">
-                    <media-browsing-modal :field="field"
-                                          :multipleSelect="multipleSelect"
-                                          :files.sync="files"
-                                          :isModalOpen.sync="isModalOpen"
-                                          :chosenCollection.sync="chosenCollection"
-                                          :activeFile.sync="activeFile"
-                                          :updateMedia="updateMedia"
-                                          :showUploadArea.sync="showUploadArea"
-                                          :loadingMediaFiles.sync="loadingMediaFiles"
-                                          :selectedFiles.sync="selectedFiles"
-                                          @loadImages="fetchFiles"
-                                          @search="searchValue => fetchFiles(searchValue)"/>
-                </div>
+        <media-preview
+          v-if="selectedFiles.length > 0"
+          :ordering="field.ordering"
+          :changeOrder="handleChange"
+          :files="selectedFiles"
+          :multiple="multipleSelect"
+          :field="field"
+        />
 
-                <media-preview
-                        v-if="selectedFiles.length > 0"
-                        :ordering="field.ordering"
-                        :changeOrder="handleChange"
-                        :files="selectedFiles"
-                        :multiple="multipleSelect"
-                        :field="field"
-                />
+        <p :class="`${!isCompact && 'py-6'}`" :style="`padding-top: ${!isCompact && 9}px;`" v-else>
+          {{ __('No media selected') }}
+        </p>
 
-                <p :class="`${!isCompact && 'py-6'}`" :style="`padding-top: ${!isCompact && 9}px;`" v-else>
-                    {{ __('No media selected') }}
-                </p>
-
-                <div class="field-buttons ml-auto">
-                    <button type="button"
-                            v-if="selectedFiles.length"
-                            v-on:click="clearSelectedFiles"
-                            class="btn btn-default btn-danger inline-flex items-center relative ml-auto mr-3">
-                          <span>
-                                {{ __('Clear') }}
-                          </span>
-                    </button>
-                    <button type="button"
-                            v-on:click="openMediaBrowsingModal"
-                            class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3">
-                          <span>
-                                {{ __('Media library') }}
-                          </span>
-                    </button>
-                </div>
-            </div>
-        </template>
-    </default-field>
+        <div class="field-buttons ml-auto">
+          <button
+            type="button"
+            v-if="selectedFiles.length"
+            v-on:click="clearSelectedFiles"
+            class="btn btn-default btn-danger inline-flex items-center relative ml-auto mr-3"
+          >
+            <span>
+              {{ __('Clear') }}
+            </span>
+          </button>
+          <button
+            type="button"
+            v-on:click="openMediaBrowsingModal"
+            class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3"
+          >
+            <span>
+              {{ __('Media library') }}
+            </span>
+          </button>
+        </div>
+      </div>
+    </template>
+  </default-field>
 </template>
 
 <style lang="scss">

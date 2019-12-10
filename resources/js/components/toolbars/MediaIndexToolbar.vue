@@ -1,4 +1,3 @@
-
 <script>
 export default {
   props: ['resourceName', 'resourceId', 'field'],
