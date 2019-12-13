@@ -62,8 +62,8 @@
             v-for="file in fileList.filter(filterUploadedFiles)"
             :selected="stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
             :active="file.processed && stateActiveFile && file.data.id === stateActiveFile.data.id"
-            v-on:click.native="toggleFileSelect(file)"
-            v-bind:key="file"
+            @click.native="toggleFileSelect(file)"
+            :key="file.id"
             :file="file.processed ? file.data : {}"
             :progress="file.uploading ? file.uploadProgress : -1"
           />
@@ -216,7 +216,7 @@ export default {
   },
 
   watch: {
-    isModalOpen: function(newVal, oldVal) {
+    isModalOpen(newVal, oldVal) {
       // watch it
 
       if (this.showUploadArea) {

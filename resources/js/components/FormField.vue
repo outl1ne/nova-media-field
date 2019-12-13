@@ -95,7 +95,7 @@
 
 <script>
 import { FormField, HandlesValidationErrors } from 'laravel-nova';
-import debounce from './../debounce';
+import debounce from '../debounce';
 
 function isString(value) {
   return typeof value === 'string' || value instanceof String;
@@ -190,6 +190,7 @@ export default {
       this.files = [...window.mediaLibrary.files];
     }
 
+    this.updateFiles();
     this.updateMedia();
 
     window.mediaLibrary.onload.push(this.updateFiles);
@@ -249,59 +250,60 @@ export default {
     },
 
     async fetchFiles(searchValue = null) {
-      const changedFromSearchToOverall = window.mediaLibrary.previousSearchValue !== searchValue;
-      window.mediaLibrary.previousSearchValue = searchValue;
-      if (!changedFromSearchToOverall && window.mediaLibrary.currentPage + 1 > window.mediaLibrary.totalPages) {
-        return;
-      }
+      return debounce(async () => {
+        const changedFromSearchToOverall = window.mediaLibrary.previousSearchValue !== searchValue;
+        window.mediaLibrary.previousSearchValue = searchValue;
 
-      if (changedFromSearchToOverall) {
-        window.mediaLibrary.currentPage = 0;
-      }
+        if (!changedFromSearchToOverall && window.mediaLibrary.currentPage + 1 > window.mediaLibrary.totalPages) return;
+        if (changedFromSearchToOverall) window.mediaLibrary.currentPage = 0;
 
-      window.mediaLibrary.fetching = true;
-      const response = await axios.get('/api/media', {
-        params: {
-          search: searchValue,
-          page: window.mediaLibrary.currentPage + 1,
-        },
-      });
+        window.mediaLibrary.fetching = true;
+        const response = await axios.get('/api/media', {
+          params: {
+            search: searchValue,
+            page: window.mediaLibrary.currentPage + 1,
+          },
+        });
 
-      const { data } = response.data;
-      let newFiles = data.map(file => {
-        return {
-          uploading: false,
-          processed: true,
-          data: file,
-        };
-      });
+        const { data } = response.data;
+        let newFiles = data.map(file => {
+          return {
+            uploading: false,
+            processed: true,
+            data: file,
+          };
+        });
 
-      if (changedFromSearchToOverall) {
-        window.mediaLibrary.currentPage++;
-      } else {
-        window.mediaLibrary.currentPage++;
-      }
-
-      if (searchValue) {
-        if (!window.mediaLibrary.loadedFiles) {
-          window.mediaLibrary.loadedFiles = [...window.mediaLibrary.files];
+        if (changedFromSearchToOverall) {
+          window.mediaLibrary.currentPage++;
+        } else {
+          window.mediaLibrary.currentPage++;
         }
-        window.mediaLibrary.files = [...newFiles];
-      } else {
-        if (window.mediaLibrary.loadedFiles && window.mediaLibrary.loadedFiles.length) {
-          window.mediaLibrary.files = [...window.mediaLibrary.loadedFiles];
-          window.mediaLibrary.loadedFiles = null;
+
+        if (searchValue) {
+          if (!window.mediaLibrary.loadedFiles) {
+            window.mediaLibrary.loadedFiles = [...window.mediaLibrary.files];
+          }
+
+          window.mediaLibrary.files = [...newFiles];
+        } else {
+          if (window.mediaLibrary.loadedFiles && window.mediaLibrary.loadedFiles.length) {
+            window.mediaLibrary.files = [...window.mediaLibrary.loadedFiles];
+            window.mediaLibrary.loadedFiles = null;
+          }
+
+          window.mediaLibrary.files = [
+            ...window.mediaLibrary.files,
+            ...newFiles.filter(item => !window.mediaLibrary.files.find(file => file.data.id === item.data.id)),
+          ];
         }
-        window.mediaLibrary.files = [
-          ...window.mediaLibrary.files,
-          ...newFiles.filter(item => !window.mediaLibrary.files.find(file => file.data.id === item.data.id)),
-        ];
-      }
 
-      window.mediaLibrary.totalPages = Math.ceil(response.data.total / response.data.per_page);
-      window.mediaLibrary.fetching = false;
+        window.mediaLibrary.totalPages = Math.ceil(response.data.total / response.data.per_page);
+        window.mediaLibrary.fetching = false;
 
-      this.updateMedia();
+        this.updateFiles();
+        this.updateMedia();
+      }, 200)();
     },
   },
 };
