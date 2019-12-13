@@ -18,7 +18,7 @@ Nova.booting((Vue, router, store) => {
     {
       name: 'media-library',
       path: '/media-library',
-      component: require('./views/MediaView'),
+      component: require('./views/MediaView').default,
     },
   ]);
 });

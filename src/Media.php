@@ -8,15 +8,12 @@ use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Resource;
 use OptimistDigital\MediaField\Filters\Collection;
-use OptimistDigital\MediaField\MediaField;
 use OptimistDigital\MediaField\UrlField;
 
-class Media extends Resource {
-
+class Media extends Resource
+{
     public static $model = '\OptimistDigital\MediaField\Models\Media';
-
-    public static $displayInNavigation = true;
-
+    public static $displayInNavigation = false;
     public static $search = ['collection_name', 'path', 'file_name', 'mime_type'];
 
     /**
