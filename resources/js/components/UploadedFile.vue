@@ -11,7 +11,7 @@
     </div>
 
     <div class="thumbnail-container" v-if="file.image_sizes !== void 0">
-      <img draggable="false" :src="fileThumbnail" />
+      <img v-if="fileThumbnail" draggable="false" :src="fileThumbnail" />
       <thumbnail-video-icon icon="video-icon" class="thumbnail-placeholder" v-if="!fileThumbnail" />
     </div>
 
@@ -95,8 +95,8 @@ export default {
 <style lang="scss">
 .checked-box {
   position: absolute;
-  top: 15px;
-  right: 5px;
+  top: 12px;
+  right: 12px;
   width: 30px;
   height: 30px;
 }
