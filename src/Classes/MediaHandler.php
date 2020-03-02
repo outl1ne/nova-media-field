@@ -29,6 +29,7 @@ class MediaHandler
         return $instance->storeFile([
             'name' => $request->file($key)->getClientOriginalName(),
             'path' => $request->file($key)->getRealPath(),
+            'mime_type' => $request->file($key)->getClientMimeType(),
             'collection' => $request->get('collection') ?? '',
             'alt' => $request->get('alt') ?? ''
         ], $instance->getDisk());
@@ -51,13 +52,7 @@ class MediaHandler
 
     public function isReadableImage($file): bool
     {
-        try {
-            Image::make($file);
-        } catch (NotReadableException $e) {
-            return false;
-        }
-
-        return true;
+        return exif_imagetype($file);
     }
 
     /**
@@ -175,9 +170,12 @@ class MediaHandler
             throw new \Exception('Cannot store file, invalid file path!');
         }
 
+        $mimeType = 'text/plain';
+
         if (is_array($fileData)) {
             $filename = $fileData['name'];
             $tmpName = basename($fileData['path']);
+            $mimeType = $fileData['mime_type'];
             $tmpPath = rtrim(dirname($fileData['path']), '/') . '/';
             $collection = $fileData['collection'] ?? '';
             $alt = $fileData['alt'] ?? '';
@@ -189,7 +187,7 @@ class MediaHandler
             $alt = '';
         }
 
-        return [$filename, $tmpName, $tmpPath, $collection, $alt];
+        return [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType];
     }
 
     /**
@@ -202,46 +200,52 @@ class MediaHandler
      */
     protected function storeFile($fileData, $disk): Media
     {
-        [$filename, $tmpName, $tmpPath, $collection, $alt] = $this->validateFileInput($fileData);
+        [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType] = $this->validateFileInput($fileData);
 
         $webpEnabled = config('nova-media-field.webp_enabled', true);
         $storagePath = ltrim($this->getUploadPath($disk), '/');
         $origFilename = $this->normalizeFileName(pathinfo($filename, PATHINFO_FILENAME));
         $origExtension = pathinfo($filename, PATHINFO_EXTENSION);
 
-        // If WebP is uploaded, save as PNG instead for browser compatibility
-        if (in_array($origExtension, ['webp'])) $origExtension = 'png';
-
-        // If image is not any of common formats, save it as JPG
-        if (!in_array($origExtension, ['jpg', 'jpeg', 'png', 'gif'])) $origExtension = 'jpg';
-
-        // Encode original
-        $origFile = file_get_contents($tmpPath . $tmpName);
-        $file = Image::make($origFile)->encode($origExtension, 80);
-
+        $isImageFile = $this->isReadableImage($tmpPath . $tmpName);
         $newFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
-        $disk->put($storagePath . $newFilename, $file);
 
-        if ($webpEnabled) {
-            $webpFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, 'webp');
-            $webpImg = Image::make($file)->encode('webp', 80);
-            $disk->put($storagePath . $webpFilename, $webpImg);
+        $file = null;
+        if ($isImageFile) {
+            // If WebP is uploaded, save as PNG instead for browser compatibility
+            if (in_array($origExtension, ['webp'])) $origExtension = 'png';
+
+            // If image is not any of common formats, save it as JPG
+            if (!in_array($origExtension, ['jpg', 'jpeg', 'png', 'gif'])) $origExtension = 'jpg';
+
+            // Encode original
+            $origFile = file_get_contents($tmpPath . $tmpName);
+            $file = Image::make($origFile)->encode($origExtension, 80);
+            $disk->put($storagePath . $newFilename, $file);
+
+            if ($webpEnabled) {
+                $webpFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, 'webp');
+                $webpImg = Image::make($file)->encode('webp', 80);
+                $disk->put($storagePath . $webpFilename, $webpImg);
+            }
+        } else {
+            $disk->put($storagePath . $newFilename, file_get_contents($tmpPath . $tmpName));
         }
 
         $model = new Media([
             'collection_name' => $collection,
             'path' => $storagePath,
             'file_name' => $newFilename,
-            'webp_name' => (isset($webpFilename)) ? $webpFilename : null,
             'alt' => $alt,
-            'mime_type' => $disk->getMimeType($storagePath . $newFilename),
+            'mime_type' => $mimeType ? $mimeType : $disk->getClientMimeType($storagePath . $newFilename),
             'file_size' => $disk->size($storagePath . $newFilename),
+            'webp_name' => (isset($webpFilename)) ? $webpFilename : null,
             'webp_size' => isset($webpFilename) ? $disk->size($storagePath . $webpFilename) : null,
             'image_sizes' => '{}',
             'data' => '{}',
         ]);
 
-        if ($this->isReadableImage($tmpPath . $tmpName)) {
+        if ($isImageFile) {
             $generatedImages = $this->generateImageSizes(file_get_contents($tmpPath . $tmpName), $storagePath . $newFilename, $disk);
             $model->image_sizes = json_encode($generatedImages);
         }
