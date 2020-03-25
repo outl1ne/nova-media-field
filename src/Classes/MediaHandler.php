@@ -2,7 +2,7 @@
 
 namespace OptimistDigital\MediaField\Classes;
 
-
+use Exception;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -52,7 +52,11 @@ class MediaHandler
 
     public function isReadableImage($file): bool
     {
-        return exif_imagetype($file);
+        try {
+            return exif_imagetype($file);
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     /**
