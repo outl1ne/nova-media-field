@@ -1,5 +1,8 @@
 # Nova Media Field
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/optimistdigital/nova-media-field.svg?style=flat-square)](https://packagist.org/packages/optimistdigital/nova-media-field)
+[![Total Downloads](https://img.shields.io/packagist/dt/optimistdigital/nova-media-field.svg?style=flat-square)](https://packagist.org/packages/optimistdigital/nova-media-field)
+
 This [Laravel Nova](https://nova.laravel.com) package adds a simple image/gallery upload field with a media browser to Laravel Nova.
 
 ## Requirements
