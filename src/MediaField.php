@@ -19,6 +19,17 @@ class MediaField extends Field
 
     protected $collection = null;
 
+    protected $detailThumbnailSize = null;
+
+    /**
+     * @param $width - Width of the preview thumbnail in admin
+     * @param null $height - Inherited from width when null
+     * @return $this
+     */
+    public function compact($width = 36, $height = null) {
+        $this->detailThumbnailSize = [$width, $height];
+        return $this;
+    }
 
     /**
      * Set the number of rows used for the textarea.
@@ -52,7 +63,8 @@ class MediaField extends Field
             'multiple' => $this->multiple,
             'order' => $this->multiple,
             'displayCollection' => $this->collection,
-            'collections' => config('nova-media-field.collections')
+            'collections' => config('nova-media-field.collections'),
+            'detailThumbnailSize' => $this->detailThumbnailSize
         ]);
     }
 

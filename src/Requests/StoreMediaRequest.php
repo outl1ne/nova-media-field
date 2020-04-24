@@ -16,22 +16,25 @@ class StoreMediaRequest extends FormRequest
 
             $collectionSlug = $this->get('collection');
 
-            $collection = config('nova-media-field.collections')[$collectionSlug];
+            if (!empty(config('nova-media-field.collections')[$collectionSlug])) {
 
-            if (isset($collection['constraints'])) {
+                $collection = config('nova-media-field.collections')[$collectionSlug];
 
-                if (is_array($collection['constraints'])) {
+                if (isset($collection['constraints'])) {
 
-                    foreach ($collection['constraints'] as $constraint => $value) {
+                    if (is_array($collection['constraints'])) {
 
-                        if (is_string($value)) {
-                            $rules[] = $constraint . ':' . $value;
-                        } else if (is_array($value)) {
-                            $rules[] = $constraint . ':' . implode(',', $value);
+                        foreach ($collection['constraints'] as $constraint => $value) {
+
+                            if (is_string($value)) {
+                                $rules[] = $constraint . ':' . $value;
+                            } else if (is_array($value)) {
+                                $rules[] = $constraint . ':' . implode(',', $value);
+                            }
                         }
+                    } else if (is_string($collection['constraints'])) {
+                        return $collection['constraints'];
                     }
-                } else if (is_string($collection['constraints'])) {
-                    return $collection['constraints'];
                 }
             }
         }

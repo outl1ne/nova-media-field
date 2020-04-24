@@ -2,8 +2,7 @@
 
 namespace OptimistDigital\MediaField\Classes;
 
-
-use Illuminate\Database\Eloquent\Model;
+use Exception;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -21,15 +20,16 @@ class MediaHandler
      * @param Request $request
      * @param string $key Used to access Request file upload value
      * @return Media
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Exception
      */
-    public static function createFromRequest(Request $request, $key = 'file') : Media
+    public static function createFromRequest(Request $request, $key = 'file'): Media
     {
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
         return $instance->storeFile([
             'name' => $request->file($key)->getClientOriginalName(),
             'path' => $request->file($key)->getRealPath(),
+            'mime_type' => $request->file($key)->getClientMimeType(),
             'collection' => $request->get('collection') ?? '',
             'alt' => $request->get('alt') ?? ''
         ], $instance->getDisk());
@@ -41,23 +41,22 @@ class MediaHandler
      * @param $file Full path to file
      * @return Media
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Exception
      */
-    public static function createFromFile($filepath) : Media
+    public static function createFromFile($filepath): Media
     {
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
         return $instance->storeFile($filepath, $instance->getDisk());
     }
 
-    protected function isReadableImage($file) : bool
+    public function isReadableImage($file): bool
     {
         try {
-            Image::make($file);
-        } catch (NotReadableException $e) {
+            return exif_imagetype($file);
+        } catch (Exception $e) {
             return false;
         }
-
-        return true;
     }
 
     /**
@@ -66,7 +65,7 @@ class MediaHandler
      * @param $filename
      * @return string
      */
-    protected function normalizeFileName($filename) : string
+    protected function normalizeFileName($filename): string
     {
         return preg_replace('/[^a-z0-9]+/', '-', strtolower($filename));
     }
@@ -77,15 +76,14 @@ class MediaHandler
      * @param $disk Saving destination
      * @return array
      */
-    protected function generateImageSizes($file, $path, $disk) : array
+    public function generateImageSizes($file, $path, $disk): array
     {
-
+        $webpEnabled = config('nova-media-field.webp_enabled', true);
         $origName = pathinfo($path, PATHINFO_FILENAME);
-        $extension = pathinfo($path, PATHINFO_EXTENSION);
+        $origExtension = pathinfo($path, PATHINFO_EXTENSION);
 
         $sizes = [];
-        foreach (config('nova-media-field.image_sizes') as $sizeName => $config) {
-
+        foreach (config('nova-media-field.image_sizes', []) as $sizeName => $config) {
             $img = Image::make($file);
 
             $crop = isset($config['crop']) && $config['crop'];
@@ -104,17 +102,32 @@ class MediaHandler
                 $img->resize($config['width'], $config['height']);
             }
 
-            $sizedFilename = $origName . '-' . $img->getWidth() . 'px-' . $img->getHeight() . 'px.' . $extension;
+            // Convert to WEBP
+            if ($webpEnabled) {
+                $webpImg = $img;
+                $webpImg = $webpImg->encode('webp');
+            }
 
             try {
-                $disk->put(dirname($path) . '/' . $sizedFilename, $img->encode($extension)->__toString());
+                $sizedFilenameWoExtension = $origName . '-' . $img->getWidth() . 'px-' . $img->getHeight() . 'px';
+                $origFormatFilename = "$sizedFilenameWoExtension.$origExtension";
+                $disk->put(dirname($path) . '/' . $origFormatFilename, $img->encode($origExtension, 80)->__toString());
 
                 $sizes[$sizeName] = [
-                    'file_name' => $sizedFilename,
-                    'file_size' => $disk->size(dirname($path) . '/' . $sizedFilename),
+                    'file_name' => $origFormatFilename,
+                    'file_size' => $disk->size(dirname($path) . '/' . $origFormatFilename),
                     'width' => $img->getWidth(),
                     'height' => $img->getHeight(),
                 ];
+
+                if ($webpEnabled) {
+                    $webpFilename = "$sizedFilenameWoExtension.webp";
+                    $disk->put(dirname($path) . '/' . $webpFilename, $img->encode('webp')->__toString());
+                    $sizes[$sizeName] = array_merge($sizes[$sizeName], [
+                        'webp_name' => $webpFilename,
+                        'webp_size' => $disk->size(dirname($path) . '/' . $webpFilename),
+                    ]);
+                }
             } catch (\Intervention\Image\Exception\NotSupportedException $e) {
                 continue;
             }
@@ -131,13 +144,8 @@ class MediaHandler
      */
     protected function getUploadPath($disk): string
     {
-
         $subPath = config('nova-media-field.storage_path') . date('Y') . '/' . date('m') . '/';
-
-        if (!$disk->exists($subPath)) {
-            $disk->makeDirectory($subPath);
-        }
-
+        if (!$disk->exists($subPath)) $disk->makeDirectory($subPath);
         return $subPath;
     }
 
@@ -146,7 +154,7 @@ class MediaHandler
      *
      * @return \Illuminate\Contracts\Filesystem\Filesystem
      */
-    protected function getDisk()
+    public function getDisk()
     {
         return Storage::disk(config('nova-media-field.storage_driver'));
     }
@@ -166,9 +174,12 @@ class MediaHandler
             throw new \Exception('Cannot store file, invalid file path!');
         }
 
+        $mimeType = 'text/plain';
+
         if (is_array($fileData)) {
             $filename = $fileData['name'];
             $tmpName = basename($fileData['path']);
+            $mimeType = $fileData['mime_type'];
             $tmpPath = rtrim(dirname($fileData['path']), '/') . '/';
             $collection = $fileData['collection'] ?? '';
             $alt = $fileData['alt'] ?? '';
@@ -180,7 +191,7 @@ class MediaHandler
             $alt = '';
         }
 
-        return [$filename, $tmpName, $tmpPath, $collection, $alt];
+        return [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType];
     }
 
     /**
@@ -193,35 +204,52 @@ class MediaHandler
      */
     protected function storeFile($fileData, $disk): Media
     {
-        [$filename, $tmpName, $tmpPath, $collection, $alt] = $this->validateFileInput($fileData);
+        [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType] = $this->validateFileInput($fileData);
 
+        $webpEnabled = config('nova-media-field.webp_enabled', true);
         $storagePath = ltrim($this->getUploadPath($disk), '/');
-
         $origFilename = $this->normalizeFileName(pathinfo($filename, PATHINFO_FILENAME));
-        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $origExtension = pathinfo($filename, PATHINFO_EXTENSION);
 
-        $newFilename = $origFilename . '.' . $extension;
+        $isImageFile = $this->isReadableImage($tmpPath . $tmpName);
+        $newFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
 
-        $i = 1;
-        while ($disk->exists($storagePath . $newFilename)) {
-            $newFilename = $origFilename . '-' . $i . '.' . $extension;
-            $i++;
+        $file = null;
+        if ($isImageFile) {
+            // If WebP is uploaded, save as PNG instead for browser compatibility
+            if (in_array($origExtension, ['webp'])) $origExtension = 'png';
+
+            // If image is not any of common formats, save it as JPG
+            if (!in_array($origExtension, ['jpg', 'jpeg', 'png', 'gif'])) $origExtension = 'jpg';
+
+            // Encode original
+            $origFile = file_get_contents($tmpPath . $tmpName);
+            $file = Image::make($origFile)->encode($origExtension, 80);
+            $disk->put($storagePath . $newFilename, $file);
+
+            if ($webpEnabled) {
+                $webpFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, 'webp');
+                $webpImg = Image::make($file)->encode('webp', 80);
+                $disk->put($storagePath . $webpFilename, $webpImg);
+            }
+        } else {
+            $disk->put($storagePath . $newFilename, file_get_contents($tmpPath . $tmpName));
         }
-
-        $disk->put($storagePath . $newFilename, file_get_contents($tmpPath . $tmpName));
 
         $model = new Media([
             'collection_name' => $collection,
             'path' => $storagePath,
             'file_name' => $newFilename,
             'alt' => $alt,
-            'mime_type' => $disk->getMimeType($storagePath . $newFilename),
+            'mime_type' => $mimeType ? $mimeType : $disk->getClientMimeType($storagePath . $newFilename),
             'file_size' => $disk->size($storagePath . $newFilename),
+            'webp_name' => (isset($webpFilename)) ? $webpFilename : null,
+            'webp_size' => isset($webpFilename) ? $disk->size($storagePath . $webpFilename) : null,
             'image_sizes' => '{}',
             'data' => '{}',
         ]);
 
-        if ($this->isReadableImage($storagePath . $newFilename)) {
+        if ($isImageFile) {
             $generatedImages = $this->generateImageSizes(file_get_contents($tmpPath . $tmpName), $storagePath . $newFilename, $disk);
             $model->image_sizes = json_encode($generatedImages);
         }
@@ -229,5 +257,16 @@ class MediaHandler
         $model->save();
 
         return $model;
+    }
+
+    public function createUniqueFilename($disk, $storagePath, $filename, $extension)
+    {
+        $uniqueFilename = $filename . '.' . $extension;
+        $i = 1;
+        while ($disk->exists($storagePath . $uniqueFilename)) {
+            $uniqueFilename = $filename . '-' . $i . '.' . $extension;
+            $i++;
+        }
+        return $uniqueFilename;
     }
 }
