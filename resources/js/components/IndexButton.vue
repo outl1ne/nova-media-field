@@ -48,7 +48,7 @@ export default {
   },
 
   watch: {
-    isModalOpen: function(value) {
+    isModalOpen: function (value) {
       if (!value) {
         this.files = [];
       }
@@ -69,7 +69,7 @@ export default {
       this.updateMedia();
     },
 
-    updateMedia: debounce(function() {
+    updateMedia: debounce(function () {
       this.onUploadFinished();
       this.$toasted.show('Files have been successfully uploaded!', { type: 'success' });
     }, 1000),

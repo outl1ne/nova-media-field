@@ -9,7 +9,7 @@
       <edit-image v-if="file" :file="file.data" />
       <div class="loader-container" v-else>
         <div class="loader" />
-        <div class="small-loader " />
+        <div class="small-loader" />
       </div>
     </div>
     <div slot="buttons" class="w-full flex">

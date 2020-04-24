@@ -119,14 +119,14 @@ export default {
   },
 
   watch: {
-    selectedFiles: function(value) {
+    selectedFiles: function (value) {
       if (!value || !Array.isArray(value) || !window.mediaLibrary.loadedFiles) return;
       window.mediaLibrary.loadedFiles = [
         ...window.mediaLibrary.loadedFiles,
         ...value.filter(item => !window.mediaLibrary.loadedFiles.find(file => file.data.id === item.data.id)),
       ];
     },
-    isModalOpen: function(value) {
+    isModalOpen: function (value) {
       if (!value && window.mediaLibrary.loadedFiles && window.mediaLibrary.loadedFiles.length) {
         window.mediaLibrary.files = [...window.mediaLibrary.loadedFiles];
         window.mediaLibrary.loadedFiles = null;

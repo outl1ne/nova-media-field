@@ -74,11 +74,9 @@
         </div>
 
         <div
-          :class="
-            `input-dropzone-wrap ${draggingFile || (showUploadArea && listenUploadArea) ? 'visible' : ''} ${
-              draggingFile && !draggingOverDropzone ? 'pulse' : ''
-            }`
-          "
+          :class="`input-dropzone-wrap ${draggingFile || (showUploadArea && listenUploadArea) ? 'visible' : ''} ${
+            draggingFile && !draggingOverDropzone ? 'pulse' : ''
+          }`"
         >
           <p>
             <svg class="fill-current w-4 h-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -99,7 +97,7 @@
 
       <div class="loader-container" v-if="loadingMediaFiles">
         <div class="loader" />
-        <div class="small-loader " />
+        <div class="small-loader" />
       </div>
     </div>
     <div slot="buttons" class="w-full flex">
@@ -174,16 +172,16 @@ export default {
     },
 
     currentCollection: {
-      get: function() {
+      get: function () {
         return this.field.displayCollection || this.chosenCollection;
       },
-      set: function(value) {
+      set: function (value) {
         this.$emit('update:chosenCollection', value);
       },
     },
 
     currentCollectionData: {
-      get: function() {
+      get: function () {
         if (!this.currentCollection) return null;
         if (this.field.collections[this.currentCollection]) return this.field.collections[this.currentCollection];
 
@@ -365,7 +363,7 @@ export default {
       }
     },
 
-    setEndDrag: debounce(function() {
+    setEndDrag: debounce(function () {
       if (this.endDrag) {
         this.draggingFile = false;
         this.draggingOverDropzone = false;
