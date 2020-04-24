@@ -1,46 +1,38 @@
 # Nova Media Field
 
-Simple image/gallery upload field with media browser.
+This [Laravel Nova](https://nova.laravel.com) package adds a simple image/gallery upload field with a media browser to Laravel Nova.
 
-Requirements:
+## Requirements
 
-- Imagick with it's php extension
+- Imagick
+- Laravel Nova >= 2.10.0
 
-Features:
+## Features:
 
 - Media browser
-- Drag and drop multi file upload
-- Multiple file selection (ex gallery)
+- Drag-and-drop multi file upload
+- Multiple file selection
 - Drag and drop reordering of selected files
 - Collections
-- Thumbnail generator with custom sizes (with command)
-- WebP generator (with command)
+- Thumbnail generator with custom sizes (also re-generation via command)
+- WebP generator (also re-generation via command)
+- Works with [nova-translatable](https://github.com/optimistdigital/nova-translatable)
 
 ## Installation
 
-#### Field installation
+Install the package in a Laravel Nova project via Composer and run migrations:
 
-Under repositories in composer.json add following
-
-```
-{
-  "type": "vcs",
-  "url": "git@github.com:optimistdigital/nova-media-field.git"
-}
-```
-
-Then in your terminal run
-
-```
+```bash
+# Install package
 composer require optimistdigital/nova-media-field
+
+# And then run migrations
 php artisan migrate
 ```
 
-#### Register Media tool
+And then register the `NovaMediaLibrary` tool in `NovaServiceProvider`:
 
-In your `NovaServiceProvider` class add or update `tools` method
-
-```
+```php
 use OptimistDigital\MediaField\NovaMediaLibrary;
 
 public function tools()
@@ -57,30 +49,22 @@ public function tools()
 
 To use media field first define import
 
-```
+```php
 use OptimistDigital\MediaField\MediaField;
-```
 
-Make a field by calling `make` on `MediaField`
+// ...
 
-```
-MediaField::make('Profile image')
-```
+fields() {
+  return [
+    MediaField::make('Profile image', 'profile_image'),
 
-Currently available options
-
-```
-
-// Allows multiple image selection
-MediaField::make('Profile image')->multiple()
-
-// Set fixed collection for field to use
-MediaField::make('Profile image')->collection(String $collectionName)
-
-// Make thumbnails on admin certain size. $height is inherited from $width
-// when null
-MediaField::make('Profile image')->compact($width, $height = null)
-
+    // Configurable options:
+    MediaField::make('Config example', 'config_example'),
+      ->multiple() // Allows multiple images to tbe selected
+      ->collection('profile-pictures') // Defines a fixed collection of images instead of a global scope
+      ->compact($width, $height = null) // Defines the thumbnail image size shown in Nova (to actually change thumbnail image size, use config)
+  ]
+}
 ```
 
 ### Image thumbnails
@@ -88,7 +72,7 @@ MediaField::make('Profile image')->compact($width, $height = null)
 Image thumbnails define different conversions for uploaded images. These conversions can be configured
 under media field config file under `image_sizes` key.
 
-```
+```php
 # config/nova-media-field.php
 
 [
@@ -122,7 +106,7 @@ missing thumbnails and WebP files.
 
 To regenerate your thumbnails you can run
 
-```
+```bash
 php artisan media:regenerate-thumbnails
 ```
 
@@ -130,7 +114,7 @@ php artisan media:regenerate-thumbnails
 
 To regenerate your missing WebP files you can run
 
-```
+```bsah
 php artisan media:regenerate-webp
 ```
 
@@ -164,3 +148,12 @@ Collection configuration goes under media field config file under `collection` k
 - `label` - Display label for collection
 - `constraints` - Array of validation rules (like in Request validation)
 - `image_sizes` - Sizes to generate (overrides default)
+
+## Credits
+
+- [Marttin Notta](https://github.com/marttinnotta)
+- [Tarvo Reinpalu](https://github.com/Tarpsvo)
+
+## License
+
+Nova Media Field is open-sourced software licensed under the [MIT license](LICENSE.md).
