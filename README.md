@@ -48,10 +48,6 @@ public function tools()
 
 ## Usage
 
-### Nova Media Field
-
-To use media field first define import
-
 ```php
 use OptimistDigital\MediaField\MediaField;
 
@@ -98,24 +94,24 @@ under media field config file under `image_sizes` key.
 
 Defining only one dimension (width or height) keeps the ratio.
 
-##### WebP support
+### WebP support
 
 By default WebP support is enabled in nova media config file. On image upload
 the WebP will be generated automatically for you. If you have activated
 or plan to activate it later then you can use commands below to regenerate
 missing thumbnails and WebP files.
 
-##### Regenerate thumbnails
+### Regenerate thumbnails
 
-To regenerate your thumbnails you can run
+To regenerate thumbnails (after defining a new thumbnail size etc) run this command:
 
 ```bash
 php artisan media:regenerate-thumbnails
 ```
 
-##### Regenerate WebP files
+### Regenerate WebP files
 
-To regenerate your missing WebP files you can run
+To regenerate your missing WebP files run this command:
 
 ```bsah
 php artisan media:regenerate-webp
