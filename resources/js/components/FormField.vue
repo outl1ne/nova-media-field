@@ -149,29 +149,23 @@ export default {
 
   mounted() {
     if (this.field.value && this.field.value !== '') {
-      axios
-        .get('/api/media/find', {
-          params: {
-            ids: isString(this.field.value) ? this.field.value.split(',') : this.field.value,
-          },
-        })
-        .then(response => {
-          this.selectedFiles = response.data.map(file => ({
-            data: file,
-            processed: true,
-            uploading: false,
-            uploadProgress: 0,
-          }));
-          if (window.mediaLibrary.loaded) {
-            window.mediaLibrary.files = [
-              ...window.mediaLibrary.files,
-              ...this.selectedFiles.filter(
-                item => !window.mediaLibrary.files.find(file => file.data.id === item.data.id)
-              ),
-            ];
-            this.updateMedia();
-          }
-        });
+      axios.get('/api/media/find', { params: { ids: this.getInitialValue() } }).then(response => {
+        this.selectedFiles = response.data.map(file => ({
+          data: file,
+          processed: true,
+          uploading: false,
+          uploadProgress: 0,
+        }));
+        if (window.mediaLibrary.loaded) {
+          window.mediaLibrary.files = [
+            ...window.mediaLibrary.files,
+            ...this.selectedFiles.filter(
+              item => !window.mediaLibrary.files.find(file => file.data.id === item.data.id)
+            ),
+          ];
+          this.updateMedia();
+        }
+      });
     }
 
     if (!window.mediaLibrary) {
@@ -217,6 +211,12 @@ export default {
       this.showUploadArea = false;
     },
 
+    getInitialValue() {
+      if (Array.isArray(this.field.value)) return this.field.value;
+      if (isString(this.field.value)) return this.field.value.split(',');
+      return [this.field.value];
+    },
+
     /*
      * Set the initial, internal value for the field.
      */
@@ -224,7 +224,7 @@ export default {
       if (!this.field.value) {
         this.value = '';
       } else {
-        const ids = this.field.value.split(',');
+        const ids = this.getInitialValue();
         const validatedIds = ids.filter(id => !isNaN(id));
         this.value = validatedIds.join(',') || '';
       }
