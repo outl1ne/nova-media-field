@@ -18,16 +18,20 @@ class MediaController extends Controller
 
     public function findFiles(Request $request)
     {
-        if (is_array($request->get('ids'))) {
-            $ids =  array_map('trim', array_filter($request->get('ids'), 'is_numeric'));
-            $idsString = implode(',', $ids);
-            $media = Media::whereIn('id', $ids)
-                ->orderByRaw("FIELD (id, $idsString)")
-                ->get();
+        $ids = collect($request->get('ids'))->map('trim')->filter(fn($value) => is_numeric($value));
+
+        if ($ids->isNotEmpty()) {
+
+            $idsString = $ids->implode(',');
+            $media = Media::whereIn('id', $ids->toArray())
+                          ->orderByRaw("FIELD (id, $idsString)")
+                          ->get();
+
             return response()->json($media, 200);
+
         }
 
-        return response()->json(['Media files not found'], 404);
+        return response()->json([ 'Media files not found' ], 404);
     }
 
     public function updateFile(Request $request)
