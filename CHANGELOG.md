@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Fixed issue with media not being queryed on detail view
+- Fixed issue with media not being queried on detail view
 
 ## [1.0.0] - 2020-04-24
 
