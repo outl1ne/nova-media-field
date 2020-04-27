@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2020-04-27
+
+### Changed
+
+- Fixed issue with media not being queryed on detail view
+
 ## [1.0.0] - 2020-04-24
 
 Initial public release.
