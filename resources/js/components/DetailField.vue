@@ -31,9 +31,7 @@ export default {
 
     axios
       .get('/api/media/find', {
-        params: {
-          ids: isString(this.field.value) ? this.field.value.split(',') : this.field.value,
-        },
+        params: { ids: this.getInitialValue() },
       })
       .then(response => {
         this.files = response.data.map(file => ({
@@ -43,6 +41,14 @@ export default {
           uploadProgress: 0,
         }));
       });
+  },
+
+  methods: {
+    getInitialValue() {
+      if (Array.isArray(this.field.value)) return this.field.value;
+      if (isString(this.field.value)) return this.field.value.split(',');
+      return [this.field.value];
+    },
   },
 };
 </script>
