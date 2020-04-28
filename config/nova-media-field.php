@@ -15,5 +15,7 @@ return [
 
     'storage_driver' => config('filesystems.default'),
 
-    'storage_path' => 'public/media/'
+    'storage_path' => 'public/media/',
+
+    'media_handler' => \OptimistDigital\MediaField\Classes\MediaHandler::class,
 ];
