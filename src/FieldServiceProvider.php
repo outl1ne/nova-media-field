@@ -67,7 +67,8 @@ class FieldServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(MediaHandler::class, function () {
-            return new MediaHandler();
+            $mediaHandler = config('nova-media-field.media_handler', MediaHandler::class);
+            return new $mediaHandler;
         });
     }
 }
