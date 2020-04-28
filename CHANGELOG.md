@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2020-04-28
+
+### Added
+
+- Added ability to overwrite MediaHandler class (thanks to [Rafael Milewski](https://github.com/milewski))
+
 ## [1.0.1] - 2020-04-27
 
 ### Changed
