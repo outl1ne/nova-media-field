@@ -46,7 +46,7 @@ class FieldServiceProvider extends ServiceProvider
         });
 
         Nova::resources([
-            Media::class,
+            config('nova-media-field.media_resource', Media::class)
         ]);
 
         $this->commands([

@@ -18,4 +18,6 @@ return [
     'storage_path' => 'public/media/',
 
     'media_handler' => \OptimistDigital\MediaField\Classes\MediaHandler::class,
+
+    'media_resource' => \OptimistDigital\MediaField\Media::class,
 ];
