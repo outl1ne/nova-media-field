@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2020-05-05
+
+### Added
+
+- Added ability to copy link to clipboard through click (thanks to [Rafael Milewski](https://github.com/milewski))
+- Added config option to overwrite the Media resource (thanks to [Rafael Milewski](https://github.com/milewski))
+
+### Changed
+
+- Fixed URL field not displaying (thanks to [Rafael Milewski](https://github.com/milewski))
+
 ## [1.1.0] - 2020-04-28
 
 ### Added
