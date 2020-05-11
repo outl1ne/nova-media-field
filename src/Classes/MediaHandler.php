@@ -30,8 +30,9 @@ class MediaHandler
             'name' => $request->file($key)->getClientOriginalName(),
             'path' => $request->file($key)->getRealPath(),
             'mime_type' => $request->file($key)->getClientMimeType(),
-            'collection' => $request->get('collection') ?? '',
-            'alt' => $request->get('alt') ?? ''
+            'collection' => $request->get('collection', ''),
+            'alt' => $request->get('alt', ''),
+            'withThumbnails' => $request->get('withThumbnails', true),
         ], $instance->getDisk());
     }
 
@@ -175,6 +176,7 @@ class MediaHandler
         }
 
         $mimeType = 'text/plain';
+        $withThumbnails = true;
 
         if (is_array($fileData)) {
             $filename = $fileData['name'];
@@ -183,6 +185,7 @@ class MediaHandler
             $tmpPath = rtrim(dirname($fileData['path']), '/') . '/';
             $collection = $fileData['collection'] ?? '';
             $alt = $fileData['alt'] ?? '';
+            $withThumbnails = filter_var($fileData['withThumbnails'] ?? true, FILTER_VALIDATE_BOOLEAN);
         } else if (is_string($fileData)) {
             $filename = basename($fileData);
             $tmpName = $filename;
@@ -191,7 +194,7 @@ class MediaHandler
             $alt = '';
         }
 
-        return [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType];
+        return [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType, $withThumbnails];
     }
 
     /**
@@ -204,7 +207,8 @@ class MediaHandler
      */
     protected function storeFile($fileData, $disk): Media
     {
-        [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType] = $this->validateFileInput($fileData);
+
+        [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType, $withThumbnails] = $this->validateFileInput($fileData);
 
         $webpEnabled = config('nova-media-field.webp_enabled', true);
         $storagePath = ltrim($this->getUploadPath($disk), '/');
@@ -249,7 +253,7 @@ class MediaHandler
             'data' => '{}',
         ]);
 
-        if ($isImageFile) {
+        if ($isImageFile && $withThumbnails) {
             $generatedImages = $this->generateImageSizes(file_get_contents($tmpPath . $tmpName), $storagePath . $newFilename, $disk);
             $model->image_sizes = json_encode($generatedImages);
         }
