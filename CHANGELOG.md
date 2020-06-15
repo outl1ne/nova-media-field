@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2020-06-15
+
+### Changed
+
+- Fixed uploaded `webp` image not saving original file as `png`, even though it was encoded as such
+
 ## [1.2.0] - 2020-05-05
 
 ### Added
