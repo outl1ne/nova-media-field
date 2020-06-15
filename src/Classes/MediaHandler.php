@@ -86,11 +86,6 @@ class MediaHandler
         foreach (config('nova-media-field.image_sizes', []) as $sizeName => $config) {
             $img = Image::make($file);
 
-            if ($origExtension === 'webp') {
-                $img = $img->encode('png', 80);
-                $origExtension = 'png';
-            }
-
             $crop = isset($config['crop']) && $config['crop'];
 
             if (isset($config['width']) && !isset($config['height'])) {
@@ -209,7 +204,6 @@ class MediaHandler
         $storagePath = ltrim($this->getUploadPath($disk), '/');
         $origFilename = $this->normalizeFileName(pathinfo($filename, PATHINFO_FILENAME));
         $origExtension = pathinfo($filename, PATHINFO_EXTENSION);
-
         $isImageFile = $this->isReadableImage($tmpPath . $tmpName);
 
         $file = null;
