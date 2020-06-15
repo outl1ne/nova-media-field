@@ -86,6 +86,11 @@ class MediaHandler
         foreach (config('nova-media-field.image_sizes', []) as $sizeName => $config) {
             $img = Image::make($file);
 
+            if ($origExtension === 'webp') {
+                $img = $img->encode('png', 80);
+                $origExtension = 'png';
+            }
+
             $crop = isset($config['crop']) && $config['crop'];
 
             if (isset($config['width']) && !isset($config['height'])) {
@@ -100,12 +105,6 @@ class MediaHandler
                 $img->fit($config['width'], $config['height']);
             } else if (isset($config['width']) && isset($config['height'])) {
                 $img->resize($config['width'], $config['height']);
-            }
-
-            // Convert to WEBP
-            if ($webpEnabled) {
-                $webpImg = $img;
-                $webpImg = $webpImg->encode('webp');
             }
 
             try {
@@ -212,7 +211,6 @@ class MediaHandler
         $origExtension = pathinfo($filename, PATHINFO_EXTENSION);
 
         $isImageFile = $this->isReadableImage($tmpPath . $tmpName);
-        $newFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
 
         $file = null;
         if ($isImageFile) {
@@ -221,6 +219,8 @@ class MediaHandler
 
             // If image is not any of common formats, save it as JPG
             if (!in_array($origExtension, ['jpg', 'jpeg', 'png', 'gif'])) $origExtension = 'jpg';
+
+            $newFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
 
             // Encode original
             $origFile = file_get_contents($tmpPath . $tmpName);
