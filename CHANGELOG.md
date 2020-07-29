@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2020-07-29
+
+### Changed
+
+- Fixed non-image (for example SVG) upload which was broken in 1.2.1
+
 ## [1.2.1] - 2020-06-15
 
 ### Changed
