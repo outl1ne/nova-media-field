@@ -227,6 +227,7 @@ class MediaHandler
                 $disk->put($storagePath . $webpFilename, $webpImg);
             }
         } else {
+            $newFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
             $disk->put($storagePath . $newFilename, file_get_contents($tmpPath . $tmpName));
         }
 
