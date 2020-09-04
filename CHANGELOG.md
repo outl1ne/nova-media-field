@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.3] - 2020-09-04
+
+### Changed
+
+- Replaced `env()` usage with `config()` (thanks to [@KasparRosin](https://github.com/KasparRosin))
+- Updated packages
+
 ## [1.2.2] - 2020-07-29
 
 ### Changed
