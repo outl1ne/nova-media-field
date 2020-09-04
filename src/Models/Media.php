@@ -26,12 +26,12 @@ class Media extends Model
 
     public function getUrlAttribute()
     {
-        return env('APP_URL') . Storage::url($this->path . $this->file_name);
+        return config('app.url') . Storage::url($this->path . $this->file_name);
     }
 
     public function getWebpUrlAttribute()
     {
-        return env('APP_URL') . Storage::url($this->path . $this->webp_name);
+        return config('app.url') . Storage::url($this->path . $this->webp_name);
     }
 
     public function getImageSizesAttribute($value)
@@ -39,9 +39,9 @@ class Media extends Model
         $sizes = json_decode($value, true);
 
         foreach ($sizes as $key => $size) {
-            $sizes[$key]['url'] = env('APP_URL') . Storage::url($this->path . $size['file_name']);
+            $sizes[$key]['url'] = config('app.url') . Storage::url($this->path . $size['file_name']);
             if (config('nova-media-field.webp_enabled', true) && isset($size['webp_name'])) {
-                $sizes[$key]['webp_url'] = env('APP_URL') . Storage::url($this->path . $size['webp_name']);
+                $sizes[$key]['webp_url'] = config('app.url') . Storage::url($this->path . $size['webp_name']);
             }
         }
 
