@@ -31,7 +31,7 @@ class Media extends Model
 
     public function getWebpUrlAttribute()
     {
-        return config('app.url') . Storage::url($this->path . $this->webp_name);
+        return !empty($this->webp_name) ? config('app.url') . Storage::url($this->path . $this->webp_name) : null;
     }
 
     public function getImageSizesAttribute($value)
