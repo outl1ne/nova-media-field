@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.4] - 2020-09-21
+
+### Changed
+
+- Fixed webp url returning only folder path when webp_name was null
+
 ## [1.2.3] - 2020-09-04
 
 ### Changed
