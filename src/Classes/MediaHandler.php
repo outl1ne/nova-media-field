@@ -3,16 +3,25 @@
 namespace OptimistDigital\MediaField\Classes;
 
 use Exception;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use GuzzleHttp\Client;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Exception\NotReadableException;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Models\Media;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use OptimistDigital\MediaField\NovaMediaLibrary;
 
 class MediaHandler
 {
     use ValidatesRequests;
+
+    protected $client;
+
+    public function __construct()
+    {
+        $this->client = new Client;
+    }
 
     /**
      * Create new media resource using laravel's Request class
@@ -48,6 +57,18 @@ class MediaHandler
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
         return $instance->storeFile($filepath, $instance->getDisk());
+    }
+
+    public function createFromUrl($fileUrl): ?Media
+    {
+        try {
+            $tmpPath = tempnam(sys_get_temp_dir(), 'media-');
+            $this->client->get($fileUrl, ['sink' => $tmpPath]);
+            return $this->storeFile($tmpPath, $this->getDisk());
+        } catch (Exception $e) {
+            \Log::error($e->getMessage());
+        }
+        return null;
     }
 
     public function isReadableImage($file): bool
