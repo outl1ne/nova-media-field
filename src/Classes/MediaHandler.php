@@ -202,6 +202,7 @@ class MediaHandler
             $filename = basename($fileData);
             $tmpName = $filename;
             $tmpPath = rtrim(dirname($fileData), '/') . '/';
+            $mimeType = mime_content_type($fileData);
             $collection = '';
             $alt = '';
         }
