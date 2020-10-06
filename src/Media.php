@@ -26,7 +26,7 @@ class Media extends Resource
     {
         return [
             ID::make(),
-            Image::make('Preview', 'file_path')->hideWhenUpdating()->hideWhenCreating(),
+            Image::make('Preview', 'thumbnail_path')->hideWhenUpdating()->hideWhenCreating(),
             Text::make('Name', 'file_name')->readonly(),
             UrlField::make('Url', 'url')->readonly(),
             Text::make('Collection', 'collection_name')->readonly(),

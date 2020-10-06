@@ -83,7 +83,7 @@ class MediaHandler
         $origExtension = pathinfo($path, PATHINFO_EXTENSION);
 
         $sizes = [];
-        foreach (config('nova-media-field.image_sizes', []) as $sizeName => $config) {
+        foreach (NovaMediaLibrary::getImageSizes() as $sizeName => $config) {
             $img = Image::make($file);
 
             $crop = isset($config['crop']) && $config['crop'];

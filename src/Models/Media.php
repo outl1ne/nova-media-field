@@ -36,7 +36,7 @@ class Media extends Model
 
     public function getImageSizesAttribute($value)
     {
-        $sizes = json_decode($value, true);
+        $sizes = json_decode($value, true) ?? [];
 
         foreach ($sizes as $key => $size) {
             $sizes[$key]['url'] = config('app.url') . Storage::url($this->path . $size['file_name']);
@@ -46,6 +46,12 @@ class Media extends Model
         }
 
         return $sizes;
+    }
+
+    public function getThumbnailPathAttribute()
+    {
+        $thumbnailFileName = $this->image_sizes['thumbnail']['file_name'] ?? null;
+        return $thumbnailFileName ? str_replace('public/', '', $this->path) . $thumbnailFileName : $this->getFilePathAttribute();
     }
 
     public function getFilePathAttribute()
