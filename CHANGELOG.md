@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2020-10-06
+
+### Added
+
+- Added new `createFromUrl` function to MediaHandler
+
+### Changed
+
+- Enforce thumbnails and always try to display thumbnails in the front-end
+- Fixed case where `mimeType` was left to `text/plain`
+- Updated packages
+
 ## [1.2.4] - 2020-09-21
 
 ### Changed
