@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.1] - 2020-12-02
+
+### Changed
+
+- Fixed MediaController crashing with invalid ids input
+- Updated packages
+
 ## [1.3.0] - 2020-10-06
 
 ### Added
