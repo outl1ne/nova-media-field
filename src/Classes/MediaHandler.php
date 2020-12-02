@@ -63,7 +63,7 @@ class MediaHandler
     {
         try {
             $tmpPath = tempnam(sys_get_temp_dir(), 'media-');
-            $this->client->get($fileUrl, ['sink' => $tmpPath]);
+            $this->client->get($fileUrl, ['sink' => $tmpPath, 'connect_timeout' => 5, 'timeout' => 15]);
             $mimeType = mime_content_type($tmpPath);
             if (!Str::startsWith($mimeType, 'image')) return null;
             return $this->storeFile($tmpPath, $this->getDisk());
