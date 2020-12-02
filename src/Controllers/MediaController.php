@@ -21,9 +21,13 @@ class MediaController extends Controller
         if (is_array($request->get('ids'))) {
             $ids =  array_map('trim', array_filter($request->get('ids'), 'is_numeric'));
             $idsString = implode(',', $ids);
-            $media = Media::whereIn('id', $ids)
-                ->orderByRaw("FIELD (id, $idsString)")
-                ->get();
+            if (empty($ids)) {
+                $media = [];
+            } else {
+                $media = Media::whereIn('id', $ids)
+                    ->orderByRaw("FIELD (id, $idsString)")
+                    ->get();
+            }
             return response()->json($media, 200);
         }
 
