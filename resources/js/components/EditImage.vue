@@ -47,7 +47,7 @@
       <textarea
         v-on:input="onDataUpdate"
         v-model="file.alt"
-        rows="3"
+        rows="1"
         class="w-full form-control form-input form-input-bordered py-3 h-auto"
       ></textarea>
     </div>
@@ -102,7 +102,7 @@ export default {
 .thumbnail-container {
   position: relative;
   width: 100%;
-  height: 120px;
+  height: 180px;
   margin-bottom: 15px;
 
   video {
