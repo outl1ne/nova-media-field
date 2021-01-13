@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.3] - 2021-01-13
+
+### Changed
+
+- Make timeout configurable in `createFromUrl`
+- Changed default timeout to 60 seconds instead of 15
+- Added `max_original_image_dimensions` configuration option that restricts original image size
+- Updated packages
+
 ## [1.3.2] - 2020-12-02
 
 ### Changed
