@@ -59,13 +59,13 @@ class MediaHandler
         return $instance->storeFile($filepath, $instance->getDisk());
     }
 
-    public function createFromUrl($fileUrl): ?Media
+    public function createFromUrl($fileUrl, $options = ['timeout_in_sec' => 60]): ?Media
     {
         try {
             $tmpPath = tempnam(sys_get_temp_dir(), 'media-');
-            $this->client->get($fileUrl, ['sink' => $tmpPath, 'connect_timeout' => 5, 'timeout' => 15]);
+            $this->client->get($fileUrl, ['sink' => $tmpPath, 'connect_timeout' => 5, 'timeout' => $options['timeout_in_sec'] ?? 60]);
             $mimeType = mime_content_type($tmpPath);
-            if (!Str::startsWith($mimeType, 'image')) return null;
+            if (!Str::startsWith($mimeType, 'image')) throw new Exception("Image was not of image mimetype. Instead received: $mimeType");
             return $this->storeFile($tmpPath, $this->getDisk());
         } catch (Exception $e) {
             \Log::error($e->getMessage());
@@ -242,7 +242,17 @@ class MediaHandler
 
             // Encode original
             $origFile = file_get_contents($tmpPath . $tmpName);
-            $file = Image::make($origFile)->encode($origExtension, 80);
+            $image = Image::make($origFile);
+
+            // If max resize is enabled
+            $maxOriginalDimension = config('nova-media-field.max_original_image_dimensions', null);
+            if (!empty($maxOriginalDimension)) {
+                $image = $image->resize($maxOriginalDimension, $maxOriginalDimension, function ($constraint) {
+                    $constraint->aspectRatio();
+                });
+            }
+
+            $file = $image->encode($origExtension, 80);
             $disk->put($storagePath . $newFilename, $file);
 
             if ($webpEnabled) {

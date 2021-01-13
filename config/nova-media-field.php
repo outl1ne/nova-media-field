@@ -9,6 +9,9 @@ return [
         ]
     ],
 
+    // Set dimension size in pixels to limit image size (ie 2000 would resize 6000x3000 image to 2000x1500)
+    'max_original_image_dimensions' => null,
+
     'webp_enabled' => true,
 
     'collections' => [],
