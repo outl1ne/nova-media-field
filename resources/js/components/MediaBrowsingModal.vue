@@ -44,18 +44,12 @@
       <div :class="`flex mb-6`" id="media-dropzone" v-if="!loadingMediaFiles">
         <div class="img-collection" @scroll="scrollEventListener" ref="imgCollectionRef">
           <div class="empty-message" v-if="files.length === 0 && !uploadOnly">
-            <p>
-              There are currently no media files in this library
-            </p>
-            <p>
-              Drag and drop files here to upload them
-            </p>
+            <p>There are currently no media files in this library</p>
+            <p>Drag and drop files here to upload them</p>
           </div>
 
           <div class="empty-message" v-if="files.length === 0 && uploadOnly">
-            <p>
-              Drag and drop files here to upload them
-            </p>
+            <p>Drag and drop files here to upload them</p>
           </div>
 
           <uploaded-file
@@ -451,17 +445,25 @@ export default {
             }
           })
           .catch(error => {
-            if (!error.response) return;
+            if (!error.response) {
+              Nova.$emit('error', 'Failed to upload image.');
+              this.updateMedia();
+              return;
+            }
 
             const response = error.response.data;
 
-            if (Array.isArray(response.errors.file)) {
+            if (Array.isArray(response && response.errors && response.errors.file)) {
               Nova.$emit('error', response.errors.file[0]);
-            } else {
+            } else if (response.message) {
               Nova.$emit('error', response.message);
+            } else {
+              Nova.$emit('error', 'Failed to upload image.');
             }
 
-            window.mediaLibrary.files.splice(0, 1);
+            if (window.mediaLibrary && window.mediaLibrary.files) {
+              window.mediaLibrary.files.splice(0, 1);
+            }
 
             this.updateMedia();
           });
