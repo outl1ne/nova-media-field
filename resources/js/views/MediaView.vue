@@ -9,9 +9,7 @@
     </div>
 
     <div class="flex">
-      <heading :level="1" class="mb-3 flex-1">
-        Media Library
-      </heading>
+      <heading :level="1" class="mb-3 flex-1"> Media Library </heading>
       <div class="flex items-center" :class="{ 'mb-6': !viaResource }">
         <custom-index-toolbar v-if="!viaResource" :resource-name="resourceName" />
         <media-index-button

@@ -13,9 +13,7 @@
 
     <div class="form-field">
       <div>
-        <label class="text-80 leading-tight">
-          File name
-        </label>
+        <label class="text-80 leading-tight"> File name </label>
       </div>
       <div class="file-name">
         {{ file.file_name }}
