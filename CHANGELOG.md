@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.4] - 2021-01-18
+
+### Changed
+
+- Improved error handling on upload failure in Vue
+- Updated packages
+
 ## [1.3.3] - 2021-01-13
 
 ### Changed
