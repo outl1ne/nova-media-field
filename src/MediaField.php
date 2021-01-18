@@ -73,7 +73,7 @@ class MediaField extends Field
         $query = Media::whereIn('id', explode(',', $fieldValue));
 
         if ($this->multiple) {
-            return $query->get();
+            return $query->orderByRaw("FIELD(id, $fieldValue)")->get();
         }
 
         return $query->first();
