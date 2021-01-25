@@ -249,6 +249,7 @@ class MediaHandler
             if (!empty($maxOriginalDimension)) {
                 $image = $image->resize($maxOriginalDimension, $maxOriginalDimension, function ($constraint) {
                     $constraint->aspectRatio();
+                    $constraint->upsize();
                 });
             }
 
