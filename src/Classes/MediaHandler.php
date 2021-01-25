@@ -114,10 +114,12 @@ class MediaHandler
             if (isset($config['width']) && !isset($config['height'])) {
                 $img->resize($config['width'], null, function ($constraint) {
                     $constraint->aspectRatio();
+                    $constraint->upsize();
                 });
             } else if (!isset($config['width']) && isset($config['height'])) {
                 $img->resize(null, $config['height'], function ($constraint) {
                     $constraint->aspectRatio();
+                    $constraint->upsize();
                 });
             } else if (isset($config['width']) && isset($config['height']) && $crop) {
                 $img->fit($config['width'], $config['height']);
