@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.5] - 2021-01-25
+
+### Changed
+
+- Stop image from being upsized when resizing
+- Improve `resolveResponseValue` (thanks to [@Artexis10](https://github.com/Artexis10))
+
 ## [1.3.4] - 2021-01-18
 
 ### Changed
