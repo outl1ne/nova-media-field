@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Models\Media;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use OptimistDigital\MediaField\NovaMediaLibrary;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 
 class MediaHandler
 {
@@ -57,6 +57,11 @@ class MediaHandler
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
         return $instance->storeFile($filepath, $instance->getDisk());
+    }
+
+    public static function createFromData($data): ?Media
+    {
+        return static::createFromFile($data);
     }
 
     public function createFromUrl($fileUrl, $options = ['timeout_in_sec' => 60]): ?Media
@@ -189,11 +194,22 @@ class MediaHandler
     {
         if (is_array($fileData) && !(isset($fileData['name']) && isset($fileData['path']))) {
             throw new \Exception('Cannot store file, missing file name or path!');
-        } else if (is_string($fileData) && !file_exists($fileData)) {
-            throw new \Exception('Cannot store file, invalid file path!');
+        }
+
+        $isString = is_string($fileData);
+        $isBase64 = $this->isValid64base($fileData);
+        $fileExists = file_exists($fileData);
+
+        if ($isString && !$fileExists && !$isBase64) {
+            throw new \Exception('Cannot store file, invalid file path or data!');
         }
 
         $mimeType = 'text/plain';
+        $filename = null;
+        $tmpName = null;
+        $tmpPath = null;
+        $collection = null;
+        $alt = null;
 
         if (is_array($fileData)) {
             $filename = $fileData['name'];
@@ -202,16 +218,31 @@ class MediaHandler
             $tmpPath = rtrim(dirname($fileData['path']), '/') . '/';
             $collection = $fileData['collection'] ?? '';
             $alt = $fileData['alt'] ?? '';
-        } else if (is_string($fileData)) {
-            $filename = basename($fileData);
-            $tmpName = $filename;
-            $tmpPath = rtrim(dirname($fileData), '/') . '/';
-            $mimeType = mime_content_type($fileData);
-            $collection = '';
-            $alt = '';
+        } else if ($isString) {
+            if ($fileExists) {
+                $filename = $tmpName = basename($fileData);
+                $tmpPath = rtrim(dirname($fileData), '/') . '/';
+                $mimeType = mime_content_type($fileData);
+                $collection = '';
+                $alt = '';
+            } else if ($isBase64) {
+                $fullTmpPath = tempnam(sys_get_temp_dir(), 'abmedia-');
+                $image = Image::make($fileData)->save($fullTmpPath);
+
+                $filename = $tmpName = basename($fullTmpPath);
+                $tmpPath = rtrim(dirname($fullTmpPath), '/') . '/';
+                $mimeType = $image->mime();
+                $collection = '';
+                $alt = '';
+            }
         }
 
         return [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType];
+    }
+
+    private function isValid64base($str)
+    {
+        return (base64_decode($str, true) !== false);
     }
 
     /**
