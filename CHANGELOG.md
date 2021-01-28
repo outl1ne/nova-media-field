@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.6] - 2021-01-28
+
+### Added
+
+- Added `createFromData` function that allows saving base64 encoded image
+
+### Changed
+
+- Updated packages
+
 ## [1.3.5] - 2021-01-25
 
 ### Changed
