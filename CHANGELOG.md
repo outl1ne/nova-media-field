@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.7] - 2021-02-01
+
+### Changed
+
+- Fixed case where uploading a file from the UI didn't work
+
 ## [1.3.6] - 2021-01-28
 
 ### Added
