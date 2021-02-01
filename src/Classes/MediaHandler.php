@@ -197,8 +197,8 @@ class MediaHandler
         }
 
         $isString = is_string($fileData);
-        $isBase64 = $this->isValid64base($fileData);
-        $fileExists = file_exists($fileData);
+        $isBase64 = $isString && $this->isValid64base($fileData);
+        $fileExists = $isString && file_exists($fileData);
 
         if ($isString && !$fileExists && !$isBase64) {
             throw new \Exception('Cannot store file, invalid file path or data!');
