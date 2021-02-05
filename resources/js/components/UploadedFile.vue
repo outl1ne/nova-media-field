@@ -79,6 +79,7 @@ export default {
   computed: {
     fileThumbnail() {
       if (!Object.keys(this.file).length) return '';
+      if (this.file.image_sizes.thumbnail) return this.file.image_sizes.thumbnail.url;
       if (this.file.mime_type.indexOf('video') === 0) return this.file.data.thumbnail || '';
       return (this.file.image_sizes.thumbnail || this.file).url;
     },
