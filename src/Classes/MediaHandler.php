@@ -7,6 +7,7 @@ use FFMpeg\FFMpeg;
 use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use FFMpeg\Coordinate\TimeCode;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Models\Media;
@@ -105,26 +106,29 @@ class MediaHandler
      * @param $disk Saving destination
      * @return array
      */
-    public function generateImageSizes($path, $mimeType, $disk): array
+    public function generateImageSizes($tempFilePath, $path, $mimeType, $disk): array
     {
-        $file = file_get_contents($path);
         $webpEnabled = config('nova-media-field.webp_enabled', true);
         $origName = pathinfo($path, PATHINFO_FILENAME);
         $origExtension = pathinfo($path, PATHINFO_EXTENSION);
 
         // Is video
         $isVideo = Str::startsWith($mimeType, 'video');
+        if ($isVideo && !config('nova-media-field.generate_video_thumbnails', false)) return [];
 
         $sizes = [];
         foreach (NovaMediaLibrary::getImageSizes() as $sizeName => $config) {
             if ($isVideo) {
-                $tempFile = tempnam(sys_get_temp_dir(), 'videothumb-');
-                $video = FFMpeg::create();
-                $video->open($path);
-                $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds(1))->save($tempFile);
-                $img = Image::make($tempFile);
+                $thumbnailTmpFile = tempnam(sys_get_temp_dir(), 'videothumb-');
+                $video = FFMpeg::create([
+                    'ffmpeg.binaries' => env('FFMPEG_PATH'),
+                    'ffprobe.binaries' => env('FFPROBE_PATH'),
+                ])->open($tempFilePath);
+                $video->frame(TimeCode::fromSeconds(1))->save($thumbnailTmpFile);
+                $img = Image::make($thumbnailTmpFile);
+                $origExtension = 'jpg';
             } else {
-                $img = Image::make($file);
+                $img = Image::make($tempFilePath);
             }
 
             $crop = isset($config['crop']) && $config['crop'];
@@ -313,13 +317,15 @@ class MediaHandler
             $disk->put($storagePath . $newFilename, file_get_contents($tmpPath . $tmpName));
         }
 
+        $fullFilePath = $storagePath . $newFilename;
+
         $model = new Media([
             'collection_name' => $collection,
             'path' => $storagePath,
             'file_name' => $newFilename,
             'alt' => $alt,
-            'mime_type' => $mimeType ? $mimeType : $disk->getClientMimeType($storagePath . $newFilename),
-            'file_size' => $disk->size($storagePath . $newFilename),
+            'mime_type' => $mimeType ? $mimeType : $disk->getClientMimeType($fullFilePath),
+            'file_size' => $disk->size($fullFilePath),
             'webp_name' => (isset($webpFilename)) ? $webpFilename : null,
             'webp_size' => isset($webpFilename) ? $disk->size($storagePath . $webpFilename) : null,
             'image_sizes' => '{}',
@@ -327,7 +333,7 @@ class MediaHandler
         ]);
 
         if ($isImageFile || $isVideoFile) {
-            $generatedImages = $this->generateImageSizes($storagePath . $newFilename, $mimeType, $disk);
+            $generatedImages = $this->generateImageSizes($tmpPath . $tmpName, $fullFilePath, $mimeType, $disk);
             $model->image_sizes = json_encode($generatedImages);
         }
 

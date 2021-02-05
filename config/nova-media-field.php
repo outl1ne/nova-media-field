@@ -14,6 +14,8 @@ return [
 
     'webp_enabled' => true,
 
+    'generate_video_thumbnails' => false,
+
     'collections' => [],
 
     'storage_driver' => config('filesystems.default'),
