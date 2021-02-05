@@ -94,6 +94,23 @@ under media field config file under `image_sizes` key.
 
 Defining only one dimension (width or height) keeps the ratio.
 
+### Video thumbnails
+
+Media field can generate thumbnails from the first frame of the video. It uses `ffmpeg` and `php-ffmpeg` to achieve this.
+
+To enable this, you must:
+
+- Install `ffmpeg`
+- Provide paths to `ffmpeg` and `ffprobe` (on some environments)
+
+If `ffmpeg` and `ffprobe` paths are not automatically detected, add these variables to your ENV.
+
+```bash
+# NB! Including extension (ie .exe on Windows)
+FFMPEG_PATH=/usr/local/bin/ffmpeg
+FFPROBE_PATH=/usr/local/bin/ffprobe
+```
+
 ### WebP support
 
 By default WebP support is enabled in nova media config file. On image upload
