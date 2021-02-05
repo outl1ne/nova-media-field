@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.9] - 2021-02-06
+
+### Changed
+
+- Fixed video thumbnail not showing in add media modal after upload
+
 ## [1.3.8] - 2021-02-05
 
 ### Added
