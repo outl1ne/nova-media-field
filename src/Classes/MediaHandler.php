@@ -3,6 +3,7 @@
 namespace OptimistDigital\MediaField\Classes;
 
 use Exception;
+use FFMpeg\FFMpeg;
 use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -104,15 +105,27 @@ class MediaHandler
      * @param $disk Saving destination
      * @return array
      */
-    public function generateImageSizes($file, $path, $disk): array
+    public function generateImageSizes($path, $mimeType, $disk): array
     {
+        $file = file_get_contents($path);
         $webpEnabled = config('nova-media-field.webp_enabled', true);
         $origName = pathinfo($path, PATHINFO_FILENAME);
         $origExtension = pathinfo($path, PATHINFO_EXTENSION);
 
+        // Is video
+        $isVideo = Str::startsWith($mimeType, 'video');
+
         $sizes = [];
         foreach (NovaMediaLibrary::getImageSizes() as $sizeName => $config) {
-            $img = Image::make($file);
+            if ($isVideo) {
+                $tempFile = tempnam(sys_get_temp_dir(), 'videothumb-');
+                $video = FFMpeg::create();
+                $video->open($path);
+                $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds(1))->save($tempFile);
+                $img = Image::make($tempFile);
+            } else {
+                $img = Image::make($file);
+            }
 
             $crop = isset($config['crop']) && $config['crop'];
 
@@ -262,6 +275,7 @@ class MediaHandler
         $origFilename = $this->normalizeFileName(pathinfo($filename, PATHINFO_FILENAME));
         $origExtension = pathinfo($filename, PATHINFO_EXTENSION);
         $isImageFile = $this->isReadableImage($tmpPath . $tmpName);
+        $isVideoFile = Str::startsWith($mimeType, 'video');
 
         $file = null;
         if ($isImageFile) {
@@ -312,8 +326,8 @@ class MediaHandler
             'data' => '{}',
         ]);
 
-        if ($isImageFile) {
-            $generatedImages = $this->generateImageSizes(file_get_contents($tmpPath . $tmpName), $storagePath . $newFilename, $disk);
+        if ($isImageFile || $isVideoFile) {
+            $generatedImages = $this->generateImageSizes($storagePath . $newFilename, $mimeType, $disk);
             $model->image_sizes = json_encode($generatedImages);
         }
 
