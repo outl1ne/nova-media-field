@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.8] - 2021-02-05
+
+### Added
+
+- Added video thumbnail generation support
+
+### Changed
+
+- Updated packages
+
 ## [1.3.7] - 2021-02-01
 
 ### Changed
