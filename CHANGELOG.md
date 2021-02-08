@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.10] - 2021-02-08
+
+### Changed
+
+- Fixed Postgres support (thanks to [@LINKeRxUA](https://github.com/LINKeRxUA))
+- Make thumbnail larger in media edit view
+- Updated packages
+
 ## [1.3.9] - 2021-02-06
 
 ### Changed
