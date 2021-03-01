@@ -1,5 +1,5 @@
 <template>
-  <default-field :field="field" :errors="errors" fullWidthContent>
+  <default-field :field="field" :errors="errors" fullWidthContent :show-help-text="showHelpText">
     <template slot="field">
       <div :class="`${isCompact && 'compact-form'} ${isMultiple && 'multi-file-upload'}`">
         <div ref="modals">
