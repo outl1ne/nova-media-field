@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.11] - 2021-03-01
+
+### Changed
+
+- Fixed help text not being displayed
+
 ## [1.3.10] - 2021-02-08
 
 ### Changed
