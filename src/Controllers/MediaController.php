@@ -62,4 +62,12 @@ class MediaController extends Controller
 
         return response()->json($paginator, 200);
     }
+    public function getAudioThumbnail()
+    {
+        return response()->file(realpath(__DIR__ . '/../../resources/images/audio-thumbnail.svg'));
+    }
+    public function getVideoThumbnail()
+    {
+        return response()->file(realpath(__DIR__ . '/../../resources/images/video-thumbnail.svg'));
+    }
 }
