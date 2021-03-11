@@ -6,6 +6,9 @@
         <video v-if="file.mime_type.indexOf('video') === 0" controls>
           <source :src="file.url" :type="file.mime_type" />
         </video>
+        <audio v-if="file.mime_type.indexOf('audio') === 0" controls>
+          <source :src="file.url" :type="file.mime_type" />
+        </audio>
       </div>
     </div>
 

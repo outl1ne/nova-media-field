@@ -26,7 +26,7 @@ class Media extends Resource
     {
         return [
             ID::make(),
-            Image::make('Preview', 'thumbnail_path')->hideWhenUpdating()->hideWhenCreating(),
+            Image::make('Preview')->hideWhenUpdating()->hideWhenCreating()->thumbnail(fn () => self::getThumbnail($this->resource)),
             Text::make('Name', 'file_name')->readonly(),
             UrlField::make('Url', 'url')->readonly(),
             Text::make('Collection', 'collection_name')->readonly(),
@@ -45,5 +45,15 @@ class Media extends Resource
         return [
             new Collection,
         ];
+    }
+
+    public function getThumbnail($resource)
+    {
+        if (str_contains($resource->mime_type, 'audio')) {
+            return '/audio-thumbnail.svg';
+        }
+        if (str_contains($resource->mime_type, 'video')) {
+            return '/video-thumbnail.svg';
+        } else return $resource->thumbnail_path;
     }
 }

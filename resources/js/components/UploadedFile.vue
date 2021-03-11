@@ -11,8 +11,9 @@
     </div>
 
     <div class="thumbnail-container" v-if="file.image_sizes !== void 0">
-      <img v-if="fileThumbnail" draggable="false" :src="fileThumbnail" />
+      <img v-if="fileThumbnail && fileThumbnail !== 'audio'" draggable="false" :src="fileThumbnail" />
       <thumbnail-video-icon icon="video-icon" class="thumbnail-placeholder" v-if="!fileThumbnail" />
+      <thumbnail-audio-icon icon="audio-icon" class="thumbnail-placeholder" v-if="fileThumbnail === 'audio'"/>
     </div>
 
     <div class="checked-box" v-if="selected">
@@ -81,6 +82,7 @@ export default {
       if (!Object.keys(this.file).length) return '';
       if (this.file.image_sizes.thumbnail) return this.file.image_sizes.thumbnail.url;
       if (this.file.mime_type.indexOf('video') === 0) return this.file.data.thumbnail || '';
+      if (this.file.mime_type.indexOf('audio') === 0) return 'audio';
       return (this.file.image_sizes.thumbnail || this.file).url;
     },
     compactStyles() {
