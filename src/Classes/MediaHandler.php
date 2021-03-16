@@ -39,6 +39,12 @@ class MediaHandler
     {
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
+
+        if (config('resolve_duplicates', true)) {
+            $existingMedia = $instance->findExistingMedia($request->file($key)->getRealPath());
+            if ($existingMedia) return $existingMedia;
+        }
+
         return $instance->storeFile([
             'name' => $request->file($key)->getClientOriginalName(),
             'path' => $request->file($key)->getRealPath(),
@@ -51,7 +57,7 @@ class MediaHandler
     /**
      * Creates new media resource from existing file
      *
-     * @param $file Full path to file
+     * @param $filepath - Full path to file
      * @return Media
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \Exception
@@ -60,6 +66,12 @@ class MediaHandler
     {
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
+
+        if (config('resolve_duplicates', true)) {
+            $existingMedia = $instance->findExistingMedia($filepath);
+            if ($existingMedia) return $existingMedia;
+        }
+
         return $instance->storeFile($filepath, $instance->getDisk());
     }
 
@@ -73,12 +85,19 @@ class MediaHandler
         try {
             $tmpPath = tempnam(sys_get_temp_dir(), 'media-');
             $this->client->get($fileUrl, ['sink' => $tmpPath, 'connect_timeout' => 5, 'timeout' => $options['timeout_in_sec'] ?? 60]);
+
+            $existingMedia = $this->findExistingMedia($tmpPath);
+            if (config('nova-media-field.resolve_duplicates', true)) {
+                if ($existingMedia) return $existingMedia;
+            }
+
             $mimeType = mime_content_type($tmpPath);
             if (!Str::startsWith($mimeType, 'image')) throw new Exception("Image was not of image mimetype. Instead received: $mimeType");
             return $this->storeFile($tmpPath, $this->getDisk());
         } catch (Exception $e) {
             \Log::error($e->getMessage());
         }
+
         return null;
     }
 

@@ -25,4 +25,6 @@ return [
     'media_handler' => \OptimistDigital\MediaField\Classes\MediaHandler::class,
 
     'media_resource' => \OptimistDigital\MediaField\Media::class,
+
+    'resolve_duplicates' => true,
 ];
