@@ -13,10 +13,12 @@ use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Models\Media;
 use OptimistDigital\MediaField\NovaMediaLibrary;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use OptimistDigital\MediaField\NovaMediaLibrary;
+use OptimistDigital\MediaField\Traits\ResolvesMedia;
 
 class MediaHandler
 {
-    use ValidatesRequests;
+    use ValidatesRequests, ResolvesMedia;
 
     protected $client;
 
@@ -280,6 +282,7 @@ class MediaHandler
         $origExtension = pathinfo($filename, PATHINFO_EXTENSION);
         $isImageFile = $this->isReadableImage($tmpPath . $tmpName);
         $isVideoFile = Str::startsWith($mimeType, 'video');
+        $fileHash = $this->getFileHash($tmpPath . $tmpName);
 
         $file = null;
         if ($isImageFile) {
@@ -330,6 +333,7 @@ class MediaHandler
             'webp_size' => isset($webpFilename) ? $disk->size($storagePath . $webpFilename) : null,
             'image_sizes' => '{}',
             'data' => '{}',
+            'file_hash' => $fileHash, // Original hash of uploaded file
         ]);
 
         if ($isImageFile || $isVideoFile) {
