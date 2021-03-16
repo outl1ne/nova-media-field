@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Models\Media;
 use OptimistDigital\MediaField\NovaMediaLibrary;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use OptimistDigital\MediaField\NovaMediaLibrary;
 use OptimistDigital\MediaField\Traits\ResolvesMedia;
 
 class MediaHandler
