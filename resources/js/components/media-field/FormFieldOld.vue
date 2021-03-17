@@ -1,10 +1,5 @@
 <template>
-  <default-field
-    :field="field"
-    :errors="errors"
-    full-width-content
-    :show-help-text="showHelpText"
-  >
+  <default-field :field="field" :errors="errors" full-width-content :show-help-text="showHelpText">
     <template slot="field">
       <div :class="`${isCompact && 'compact-form'} ${isMultiple && 'multi-file-upload'}`">
         <div ref="modals">
@@ -33,11 +28,7 @@
           :field="field"
         />
 
-        <p
-          v-else
-          :class="`${!isCompact && 'py-6'}`"
-          :style="`padding-top: ${!isCompact && 9}px;`"
-        >
+        <p v-else :class="`${!isCompact && 'py-6'}`" :style="`padding-top: ${!isCompact && 9}px;`">
           {{ __('No media selected') }}
         </p>
 

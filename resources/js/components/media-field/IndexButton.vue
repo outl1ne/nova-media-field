@@ -16,11 +16,7 @@
       />
     </div>
 
-    <button
-      type="button"
-      class="btn btn-default btn-primary whitespace-no-wrap"
-      @click="openMediaBrowsingModal"
-    >
+    <button type="button" class="btn btn-default btn-primary whitespace-no-wrap" @click="openMediaBrowsingModal">
       {{ __('Upload media') }}
     </button>
   </div>

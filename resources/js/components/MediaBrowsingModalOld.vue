@@ -1,11 +1,5 @@
 <template>
-  <od-modal
-    v-if="isModalOpen"
-    ref="isModalOpen"
-    :name="'isModalOpen'"
-    :align="'flex justify-end'"
-    width="1315"
-  >
+  <od-modal v-if="isModalOpen" ref="isModalOpen" :name="'isModalOpen'" :align="'flex justify-end'" width="1315">
     <div slot="container">
       <div class="modal-header flex flex-wrap justify-between mb-6">
         <h2 class="text-90 font-normal text-xl">
@@ -14,10 +8,7 @@
           {{ currentCollection ? `(${currentCollectionData.label})` : '' }}
         </h2>
 
-        <div
-          v-if="!uploadOnly"
-          class="collection-select"
-        >
+        <div v-if="!uploadOnly" class="collection-select">
           <div>
             <span>Search</span>
             <input
@@ -25,7 +16,7 @@
               class="w-full form-control form-input form-input-bordered"
               dusk="search"
               @input="onSearchInput"
-            >
+            />
           </div>
           <div>
             <span>Collection</span>
@@ -38,10 +29,7 @@
               :disabled="displayCollection != null"
               class="w-full form-control form-select"
             >
-              <option
-                value=""
-                selected
-              >
+              <option value="" selected>
                 {{ __('All collections') }}
               </option>
             </select-control>
@@ -55,28 +43,14 @@
         :current-collection="currentCollection"
       />
 
-      <div
-        v-if="!loadingMediaFiles"
-        id="media-dropzone"
-        :class="`flex mb-6`"
-      >
-        <div
-          ref="imgCollectionRef"
-          class="img-collection"
-          @scroll="scrollEventListener"
-        >
-          <div
-            v-if="files.length === 0 && !uploadOnly"
-            class="empty-message"
-          >
+      <div v-if="!loadingMediaFiles" id="media-dropzone" :class="`flex mb-6`">
+        <div ref="imgCollectionRef" class="img-collection" @scroll="scrollEventListener">
+          <div v-if="files.length === 0 && !uploadOnly" class="empty-message">
             <p>There are currently no media files in this library</p>
             <p>Drag and drop files here to upload them</p>
           </div>
 
-          <div
-            v-if="files.length === 0 && uploadOnly"
-            class="empty-message"
-          >
+          <div v-if="files.length === 0 && uploadOnly" class="empty-message">
             <p>Drag and drop files here to upload them</p>
           </div>
 
@@ -92,10 +66,7 @@
         </div>
 
         <div class="image-editor">
-          <edit-image
-            v-if="stateActiveFile !== void 0"
-            :file="stateActiveFile.data"
-          />
+          <edit-image v-if="stateActiveFile !== void 0" :file="stateActiveFile.data" />
         </div>
 
         <div
@@ -104,11 +75,7 @@
           }`"
         >
           <p>
-            <svg
-              class="fill-current w-4 h-4 mx-auto"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-            >
+            <svg class="fill-current w-4 h-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
               <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
             </svg>
           </p>
@@ -120,22 +87,16 @@
             class="input-dropzone"
             multiple
             @change="fileBrowserSelectListener"
-          >
+          />
         </div>
       </div>
 
-      <div
-        v-if="loadingMediaFiles"
-        class="loader-container"
-      >
+      <div v-if="loadingMediaFiles" class="loader-container">
         <div class="loader" />
         <div class="small-loader" />
       </div>
     </div>
-    <div
-      slot="buttons"
-      class="w-full flex"
-    >
+    <div slot="buttons" class="w-full flex">
       <button
         v-if="
           (uploadOnly && !(showUploadArea && listenUploadArea)) || !(showUploadArea && listenUploadArea) || draggingFile
@@ -164,11 +125,7 @@
         >
           {{ __('Apply and close') }}
         </button>
-        <button
-          type="button"
-          class="btn btn-default btn-danger"
-          @click.prevent="closeModal"
-        >
+        <button type="button" class="btn btn-default btn-danger" @click.prevent="closeModal">
           {{ __('Close') }}
         </button>
       </div>

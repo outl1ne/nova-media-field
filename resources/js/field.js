@@ -1,26 +1,41 @@
 import MediaLibraryStore from './store/MediaLibraryStore';
+import MediaPreview from './components/MediaPreview';
+import EditImage from './components/EditImage';
+import UploadedFile from './components/UploadedFile';
+import OdModal from './components/common/Modal';
+import MediaBrowsingModal from './components/MediaBrowsingModal';
+import MediaModalConstraints from './components/MediaModalConstraints';
+import IndexMediaField from './components/media-field/IndexField';
+import DetailMediaField from './components/media-field/DetailField';
+import FormMediaField from './components/media-field/FormField';
+import MediaEditModal from './components/MediaEditModal';
+import ThumbnailVideoIcon from './icons/VideoIcon';
+import MediaResourceTable from './components/resource-tables/ResourceTable';
+import MediaResourceTableRow from './components/resource-tables/ResourceTableRow';
+import MediaIndexButton from './components/media-field/IndexButton';
+import MediaView from './views/MediaView';
 
 Nova.booting((Vue, router, Store) => {
-  Vue.component('MediaPreview', require('./components/MediaPreview').default);
-  Vue.component('EditImage', require('./components/EditImage').default);
-  Vue.component('UploadedFile', require('./components/UploadedFile').default);
-  Vue.component('OdModal', require('./components/common/Modal').default);
-  Vue.component('MediaBrowsingModal', require('./components/MediaBrowsingModal').default);
-  Vue.component('MediaModalConstraints', require('./components/MediaModalConstraints').default);
-  Vue.component('IndexMediaField', require('./components/media-field/IndexField').default);
-  Vue.component('DetailMediaField', require('./components/media-field/DetailField').default);
-  Vue.component('FormMediaField', require('./components/media-field/FormField').default);
-  Vue.component('MediaEditModal', require('./components/MediaEditModal').default);
-  Vue.component('ThumbnailVideoIcon', require('./icons/VideoIcon').default);
-  Vue.component('MediaResourceTable', require('./components/resource-tables/ResourceTable').default);
-  Vue.component('MediaResourceTableRow', require('./components/resource-tables/ResourceTableRow').default);
-  Vue.component('MediaIndexButton', require('./components/media-field/IndexButton').default);
+  Vue.component('MediaPreview', MediaPreview);
+  Vue.component('EditImage', EditImage);
+  Vue.component('UploadedFile', UploadedFile);
+  Vue.component('OdModal', OdModal);
+  Vue.component('MediaBrowsingModal', MediaBrowsingModal);
+  Vue.component('MediaModalConstraints', MediaModalConstraints);
+  Vue.component('IndexMediaField', IndexMediaField);
+  Vue.component('DetailMediaField', DetailMediaField);
+  Vue.component('FormMediaField', FormMediaField);
+  Vue.component('MediaEditModal', MediaEditModal);
+  Vue.component('ThumbnailVideoIcon', ThumbnailVideoIcon);
+  Vue.component('MediaResourceTable', MediaResourceTable);
+  Vue.component('MediaResourceTableRow', MediaResourceTableRow);
+  Vue.component('MediaIndexButton', MediaIndexButton);
 
   router.addRoutes([
     {
       name: 'media-library',
       path: '/media-library',
-      component: require('./views/MediaView').default,
+      component: MediaView,
     },
   ]);
 

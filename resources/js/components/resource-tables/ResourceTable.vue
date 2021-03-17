@@ -1,18 +1,9 @@
 <template>
-  <table
-    v-if="resources.length > 0"
-    class="table w-full"
-    cellpadding="0"
-    cellspacing="0"
-    data-testid="resource-table"
-  >
+  <table v-if="resources.length > 0" class="table w-full" cellpadding="0" cellspacing="0" data-testid="resource-table">
     <thead>
       <tr>
         <!-- Field Names -->
-        <th
-          v-for="field in fields"
-          :class="`text-${field.textAlign}`"
-        >
+        <th v-for="field in fields" :class="`text-${field.textAlign}`">
           <sortable-icon
             v-if="field.sortable"
             :resource-name="resourceName"

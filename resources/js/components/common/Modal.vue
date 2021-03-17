@@ -1,15 +1,9 @@
 <template>
-  <portal
-    to="modals"
-    :name="name"
-  >
+  <portal to="modals" :name="name">
     <transition name="fade">
       <div class="od-modal-container">
         <modal>
-          <div
-            class="bg-white rounded-lg shadow-lg od-modal"
-            :style="style"
-          >
+          <div class="bg-white rounded-lg shadow-lg od-modal" :style="style">
             <div class="p-8">
               <slot name="container" />
             </div>

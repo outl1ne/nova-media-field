@@ -1,12 +1,6 @@
 <template>
-  <div
-    :class="`preview-container ${multiple ? 'multiple-preview' : ''}`"
-    :style="compactPreviewStyles"
-  >
-    <media-edit-modal
-      :is-modal-open.sync="isModalOpen"
-      :file="editingFile"
-    />
+  <div :class="`preview-container ${multiple ? 'multiple-preview' : ''}`" :style="compactPreviewStyles">
+    <media-edit-modal :is-modal-open.sync="isModalOpen" :file="editingFile" />
 
     <draggable
       v-if="files && files.length && multiple && ordering"
@@ -25,10 +19,7 @@
       />
     </draggable>
 
-    <div
-      v-if="files && files.length && multiple && !ordering"
-      class="media-preview no-order"
-    >
+    <div v-if="files && files.length && multiple && !ordering" class="media-preview no-order">
       <uploaded-file
         v-for="file in files"
         :key="file"
@@ -39,10 +30,7 @@
       />
     </div>
 
-    <div
-      v-if="files && files.length && !multiple"
-      class="media-preview"
-    >
+    <div v-if="files && files.length && !multiple" class="media-preview">
       <uploaded-file
         :file="files[0].data"
         :dimensions="field.detailThumbnailSize"
@@ -57,7 +45,6 @@
 import draggable from 'vuedraggable';
 
 export default {
-
   components: {
     draggable,
   },

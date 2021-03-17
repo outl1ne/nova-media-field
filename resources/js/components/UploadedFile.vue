@@ -4,45 +4,22 @@
     :style="compactStyles"
     @click="onClick"
   >
-    <div
-      v-if="progress !== -1"
-      class="upload-progress"
-    >
+    <div v-if="progress !== -1" class="upload-progress">
       <div class="progress-bar">
-        <div
-          class="progress"
-          :style="`width: ${progress}%`"
-        />
+        <div class="progress" :style="`width: ${progress}%`" />
       </div>
     </div>
 
-    <div
-      v-if="file.image_sizes !== void 0"
-      class="thumbnail-container"
-    >
-      <img
-        v-if="fileThumbnail"
-        draggable="false"
-        :src="fileThumbnail"
-      >
-      <thumbnail-video-icon
-        v-if="!fileThumbnail"
-        icon="video-icon"
-        class="thumbnail-placeholder"
-      />
+    <div v-if="file.image_sizes !== void 0" class="thumbnail-container">
+      <img v-if="fileThumbnail" draggable="false" :src="fileThumbnail" />
+      <thumbnail-video-icon v-if="!fileThumbnail" icon="video-icon" class="thumbnail-placeholder" />
     </div>
 
-    <div
-      v-if="selected"
-      class="checked-box"
-    >
+    <div v-if="selected" class="checked-box">
       <checkbox :checked="selected" />
     </div>
 
-    <div
-      v-if="file.file_name && !hideName"
-      class="uploaded-file-name"
-    >
+    <div v-if="file.file_name && !hideName" class="uploaded-file-name">
       {{ file.file_name || '' }}
     </div>
   </div>

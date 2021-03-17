@@ -1,11 +1,7 @@
 <template>
   <panel-item :field="field">
     <template slot="value">
-      <media-preview
-        :ordering="false"
-        :files="files"
-        :multiple="multipleSelect"
-      />
+      <media-preview :ordering="false" :files="files" :multiple="multipleSelect" />
     </template>
   </panel-item>
 </template>

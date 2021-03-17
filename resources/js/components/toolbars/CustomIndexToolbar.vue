@@ -1,9 +1,6 @@
 <template>
   <div class="flex w-full justify-end items-center mx-3">
-    <component
-      :is="component"
-      v-if="hasComponent"
-    />
+    <component :is="component" v-if="hasComponent" />
   </div>
 </template>
 

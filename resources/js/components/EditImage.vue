@@ -2,18 +2,9 @@
   <div class="edit-image-container">
     <div class="form-field">
       <div class="thumbnail-container">
-        <img
-          v-if="file.mime_type.indexOf('image') === 0"
-          :src="file.url"
-        >
-        <video
-          v-if="file.mime_type.indexOf('video') === 0"
-          controls
-        >
-          <source
-            :src="file.url"
-            :type="file.mime_type"
-          >
+        <img v-if="file.mime_type.indexOf('image') === 0" :src="file.url" />
+        <video v-if="file.mime_type.indexOf('video') === 0" controls>
+          <source :src="file.url" :type="file.mime_type" />
         </video>
       </div>
     </div>
@@ -36,7 +27,7 @@
         readonly="readonly"
         class="w-full form-control form-input form-input-bordered"
         :value="file.url"
-      >
+      />
     </div>
 
     <div class="form-field">
@@ -46,7 +37,7 @@
         type="text"
         class="w-full form-control form-input form-input-bordered"
         @input="onDataUpdate"
-      >
+      />
     </div>
 
     <div class="form-field">
