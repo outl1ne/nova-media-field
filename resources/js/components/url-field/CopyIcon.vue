@@ -1,7 +1,7 @@
 <template>
   <svg
-    class="cursor-pointer text-70 hover:text-primary mr-3 inline-flex items-center fill-current"
     v-tooltip.click="__('Copy to clipboard')"
+    class="cursor-pointer text-70 hover:text-primary mr-3 inline-flex items-center fill-current"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     width="24"

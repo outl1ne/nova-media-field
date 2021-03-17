@@ -3,8 +3,13 @@
     v-if="currentCollection && currentCollectionData.constraints && currentCollectionData.constraints.length"
     class="media-rules"
   >
-    <div class="media-rule-label">Constraints</div>
-    <div v-for="constraintKey of Object.keys(currentCollectionData.constraints)" class="single-constraint">
+    <div class="media-rule-label">
+      Constraints
+    </div>
+    <div
+      v-for="constraintKey of Object.keys(currentCollectionData.constraints)"
+      class="single-constraint"
+    >
       <span class="constraint-label">
         {{ parseConstraintKey(constraintKey) }}
       </span>

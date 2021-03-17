@@ -4,22 +4,45 @@
     :style="compactStyles"
     @click="onClick"
   >
-    <div v-if="progress !== -1" class="upload-progress">
+    <div
+      v-if="progress !== -1"
+      class="upload-progress"
+    >
       <div class="progress-bar">
-        <div class="progress" :style="`width: ${progress}%`"></div>
+        <div
+          class="progress"
+          :style="`width: ${progress}%`"
+        />
       </div>
     </div>
 
-    <div class="thumbnail-container" v-if="file.image_sizes !== void 0">
-      <img v-if="fileThumbnail" draggable="false" :src="fileThumbnail" />
-      <thumbnail-video-icon icon="video-icon" class="thumbnail-placeholder" v-if="!fileThumbnail" />
+    <div
+      v-if="file.image_sizes !== void 0"
+      class="thumbnail-container"
+    >
+      <img
+        v-if="fileThumbnail"
+        draggable="false"
+        :src="fileThumbnail"
+      >
+      <thumbnail-video-icon
+        v-if="!fileThumbnail"
+        icon="video-icon"
+        class="thumbnail-placeholder"
+      />
     </div>
 
-    <div class="checked-box" v-if="selected">
+    <div
+      v-if="selected"
+      class="checked-box"
+    >
       <checkbox :checked="selected" />
     </div>
 
-    <div class="uploaded-file-name" v-if="file.file_name && !hideName">
+    <div
+      v-if="file.file_name && !hideName"
+      class="uploaded-file-name"
+    >
       {{ file.file_name || '' }}
     </div>
   </div>
@@ -64,18 +87,6 @@ export default {
     //
   }),
 
-  methods: {
-    onClick() {
-      this.$emit('click');
-    },
-    compactWidth() {
-      return Array.isArray(this.dimensions) && this.dimensions[0];
-    },
-    compactHeight() {
-      return Array.isArray(this.dimensions) && (this.dimensions[1] || this.dimensions[0]);
-    },
-  },
-
   computed: {
     fileThumbnail() {
       if (!Object.keys(this.file).length) return '';
@@ -88,6 +99,18 @@ export default {
         width: `${this.compactWidth()}px`,
         height: `${this.compactHeight()}px`,
       };
+    },
+  },
+
+  methods: {
+    onClick() {
+      this.$emit('click');
+    },
+    compactWidth() {
+      return Array.isArray(this.dimensions) && this.dimensions[0];
+    },
+    compactHeight() {
+      return Array.isArray(this.dimensions) && (this.dimensions[1] || this.dimensions[0]);
     },
   },
 };

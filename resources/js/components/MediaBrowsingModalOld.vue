@@ -1,5 +1,11 @@
 <template>
-  <od-modal ref="isModalOpen" v-if="isModalOpen" :name="'isModalOpen'" :align="'flex justify-end'" width="1315">
+  <od-modal
+    v-if="isModalOpen"
+    ref="isModalOpen"
+    :name="'isModalOpen'"
+    :align="'flex justify-end'"
+    width="1315"
+  >
     <div slot="container">
       <div class="modal-header flex flex-wrap justify-between mb-6">
         <h2 class="text-90 font-normal text-xl">
@@ -8,28 +14,36 @@
           {{ currentCollection ? `(${currentCollectionData.label})` : '' }}
         </h2>
 
-        <div class="collection-select" v-if="!uploadOnly">
+        <div
+          v-if="!uploadOnly"
+          class="collection-select"
+        >
           <div>
             <span>Search</span>
             <input
-              class="w-full form-control form-input form-input-bordered"
               id="search"
+              class="w-full form-control form-input form-input-bordered"
               dusk="search"
               @input="onSearchInput"
-            />
+            >
           </div>
           <div>
             <span>Collection</span>
             <select-control
               :id="collectionField.attribute"
-              :dusk="collectionField.attribute"
-              :fieldName="collectionField.fieldName"
-              :options="collectionField.options"
               v-model="currentCollection"
+              :dusk="collectionField.attribute"
+              :field-name="collectionField.fieldName"
+              :options="collectionField.options"
               :disabled="displayCollection != null"
               class="w-full form-control form-select"
             >
-              <option value="" selected>{{ __('All collections') }}</option>
+              <option
+                value=""
+                selected
+              >
+                {{ __('All collections') }}
+              </option>
             </select-control>
           </div>
         </div>
@@ -37,34 +51,51 @@
 
       <media-modal-constraints
         :field="field"
-        :currentCollectionData="currentCollectionData"
-        :currentCollection="currentCollection"
+        :current-collection-data="currentCollectionData"
+        :current-collection="currentCollection"
       />
 
-      <div :class="`flex mb-6`" id="media-dropzone" v-if="!loadingMediaFiles">
-        <div class="img-collection" @scroll="scrollEventListener" ref="imgCollectionRef">
-          <div class="empty-message" v-if="files.length === 0 && !uploadOnly">
+      <div
+        v-if="!loadingMediaFiles"
+        id="media-dropzone"
+        :class="`flex mb-6`"
+      >
+        <div
+          ref="imgCollectionRef"
+          class="img-collection"
+          @scroll="scrollEventListener"
+        >
+          <div
+            v-if="files.length === 0 && !uploadOnly"
+            class="empty-message"
+          >
             <p>There are currently no media files in this library</p>
             <p>Drag and drop files here to upload them</p>
           </div>
 
-          <div class="empty-message" v-if="files.length === 0 && uploadOnly">
+          <div
+            v-if="files.length === 0 && uploadOnly"
+            class="empty-message"
+          >
             <p>Drag and drop files here to upload them</p>
           </div>
 
           <uploaded-file
             v-for="file in fileList.filter(filterUploadedFiles)"
+            :key="file.id"
             :selected="stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
             :active="file.processed && stateActiveFile && file.data.id === stateActiveFile.data.id"
-            @click.native="toggleFileSelect(file)"
-            :key="file.id"
             :file="file.processed ? file.data : {}"
             :progress="file.uploading ? file.uploadProgress : -1"
+            @click.native="toggleFileSelect(file)"
           />
         </div>
 
         <div class="image-editor">
-          <edit-image v-if="stateActiveFile !== void 0" :file="stateActiveFile.data" />
+          <edit-image
+            v-if="stateActiveFile !== void 0"
+            :file="stateActiveFile.data"
+          />
         </div>
 
         <div
@@ -73,57 +104,71 @@
           }`"
         >
           <p>
-            <svg class="fill-current w-4 h-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <svg
+              class="fill-current w-4 h-4 mx-auto"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
               <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
             </svg>
           </p>
           <p>To upload files you can simply drag and drop them in the area or click it to open file browser.</p>
           <input
-            type="file"
             ref="uploadFiles"
+            type="file"
             name="media"
             class="input-dropzone"
-            @change="fileBrowserSelectListener"
             multiple
-          />
+            @change="fileBrowserSelectListener"
+          >
         </div>
       </div>
 
-      <div class="loader-container" v-if="loadingMediaFiles">
+      <div
+        v-if="loadingMediaFiles"
+        class="loader-container"
+      >
         <div class="loader" />
         <div class="small-loader" />
       </div>
     </div>
-    <div slot="buttons" class="w-full flex">
+    <div
+      slot="buttons"
+      class="w-full flex"
+    >
       <button
-        type="button"
         v-if="
           (uploadOnly && !(showUploadArea && listenUploadArea)) || !(showUploadArea && listenUploadArea) || draggingFile
         "
-        v-on:click="openModalWithUpload"
+        type="button"
         class="btn btn-default btn-primary whitespace-no-wrap"
+        @click="openModalWithUpload"
       >
         {{ __('Upload files') }}
       </button>
       <button
-        type="button"
         v-if="!(!(showUploadArea && listenUploadArea) || draggingFile)"
-        v-on:click="showMediaLibrary"
+        type="button"
         class="btn btn-default btn-primary whitespace-no-wrap"
+        @click="showMediaLibrary"
       >
         {{ __('Back') }}
       </button>
 
       <div class="flex w-full justify-end">
         <button
-          type="button"
           v-if="(!(showUploadArea && listenUploadArea) || draggingFile) && !uploadOnly"
-          @click.prevent="closeModalAndSave"
+          type="button"
           class="btn btn-default btn-primary mr-3"
+          @click.prevent="closeModalAndSave"
         >
           {{ __('Apply and close') }}
         </button>
-        <button type="button" @click.prevent="closeModal" class="btn btn-default btn-danger">
+        <button
+          type="button"
+          class="btn btn-default btn-danger"
+          @click.prevent="closeModal"
+        >
           {{ __('Close') }}
         </button>
       </div>

@@ -1,19 +1,24 @@
 <template>
-  <default-field :field="field" :errors="errors" fullWidthContent :show-help-text="showHelpText">
+  <default-field
+    :field="field"
+    :errors="errors"
+    full-width-content
+    :show-help-text="showHelpText"
+  >
     <template slot="field">
       <div :class="`${isCompact && 'compact-form'} ${isMultiple && 'multi-file-upload'}`">
         <div ref="modals">
           <media-browsing-modal
             :field="field"
-            :multipleSelect="multipleSelect"
+            :multiple-select="multipleSelect"
             :files.sync="files"
-            :isModalOpen.sync="isModalOpen"
-            :chosenCollection.sync="chosenCollection"
-            :activeFile.sync="activeFile"
-            :updateMedia="updateMedia"
-            :showUploadArea.sync="showUploadArea"
-            :loadingMediaFiles.sync="loadingMediaFiles"
-            :selectedFiles.sync="selectedFiles"
+            :is-modal-open.sync="isModalOpen"
+            :chosen-collection.sync="chosenCollection"
+            :active-file.sync="activeFile"
+            :update-media="updateMedia"
+            :show-upload-area.sync="showUploadArea"
+            :loading-media-files.sync="loadingMediaFiles"
+            :selected-files.sync="selectedFiles"
             @loadImages="fetchFiles"
             @search="searchValue => fetchFiles(searchValue)"
           />
@@ -22,22 +27,26 @@
         <media-preview
           v-if="selectedFiles.length > 0"
           :ordering="field.ordering"
-          :changeOrder="handleChange"
+          :change-order="handleChange"
           :files="selectedFiles"
           :multiple="multipleSelect"
           :field="field"
         />
 
-        <p :class="`${!isCompact && 'py-6'}`" :style="`padding-top: ${!isCompact && 9}px;`" v-else>
+        <p
+          v-else
+          :class="`${!isCompact && 'py-6'}`"
+          :style="`padding-top: ${!isCompact && 9}px;`"
+        >
           {{ __('No media selected') }}
         </p>
 
         <div class="field-buttons ml-auto">
           <button
-            type="button"
             v-if="selectedFiles.length"
-            v-on:click="clearSelectedFiles"
+            type="button"
             class="btn btn-default btn-danger inline-flex items-center relative ml-auto mr-3"
+            @click="clearSelectedFiles"
           >
             <span>
               {{ __('Clear') }}
@@ -45,8 +54,8 @@
           </button>
           <button
             type="button"
-            v-on:click="openMediaBrowsingModal"
             class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3"
+            @click="openMediaBrowsingModal"
           >
             <span>
               {{ __('Media library') }}
@@ -118,6 +127,18 @@ export default {
     };
   },
 
+  computed: {
+    multipleSelect() {
+      return this.field.multiple;
+    },
+    isCompact() {
+      return Array.isArray(this.field.detailThumbnailSize) && this.field.detailThumbnailSize[0];
+    },
+    isMultiple() {
+      return this.field.multiple || false;
+    },
+  },
+
   watch: {
     selectedFiles: function (value) {
       if (!value || !Array.isArray(value) || !window.mediaLibrary.loadedFiles) return;
@@ -132,18 +153,6 @@ export default {
         window.mediaLibrary.loadedFiles = null;
         this.updateMedia();
       }
-    },
-  },
-
-  computed: {
-    multipleSelect() {
-      return this.field.multiple;
-    },
-    isCompact() {
-      return Array.isArray(this.field.detailThumbnailSize) && this.field.detailThumbnailSize[0];
-    },
-    isMultiple() {
-      return this.field.multiple || false;
     },
   },
 

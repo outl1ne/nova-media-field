@@ -1,14 +1,23 @@
 <template>
-  <table v-if="resources.length > 0" class="table w-full" cellpadding="0" cellspacing="0" data-testid="resource-table">
+  <table
+    v-if="resources.length > 0"
+    class="table w-full"
+    cellpadding="0"
+    cellspacing="0"
+    data-testid="resource-table"
+  >
     <thead>
       <tr>
         <!-- Field Names -->
-        <th v-for="field in fields" :class="`text-${field.textAlign}`">
+        <th
+          v-for="field in fields"
+          :class="`text-${field.textAlign}`"
+        >
           <sortable-icon
-            @sort="requestOrderByChange(field)"
+            v-if="field.sortable"
             :resource-name="resourceName"
             :uri-key="field.sortableUriKey"
-            v-if="field.sortable"
+            @sort="requestOrderByChange(field)"
           >
             {{ field.indexName }}
           </sortable-icon>
@@ -19,12 +28,12 @@
     </thead>
     <tbody>
       <tr
+        is="ecom-resource-table-row"
         v-for="(resource, index) in resources"
-        :testId="`${resourceName}-items-${index}`"
         :key="resource.id.value"
+        :test-id="`${resourceName}-items-${index}`"
         :delete-resource="deleteResource"
         :restore-resource="restoreResource"
-        is="ecom-resource-table-row"
         :resource="resource"
         :resource-name="resourceName"
         :relationship-type="relationshipType"
@@ -97,29 +106,6 @@ export default {
     resourceCount: null,
   }),
 
-  methods: {
-    /**
-     * Delete the given resource.
-     */
-    deleteResource(resource) {
-      this.$emit('delete', [resource]);
-    },
-
-    /**
-     * Restore the given resource.
-     */
-    restoreResource(resource) {
-      this.$emit('restore', [resource]);
-    },
-
-    /**
-     * Broadcast that the ordering should be updated.
-     */
-    requestOrderByChange(field) {
-      this.$emit('order', field);
-    },
-  },
-
   computed: {
     /**
      * Get all of the available fields for the resources.
@@ -142,6 +128,29 @@ export default {
      */
     viaHasOne() {
       return this.relationshipType == 'hasOne' || this.relationshipType == 'morphOne';
+    },
+  },
+
+  methods: {
+    /**
+     * Delete the given resource.
+     */
+    deleteResource(resource) {
+      this.$emit('delete', [resource]);
+    },
+
+    /**
+     * Restore the given resource.
+     */
+    restoreResource(resource) {
+      this.$emit('restore', [resource]);
+    },
+
+    /**
+     * Broadcast that the ordering should be updated.
+     */
+    requestOrderByChange(field) {
+      this.$emit('order', field);
     },
   },
 };

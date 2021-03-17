@@ -3,20 +3,24 @@
     <div ref="modals">
       <media-browsing-modal
         :field="field"
-        :multipleSelect="multipleSelect"
+        :multiple-select="multipleSelect"
         :files.sync="files"
-        :uploadOnly="true"
-        :isModalOpen.sync="isModalOpen"
-        :chosenCollection.sync="chosenCollection"
-        :activeFile.sync="activeFile"
-        :showUploadArea.sync="showUploadArea"
+        :upload-only="true"
+        :is-modal-open.sync="isModalOpen"
+        :chosen-collection.sync="chosenCollection"
+        :active-file.sync="activeFile"
+        :show-upload-area.sync="showUploadArea"
+        :loading-media-files.sync="loadingMediaFiles"
+        :selected-files.sync="selectedFiles"
         @updateFiles="updateFiles"
-        :loadingMediaFiles.sync="loadingMediaFiles"
-        :selectedFiles.sync="selectedFiles"
       />
     </div>
 
-    <button type="button" v-on:click="openMediaBrowsingModal" class="btn btn-default btn-primary whitespace-no-wrap">
+    <button
+      type="button"
+      class="btn btn-default btn-primary whitespace-no-wrap"
+      @click="openMediaBrowsingModal"
+    >
       {{ __('Upload media') }}
     </button>
   </div>
@@ -47,17 +51,17 @@ export default {
     };
   },
 
+  computed: {
+    multipleSelect() {
+      return this.field.multiple;
+    },
+  },
+
   watch: {
     isModalOpen: function (value) {
       if (!value) {
         this.files = [];
       }
-    },
-  },
-
-  computed: {
-    multipleSelect() {
-      return this.field.multiple;
     },
   },
 

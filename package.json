@@ -5,7 +5,7 @@
     "watch": "mix watch",
     "hot": "mix watch --hot",
     "prod": "mix --production",
-    "format": "prettier --write 'resources/**/*.{js,scss,vue}'"
+    "format": "prettier --write 'resources/**/*.{js,scss,vue}' && eslint --fix resources/js/**.{js,vue}"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
@@ -23,6 +23,7 @@
     "eslint-plugin-vue": "^7.7.0"
   },
   "dependencies": {
+    "eslint-loader": "^4.0.2",
     "vue": "^2.6.12",
     "vue-clipboard2": "^0.3.1",
     "vuedraggable": "^2.24.3",

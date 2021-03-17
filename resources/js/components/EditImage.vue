@@ -2,14 +2,23 @@
   <div class="edit-image-container">
     <div class="form-field">
       <div class="thumbnail-container">
-        <img :src="file.url" v-if="file.mime_type.indexOf('image') === 0" />
-        <video v-if="file.mime_type.indexOf('video') === 0" controls>
-          <source :src="file.url" :type="file.mime_type" />
+        <img
+          v-if="file.mime_type.indexOf('image') === 0"
+          :src="file.url"
+        >
+        <video
+          v-if="file.mime_type.indexOf('video') === 0"
+          controls
+        >
+          <source
+            :src="file.url"
+            :type="file.mime_type"
+          >
         </video>
       </div>
     </div>
 
-    <div class="separator"></div>
+    <div class="separator" />
 
     <div class="form-field">
       <div>
@@ -27,27 +36,27 @@
         readonly="readonly"
         class="w-full form-control form-input form-input-bordered"
         :value="file.url"
-      />
+      >
     </div>
 
     <div class="form-field">
       <label class="text-80 leading-tight">Title</label>
       <input
+        v-model="file.title"
         type="text"
         class="w-full form-control form-input form-input-bordered"
-        v-on:input="onDataUpdate"
-        v-model="file.title"
-      />
+        @input="onDataUpdate"
+      >
     </div>
 
     <div class="form-field">
       <label class="text-80 leading-tight">Alt text</label>
       <textarea
-        v-on:input="onDataUpdate"
         v-model="file.alt"
         rows="2"
         class="w-full form-control form-input form-input-bordered py-3 h-auto"
-      ></textarea>
+        @input="onDataUpdate"
+      />
     </div>
 
     <div class="label-field">

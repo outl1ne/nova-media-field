@@ -16,8 +16,8 @@ import Link from './Link';
 import CopyIcon from './CopyIcon';
 
 export default {
-  props: ['resourceName', 'field'],
   components: { Link, CopyIcon },
+  props: ['resourceName', 'field'],
   mounted() {
     const editButtonEl = document.querySelector('.content').querySelector('[dusk="edit-resource-button"]');
 

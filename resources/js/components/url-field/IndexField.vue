@@ -1,6 +1,8 @@
 <template>
   <div class="flex items-center">
-    <Link :url="field.value">{{ __('Link') }}</Link>
+    <Link :url="field.value">
+      {{ __('Link') }}
+    </Link>
     <CopyIcon :text="field.value" />
   </div>
 </template>
@@ -10,8 +12,8 @@ import CopyIcon from './CopyIcon';
 import Link from './Link';
 
 export default {
-  props: ['resourceName', 'field'],
   components: { CopyIcon, Link },
+  props: ['resourceName', 'field'],
   mounted() {
     document.querySelectorAll('table tr td:last-child span:nth-child(2)').forEach(node => {
       node.parentNode.removeChild(node);

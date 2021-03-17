@@ -1,4 +1,4 @@
 Nova.booting((Vue, router) => {
-  Vue.component('custom-index-toolbar', require('./components/toolbars/CustomIndexToolbar'));
-  Vue.component('media-index-toolbar', require('./components/toolbars/MediaIndexToolbar'));
+  Vue.component('CustomIndexToolbar', require('./components/toolbars/CustomIndexToolbar'));
+  Vue.component('MediaIndexToolbar', require('./components/toolbars/MediaIndexToolbar'));
 });

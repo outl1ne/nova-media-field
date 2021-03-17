@@ -1,13 +1,21 @@
 <template>
-  <portal to="modals" :name="name">
+  <portal
+    to="modals"
+    :name="name"
+  >
     <transition name="fade">
       <div class="od-modal-container">
         <modal>
-          <div class="bg-white rounded-lg shadow-lg od-modal" :style="style">
-            <div class="p-8"><slot name="container"></slot></div>
+          <div
+            class="bg-white rounded-lg shadow-lg od-modal"
+            :style="style"
+          >
+            <div class="p-8">
+              <slot name="container" />
+            </div>
 
             <div class="bg-30 px-6 py-3 flex">
-              <slot name="buttons"></slot>
+              <slot name="buttons" />
             </div>
           </div>
         </modal>

@@ -1,5 +1,10 @@
 <template>
-  <default-field :field="field" :errors="errors" fullWidthContent :show-help-text="showHelpText">
+  <default-field
+    :field="field"
+    :errors="errors"
+    full-width-content
+    :show-help-text="showHelpText"
+  >
     <field-buttons />
   </default-field>
 </template>
