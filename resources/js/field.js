@@ -1,4 +1,6 @@
-Nova.booting((Vue, router, store) => {
+import MediaLibraryStore from './store/MediaLibraryStore';
+
+Nova.booting((Vue, router, Store) => {
   Vue.component('media-preview', require('./components/MediaPreview').default);
   Vue.component('edit-image', require('./components/EditImage').default);
   Vue.component('uploaded-file', require('./components/UploadedFile').default);
@@ -21,4 +23,6 @@ Nova.booting((Vue, router, store) => {
       component: require('./views/MediaView').default,
     },
   ]);
+
+  Store.registerModule('media-library', MediaLibraryStore);
 });
