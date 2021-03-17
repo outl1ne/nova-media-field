@@ -95,7 +95,7 @@
 
 <script>
 import { FormField, HandlesValidationErrors } from 'laravel-nova';
-import debounce from '../debounce';
+import debounce from '../../debounce';
 
 function isString(value) {
   return typeof value === 'string' || value instanceof String;
