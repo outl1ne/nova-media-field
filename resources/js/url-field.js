@@ -1,7 +1,7 @@
 import VueClipboard from 'vue-clipboard2';
-import IndexField from './components/url-field/IndexField';
-import DetailField from './components/url-field/DetailField';
-import FormField from './components/url-field/FormField';
+import IndexField from './nova-url-field/IndexField';
+import DetailField from './nova-url-field/DetailField';
+import FormField from './nova-url-field/FormField';
 
 Nova.booting(Vue => {
   Vue.use(VueClipboard);
