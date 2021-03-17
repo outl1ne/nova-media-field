@@ -1,12 +1,7 @@
 <template>
   <div class="edit-image-container">
     <div class="form-field">
-      <div class="thumbnail-container">
-        <img v-if="file.mime_type.indexOf('image') === 0" :src="file.url" />
-        <video v-if="file.mime_type.indexOf('video') === 0" controls>
-          <source :src="file.url" :type="file.mime_type" />
-        </video>
-      </div>
+      <div class="thumbnail-container" />
     </div>
 
     <div class="separator" />
@@ -15,80 +10,34 @@
       <div>
         <label class="text-80 leading-tight"> File name </label>
       </div>
-      <div class="file-name">
-        {{ file.file_name }}
-      </div>
+      <div class="file-name" />
     </div>
 
     <div class="form-field">
       <label class="text-80 leading-tight">URL</label>
-      <input
-        type="text"
-        readonly="readonly"
-        class="w-full form-control form-input form-input-bordered"
-        :value="file.url"
-      />
+      <input type="text" readonly="readonly" class="w-full form-control form-input form-input-bordered" />
     </div>
 
     <div class="form-field">
       <label class="text-80 leading-tight">Title</label>
-      <input
-        v-model="file.title"
-        type="text"
-        class="w-full form-control form-input form-input-bordered"
-        @input="onDataUpdate"
-      />
+      <input type="text" class="w-full form-control form-input form-input-bordered" />
     </div>
 
     <div class="form-field">
       <label class="text-80 leading-tight">Alt text</label>
-      <textarea
-        v-model="file.alt"
-        rows="2"
-        class="w-full form-control form-input form-input-bordered py-3 h-auto"
-        @input="onDataUpdate"
-      />
+      <textarea rows="2" class="w-full form-control form-input form-input-bordered py-3 h-auto" />
     </div>
 
     <div class="label-field">
       <label class="text-80 leading-tight">
         <span>Collection:</span>
-        <span>{{ file.collection_name || 'none' }}</span>
       </label>
     </div>
   </div>
 </template>
 
 <script>
-import debounce from './../debounce';
-
-export default {
-  props: {
-    file: {
-      type: Object,
-      default: void 0,
-      required: false,
-    },
-  },
-
-  data: () => ({
-    //
-  }),
-
-  methods: {
-    onDataUpdate() {
-      this.updateImageData(this.file);
-    },
-
-    updateImageData: debounce(file => {
-      axios.post('/api/media/update', {
-        id: file.id,
-        title: file.title,
-        alt: file.alt,
-      });
-    }, 500),
-  },
-};
+export default {};
 </script>
 
 <style lang="scss" scoped>

@@ -4,7 +4,7 @@
       <div class="od-modal-container">
         <modal>
           <div class="bg-white rounded-lg shadow-lg od-modal" :style="style">
-            <div class="p-8">
+            <div class="p-6">
               <slot name="container" />
             </div>
 
@@ -37,10 +37,6 @@ export default {
       required: false,
     },
   },
-
-  data: () => ({
-    //
-  }),
 
   computed: {
     style() {
