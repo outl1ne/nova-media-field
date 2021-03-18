@@ -32,9 +32,8 @@ class MediaField extends Field
     }
 
     /**
-     * Set the number of rows used for the textarea.
+     * Allow user to choose multiple files or images, like a gallery or list
      *
-     * @param  int $rows
      * @return $this
      */
     public function multiple()
@@ -60,7 +59,7 @@ class MediaField extends Field
     public function jsonSerialize()
     {
         return array_merge(parent::jsonSerialize(), [
-            'multiple' => $this->multiple,
+            'allowMultipleFiles' => $this->multiple,
             'order' => $this->multiple,
             'displayCollection' => $this->collection,
             'collections' => config('nova-media-field.collections'),

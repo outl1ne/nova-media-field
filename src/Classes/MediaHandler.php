@@ -66,14 +66,16 @@ class MediaHandler
         return static::createFromFile($data);
     }
 
-    public function createFromUrl($fileUrl, $options = ['timeout_in_sec' => 60]): ?Media
+    public static function createFromUrl($fileUrl, $options = ['timeout_in_sec' => 60]): ?Media
     {
+        /** @var MediaHandler $instance */
+        $instance = app()->make(MediaHandler::class);
         try {
             $tmpPath = tempnam(sys_get_temp_dir(), 'media-');
-            $this->client->get($fileUrl, ['sink' => $tmpPath, 'connect_timeout' => 5, 'timeout' => $options['timeout_in_sec'] ?? 60]);
+            $instance->client->get($fileUrl, ['sink' => $tmpPath, 'connect_timeout' => 5, 'timeout' => $options['timeout_in_sec'] ?? 60]);
             $mimeType = mime_content_type($tmpPath);
             if (!Str::startsWith($mimeType, 'image')) throw new Exception("Image was not of image mimetype. Instead received: $mimeType");
-            return $this->storeFile($tmpPath, $this->getDisk());
+            return $instance->storeFile($tmpPath, $instance->getDisk());
         } catch (Exception $e) {
             \Log::error($e->getMessage());
         }
