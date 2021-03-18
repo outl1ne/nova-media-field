@@ -15,7 +15,7 @@ class MediaField extends Field
      */
     public $component = 'media-field';
 
-    protected $multiple = false;
+    protected $gallery = false;
 
     protected $collection = null;
 
@@ -26,26 +26,30 @@ class MediaField extends Field
      * @param null $height - Inherited from width when null
      * @return $this
      */
-    public function compact($width = 36, $height = null) {
+    public function compact($width = 36, $height = null): MediaField
+    {
         $this->detailThumbnailSize = [$width, $height];
         return $this;
     }
 
-    /**
-     * Set the number of rows used for the textarea.
-     *
-     * @param  int $rows
-     * @return $this
-     */
-    public function multiple()
+    public function multiple(): MediaField
     {
-        $this->multiple = true;
+        user_error("Method '" . __METHOD__ . "' is deprecated. Use method 'gallery' instead", E_USER_DEPRECATED);
 
+        return $this->gallery();
+    }
+
+    public function gallery(): MediaField
+    {
+        $this->gallery = true;
         return $this;
     }
 
-
-    public function collection($collection)
+    /**
+     * @param string $collection
+     * @return $this
+     */
+    public function collection(string $collection): MediaField
     {
         $this->collection = $collection;
         return $this;
@@ -57,11 +61,10 @@ class MediaField extends Field
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return array_merge(parent::jsonSerialize(), [
-            'multiple' => $this->multiple,
-            'order' => $this->multiple,
+            'gallery' => $this->gallery,
             'displayCollection' => $this->collection,
             'collections' => config('nova-media-field.collections'),
             'detailThumbnailSize' => $this->detailThumbnailSize
@@ -72,7 +75,7 @@ class MediaField extends Field
     {
         $query = Media::whereIn('id', explode(',', $fieldValue));
 
-        if ($this->multiple) {
+        if ($this->gallery) {
             return $query->orderByRaw("FIELD(id, $fieldValue)")->get();
         }
 
