@@ -1,8 +1,8 @@
 webpack.mix.js
-node_modules
-src
-config
-dist
-migrations
+node_modules/
+src/
+config/
+dist/
+migrations/
 resources/sass
 resources/views
