@@ -1,26 +1,31 @@
 <template>
   <div>
-    <media-browsing-modal />
-
-    <default-field :field="field" full-width-content :show-help-text="showHelpText">
+    <default-field :field="field" full-width-content>
       <template slot="field">
         <media-preview />
-
-        <FieldButtons />
+        <field-buttons />
       </template>
     </default-field>
   </div>
 </template>
 <script>
 import FieldButtons from '../components/common/FieldButtons';
-import { FormField, HandlesValidationErrors } from 'laravel-nova';
 import MediaPreview from '../components/MediaPreview';
-import MediaBrowsingModal from '../components/modals/MediaBrowsingModal';
+
 export default {
-  components: { FieldButtons, MediaPreview, MediaBrowsingModal },
+  components: { FieldButtons, MediaPreview },
 
-  mixins: [FormField, HandlesValidationErrors],
+  provide() {
+    return {
+      field: this.field,
+    };
+  },
 
-  props: ['resourceName', 'resourceId', 'field'],
+  props: {
+    field: {
+      type: Object,
+      default: null,
+    },
+  },
 };
 </script>

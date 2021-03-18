@@ -11,7 +11,7 @@
       <button type="button" class="btn btn-default btn-primary mr-3">
         {{ __('Apply and close') }}
       </button>
-      <button type="button" class="btn btn-default btn-danger">
+      <button type="button" class="btn btn-default btn-danger" @click="closeBrowsingModal">
         {{ __('Close') }}
       </button>
     </div>
@@ -19,5 +19,11 @@
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    closeBrowsingModal() {
+      this.$store.commit('media-library/closeMediaBrowserModal');
+    },
+  },
+};
 </script>
