@@ -5,6 +5,7 @@
         v-if="!isUploadMode"
         type="button"
         class="btn btn-default btn-primary whitespace-no-wrap"
+        @click="setUploadMode(true)"
       >
         {{ __('Upload files') }}
       </button>
@@ -12,6 +13,7 @@
         v-if="isUploadMode"
         type="button"
         class="btn btn-default btn-primary whitespace-no-wrap"
+        @click="setUploadMode(false)"
       >
         {{ __('Back to library') }}
       </button>
@@ -41,15 +43,20 @@
 
 <script>
 export default {
-  data() {
-    return {
-      isUploadMode: false
+  props: {
+    isUploadMode: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
     closeBrowsingModal() {
       this.$store.commit('media-library/closeMediaBrowserModal');
     },
+    setUploadMode(mode) {
+      console.log('mode', mode)
+      this.$emit('update:isUploadMode', mode)
+    }
   },
 };
 </script>

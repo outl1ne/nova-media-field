@@ -9,24 +9,24 @@
 
         <browsing-modal-constraints />
 
-        <browsing-modal-file-list />
+        <browsing-modal-file-list v-if="!isUploadMode" />
       </div>
       <div
         slot="buttons"
         class="w-full flex"
       >
-        <browsing-modal-footer />
+        <browsing-modal-footer :is-upload-mode.sync="isUploadMode" />
       </div>
     </modal>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Modal from '../common/Modal';
 import BrowsingModalHeader from './browsing-modal/BrowsingModalHeader';
 import BrowsingModalFooter from './browsing-modal/BrowsingModalFooter';
 import BrowsingModalConstraints from './browsing-modal/BrowsingModalConstraints';
-import { mapGetters } from 'vuex';
 import MediaLibrary from '../mixins/MediaLibrary';
 import BrowsingModalFileList from './browsing-modal/BrowsingModalFileList';
 
@@ -40,7 +40,12 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
 
+  data() {
+    return {
+      isUploadMode: false
+    }
   },
 
   computed: {
@@ -50,7 +55,6 @@ export default {
   },
 
   mounted() {
-    console.log('fetchImages')
     this.fetchImages();
   },
 };
