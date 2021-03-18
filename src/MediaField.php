@@ -15,7 +15,7 @@ class MediaField extends Field
      */
     public $component = 'media-field';
 
-    protected $gallery = false;
+    protected $multiple = false;
 
     protected $collection = null;
 
@@ -26,30 +26,26 @@ class MediaField extends Field
      * @param null $height - Inherited from width when null
      * @return $this
      */
-    public function compact($width = 36, $height = null): MediaField
-    {
+    public function compact($width = 36, $height = null) {
         $this->detailThumbnailSize = [$width, $height];
         return $this;
     }
 
-    public function multiple(): MediaField
+    /**
+     * Set the number of rows used for the textarea.
+     *
+     * @param  int $rows
+     * @return $this
+     */
+    public function multiple()
     {
-        user_error("Method '" . __METHOD__ . "' is deprecated. Use method 'gallery' instead", E_USER_DEPRECATED);
+        $this->multiple = true;
 
-        return $this->gallery();
-    }
-
-    public function gallery(): MediaField
-    {
-        $this->gallery = true;
         return $this;
     }
 
-    /**
-     * @param string $collection
-     * @return $this
-     */
-    public function collection(string $collection): MediaField
+
+    public function collection($collection)
     {
         $this->collection = $collection;
         return $this;
@@ -61,10 +57,11 @@ class MediaField extends Field
      *
      * @return array
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize()
     {
         return array_merge(parent::jsonSerialize(), [
-            'gallery' => $this->gallery,
+            'multiple' => $this->multiple,
+            'order' => $this->multiple,
             'displayCollection' => $this->collection,
             'collections' => config('nova-media-field.collections'),
             'detailThumbnailSize' => $this->detailThumbnailSize
@@ -75,7 +72,7 @@ class MediaField extends Field
     {
         $query = Media::whereIn('id', explode(',', $fieldValue));
 
-        if ($this->gallery) {
+        if ($this->multiple) {
             return $query->orderByRaw("FIELD(id, $fieldValue)")->get();
         }
 
