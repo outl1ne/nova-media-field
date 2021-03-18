@@ -1,9 +1,6 @@
 <template>
   <div :class="`flex mb-6`">
-    <div
-      ref="imgCollectionRef"
-      class="img-collection"
-    >
+    <div v-if="false">
       <div
         v-if="allMediaFiles.length === 0"
         class="empty-message"
@@ -18,11 +15,15 @@
       >
         <p>Drag and drop files here to upload them</p>
       </div>
-
+    </div>
+    <div
+      ref="imgCollectionRef"
+      class="img-collection flex w-full whitespace-normal"
+    >
       <browsing-modal-file
-        v-for="file in allMediaFiles"
-        :id="file.id"
+        v-for="file of allMediaFiles"
         :key="file.id"
+        :file="file"
       />
     </div>
   </div>
@@ -48,10 +49,18 @@ export default {
   },
 
   mounted() {
-    console.log('wat')
     setTimeout(() => {
       console.log('woof', this.allMediaFiles)
     },2000)
   },
 };
 </script>
+<style lang="scss">
+.img-collection {
+  height: 60vh;
+
+  .uploaded-file {
+    margin: 8px;
+  }
+}
+</style>

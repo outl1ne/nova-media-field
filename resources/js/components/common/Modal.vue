@@ -5,11 +5,11 @@
         class="bg-white rounded-lg shadow-lg od-modal"
         :style="style"
       >
-        <div class="p-6">
+        <div class="p-6 flex h-full">
           <slot name="container" />
         </div>
 
-        <div class="bg-30 px-6 py-3 flex">
+        <div class="bg-30 px-6 py-3 flex browsing-modal-footer">
           <slot name="buttons" />
         </div>
       </div>
@@ -46,9 +46,19 @@ export default {
 </script>
 
 <style>
+
+.browsing-modal-footer {
+  margin-top: -60px;
+}
+
+.od-modal-container .modal > div {
+  height: 100vh;
+  padding: 50px 25px;
+}
+
 .od-modal-container .modal > div > div {
-  padding: 0 20px;
   width: 100%;
+  display: flex;
 }
 
 .od-modal {

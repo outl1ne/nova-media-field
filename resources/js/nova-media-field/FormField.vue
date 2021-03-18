@@ -1,8 +1,11 @@
 <template>
   <div>
-    <default-field :field="field" full-width-content>
+    <default-field
+      :field="field"
+      full-width-content
+    >
       <template slot="field">
-        <media-preview />
+        <media-preview v-if="hasValue" />
         <field-buttons />
       </template>
     </default-field>
@@ -27,5 +30,11 @@ export default {
       default: null,
     },
   },
+
+  computed: {
+    hasValue() {
+      return isNaN(this.field.value)
+    }
+  }
 };
 </script>

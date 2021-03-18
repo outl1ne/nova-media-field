@@ -7,9 +7,9 @@
       <div slot="container">
         <browsing-modal-header upload-only />
 
-        <browsing-modal-file-list />
-
         <browsing-modal-constraints />
+
+        <browsing-modal-file-list />
       </div>
       <div
         slot="buttons"
@@ -50,6 +50,7 @@ export default {
   },
 
   mounted() {
+    console.log('fetchImages')
     this.fetchImages();
   },
 };

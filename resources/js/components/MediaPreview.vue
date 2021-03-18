@@ -4,26 +4,25 @@
     :style="compactPreviewStyles"
   >
     <div class="media-preview">
-      <browsing-modal-file />
+      Raw id: {{ field.value }}
     </div>
   </div>
 </template>
 
 <script>
-import BrowsingModalFile from "./modals/browsing-modal/BrowsingModalFile";
-
 export default {
-  components: {
-    BrowsingModalFile,
-  },
   inject: ['field'],
   computed: {
     compactPreviewStyles() {
-      if (!Array.isArray(this?.field?.detailThumbnailSize)) return null;
+      if (!Array.isArray(this.field?.detailThumbnailSize)) return null;
       return {
         'min-height': `${this.compactHeight() + 18}px`,
       };
     },
+  },
+
+  mounted() {
+    console.log('field', this.field)
   },
 };
 </script>
