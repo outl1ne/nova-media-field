@@ -20,7 +20,7 @@ return [
 
     'storage_driver' => env('MEDIA_LIBRARY_DISK', 'public'),
 
-    'storage_path' => 'public/media/',
+    'storage_path' => 'media/',
 
     'media_handler' => \OptimistDigital\MediaField\Classes\MediaHandler::class,
 
