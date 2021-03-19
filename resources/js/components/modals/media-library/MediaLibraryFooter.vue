@@ -54,7 +54,6 @@ export default {
       this.$store.commit('media-library/closeMediaLibraryModal');
     },
     setUploadMode(mode) {
-      console.log('mode', mode)
       this.$emit('update:isUploadMode', mode)
     }
   },

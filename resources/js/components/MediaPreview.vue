@@ -20,9 +20,5 @@ export default {
       };
     },
   },
-
-  mounted() {
-    console.log('field', this.field)
-  },
 };
 </script>

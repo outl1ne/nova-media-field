@@ -1,13 +1,20 @@
 <template>
   <div :class="`media-library-file ${hasFocus ? 'focus' : ''} ${hasSelected ? 'selected' : ''}`">
     <div
-      v-if="fileThumbnail"
       class="thumbnail-container"
     >
       <img
+        v-if="file.uploaded && fileThumbnail"
         draggable="false"
         :src="fileThumbnail"
       >
+      <media-loader
+        v-else
+        center
+        :text="loadingText"
+        draggable="false"
+        :src="fileThumbnail"
+      />
     </div>
     <div
       v-if="fileName && !hideName"
@@ -19,7 +26,12 @@
 </template>
 
 <script>
+import MediaLoader from "../../common/MediaLoader";
+
 export default {
+
+  components: {MediaLoader},
+
   props: {
     file: {
       type: Object,
@@ -41,12 +53,22 @@ export default {
     },
     fileThumbnail() {
       return this.file?.thumbnail || ''
+    },
+    loadingText() {
+      if (this.file?.processing) return 'Processing...'
+
+      const fileCount = this.file?.fileList?.length
+
+      if (!this.file?.processing && fileCount > 1) return `Uploading ${fileCount} files...`
+      if (!this.file?.processing && fileCount === 1) return `Uploading 1 file...`
+
+      return ''
     }
   }
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .media-library-file {
   width: 125px;
   height: 150px;
@@ -54,6 +76,10 @@ export default {
   transition: box-shadow 0.2s, border-color 0.2s;
   overflow: hidden;
   cursor: pointer;
+
+  .loader-container {
+    border: 1px solid var(--40)
+  }
 
   .media-library-file-name {
     padding: 4px 5px;

@@ -43,9 +43,7 @@ export default {
      */
     addFileListToMediaLibrary(fileList) {
       if (!(fileList instanceof FileList)) return;
-      if (!(fileList instanceof File)) {
-        fileList = [fileList]
-      }
+      else if (fileList instanceof File) fileList = [fileList]
 
       // If not already a list
       if (!fileList.length) {
@@ -66,6 +64,9 @@ export default {
         uploaded: false,
         thumbnail: '',
         fileList,
+        progress: 0,
+        uploading: false,
+        processing: false
       };
     },
 

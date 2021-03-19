@@ -22,6 +22,7 @@
         type="file"
         name="media"
         class="input-dropzone"
+        multiple
         @change="fileBrowserSelectListener"
       >
     </div>
@@ -59,30 +60,22 @@ export default {
 
   methods: {
 
-    fileBrowserSelectListener() {
+    fileBrowserSelectListener(e) {
+      e.preventDefault();
+      e.stopPropagation();
 
+      this.addFileListToMediaLibrary(e.target.files)
+
+      this.$emit('update:isUploadMode', false)
     },
 
     dropEventListener(e) {
       e.preventDefault();
       e.stopPropagation();
 
-      console.log('e.dataTransfer.files', e.dataTransfer.files)
-
       this.addFileListToMediaLibrary(e.dataTransfer.files)
 
       this.$emit('update:isUploadMode', false)
-
-      // for (const fileKey of Object.keys(e.dataTransfer.files)) {
-      //   this.files.unshift({
-      //     fileInput: e.dataTransfer.files[fileKey],
-      //     collection: this.currentCollection || null,
-      //     data: {},
-      //     uploadProgress: 0,
-      //     uploading: false,
-      //     processed: false,
-      //   });
-      // }
     },
 
     dragLeaveListener(e) {
@@ -97,8 +90,6 @@ export default {
     dragOverListener(e) {
       e.preventDefault();
       e.stopPropagation();
-
-      console.log('dragover')
 
       if (e.target.matches('.input-dropzone')) this.showDropAnimation = true;
     },

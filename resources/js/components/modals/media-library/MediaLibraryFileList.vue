@@ -47,12 +47,6 @@ export default {
       allMediaFiles: 'media-library/getAllFiles',
     }),
   },
-
-  mounted() {
-    setTimeout(() => {
-      console.log('woof', this.allMediaFiles)
-    },2000)
-  },
 };
 </script>
 <style lang="scss">
