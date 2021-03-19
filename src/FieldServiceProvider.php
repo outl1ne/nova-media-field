@@ -39,10 +39,15 @@ class FieldServiceProvider extends ServiceProvider
         Validator::extend('height', '\OptimistDigital\MediaField\Classes\MediaValidator@height');
 
         Nova::serving(function (ServingNova $event) {
-            Nova::script('media-field', __DIR__ . '/../dist/js/field.js');
-            Nova::style('media-field', __DIR__ . '/../dist/css/field.css');
-            Nova::script('url-field', __DIR__ . '/../dist/js/urlField.js');
-            Nova::script('custom-index-toolbar', __DIR__ . '/../dist/js/toolbar.js');
+            $files = app('files');
+            if ($files->exists(__DIR__ . '/../dist/hot')) {
+                Nova::remoteScript('http://localhost:8080/js/field.js');
+            } else {
+                Nova::script('media-field', __DIR__ . '/../dist/js/field.js');
+                Nova::style('media-field', __DIR__ . '/../dist/css/field.css');
+                Nova::script('url-field', __DIR__ . '/../dist/js/urlField.js');
+                Nova::script('custom-index-toolbar', __DIR__ . '/../dist/js/toolbar.js');
+            }
         });
 
         Nova::resources([
