@@ -1,5 +1,5 @@
 <template>
-  <div :class="`flex mb-6`">
+  <div class="flex mb-6 w-full">
     <div v-if="false">
       <div
         v-if="allMediaFiles.length === 0"

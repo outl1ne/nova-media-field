@@ -5,7 +5,7 @@
         class="bg-white rounded-lg shadow-lg od-modal"
         :style="style"
       >
-        <div class="p-6 flex h-full">
+        <div class="p-6 w-full">
           <slot name="container" />
         </div>
 
@@ -46,13 +46,7 @@ export default {
 </script>
 
 <style>
-
-.browsing-modal-footer {
-  margin-top: -60px;
-}
-
 .od-modal-container .modal > div {
-  height: 100vh;
   padding: 50px 25px;
 }
 

@@ -4,7 +4,7 @@ export default {
     selectedFileIds: [],
     nextTmpMediaItemId: 0,
     mediaLibraryModal: {
-      isOpen: false,
+      isOpen: true,
       uploadOnly: false
     }
   },

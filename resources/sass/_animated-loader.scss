@@ -1,0 +1,44 @@
+
+@keyframes rotate {
+  0% {
+    transform: translate(-50%, -50%) rotate(0);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+
+.loader-container {
+  width: 100%;
+  min-height: 400px;
+  position: relative;
+
+  .loader {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-left-color: #4099de;
+    border-right-color: #4099de;
+    top: 50%;
+    left: 50%;
+    transform-origin: center;
+    animation: rotate 1s linear infinite;
+  }
+
+  .small-loader {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-left-color: #4099de;
+    border-right-color: #4099de;
+    top: 50%;
+    left: 50%;
+    transform-origin: center;
+    animation: rotate 1s linear reverse infinite;
+  }
+}

@@ -4,12 +4,20 @@
       v-if="isModalOpen"
       width="1315"
     >
-      <div slot="container">
+      <div
+        slot="container"
+        class="w-full"
+      >
         <media-library-header upload-only />
 
         <media-library-constraints />
 
         <media-library-file-list v-if="!isUploadMode" />
+
+        <media-library-dropzone
+          v-else
+          :is-upload-mode.sync="isUploadMode"
+        />
       </div>
       <div
         slot="buttons"
@@ -29,9 +37,10 @@ import MediaLibraryFooter from './media-library/MediaLibraryFooter';
 import MediaLibraryConstraints from './media-library/MediaLibraryConstraints';
 import MediaLibrary from '../mixins/MediaLibrary';
 import MediaLibraryFileList from './media-library/MediaLibraryFileList';
+import MediaLibraryDropzone from "./media-library/MediaLibraryDropzone";
 
 export default {
-  components: { MediaLibraryFileList, Modal, MediaLibraryHeader, MediaLibraryFooter, MediaLibraryConstraints },
+  components: {MediaLibraryDropzone, MediaLibraryFileList, Modal, MediaLibraryHeader, MediaLibraryFooter, MediaLibraryConstraints },
 
   mixins: [MediaLibrary],
 
@@ -44,7 +53,7 @@ export default {
 
   data() {
     return {
-      isUploadMode: false
+      isUploadMode: true
     }
   },
 

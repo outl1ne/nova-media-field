@@ -14,9 +14,10 @@ export default {
      */
     addModelsToMediaLibrary(models) {
       if (Array.isArray(models)) {
-        const mapModels = model => this.createMediaLibraryItemFromModel(model)
+        const mapModels = model => this.createMediaLibraryItemFromModel(model);
         this.$store.commit('media-library/addToFiles', models.map(mapModels));
       } else {
+        // Handles single file
         this.$store.commit('media-library/addToFiles', this.createMediaLibraryItemFromModel(models));
       }
     },
@@ -36,7 +37,41 @@ export default {
     },
 
     /**
-     * Used when adding custom item to media library list that has no association with model
+     * Adds FileList files to media library for upload
+     *
+     * @param {FileList|File|Array} fileList - FileList array or single File object
+     */
+    addFileListToMediaLibrary(fileList) {
+      if (!(fileList instanceof FileList)) return;
+      if (!(fileList instanceof File)) {
+        fileList = [fileList]
+      }
+
+      // If not already a list
+      if (!fileList.length) {
+        fileList = [fileList];
+      }
+
+      this.$store.commit('media-library/addToFiles', this.createMediaLibraryItemFromFileList(fileList));
+    },
+
+    /**
+     * Creates uniform media library items from FileList
+     *
+     * @param {FileList} fileList - FileList array
+     */
+    createMediaLibraryItemFromFileList(fileList) {
+      return {
+        id: this.getNextMediaItemId(),
+        uploaded: false,
+        thumbnail: '',
+        fileList,
+      };
+    },
+
+    /**
+     * Used when adding custom item to media library list that has no association with model, like files that are not
+     * yet uploaded
      */
     getNextMediaItemId() {
       const id = this.nextMediaItemIdFromStore;
@@ -57,7 +92,9 @@ export default {
      */
     async fetchImages(options = {}) {
       const { page = 1, search } = options;
-      const { data: { data: imageList } } = await axios.get('/api/media', { params: { page, search } });
+      const {
+        data: { data: imageList },
+      } = await axios.get('/api/media', { params: { page, search } });
       this.addModelsToMediaLibrary(imageList);
     },
   },

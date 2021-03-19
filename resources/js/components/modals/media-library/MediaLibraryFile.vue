@@ -1,19 +1,19 @@
 <template>
   <div :class="`media-library-file ${hasFocus ? 'focus' : ''} ${hasSelected ? 'selected' : ''}`">
     <div
-      v-if="file.thumbnail"
+      v-if="fileThumbnail"
       class="thumbnail-container"
     >
       <img
         draggable="false"
-        :src="file.thumbnail"
+        :src="fileThumbnail"
       >
     </div>
     <div
-      v-if="file.model.file_name && !hideName"
+      v-if="fileName && !hideName"
       class="media-library-file-name"
     >
-      {{ file.model.file_name || '' }}
+      {{ fileName || '' }}
     </div>
   </div>
 </template>
@@ -34,6 +34,15 @@ export default {
       hasSelected: false
     }
   },
+
+  computed: {
+    fileName() {
+      return this.file?.model?.file_name || this.file?.id
+    },
+    fileThumbnail() {
+      return this.file?.thumbnail || ''
+    }
+  }
 };
 </script>
 
