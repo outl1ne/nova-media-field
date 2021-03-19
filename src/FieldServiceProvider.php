@@ -40,7 +40,7 @@ class FieldServiceProvider extends ServiceProvider
 
         Nova::serving(function (ServingNova $event) {
             $files = app('files');
-            if ($files->exists(__DIR__ . '/../dist/hot')) {
+            if (config('app.env') == 'local' && $files->exists(__DIR__ . '/../dist/hot')) {
                 Nova::remoteScript('http://localhost:8080/js/field.js');
             } else {
                 Nova::script('media-field', __DIR__ . '/../dist/js/field.js');
