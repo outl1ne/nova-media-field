@@ -20,7 +20,7 @@
       ref="imgCollectionRef"
       class="img-collection flex w-full whitespace-normal"
     >
-      <browsing-modal-file
+      <media-library-file
         v-for="file of allMediaFiles"
         :key="file.id"
         :file="file"
@@ -29,11 +29,11 @@
   </div>
 </template>
 <script>
-import BrowsingModalFile from './BrowsingModalFile';
+import MediaLibraryFile from './MediaLibraryFile';
 import { mapGetters } from 'vuex';
 
 export default {
-  components: { BrowsingModalFile },
+  components: { MediaLibraryFile },
 
   props: {
     uploadOnly: {
@@ -59,7 +59,7 @@ export default {
 .img-collection {
   height: 60vh;
 
-  .uploaded-file {
+  .media-library-file {
     margin: 8px;
   }
 }

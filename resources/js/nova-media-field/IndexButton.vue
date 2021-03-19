@@ -16,7 +16,11 @@
       />
     </div>
 
-    <button type="button" class="btn btn-default btn-primary whitespace-no-wrap" @click="openMediaBrowsingModal">
+    <button
+      type="button"
+      class="btn btn-default btn-primary whitespace-no-wrap"
+      @click="openMediaMediaLibrary"
+    >
       {{ __('Upload media') }}
     </button>
   </div>
@@ -74,7 +78,7 @@ export default {
       this.$toasted.show('Files have been successfully uploaded!', { type: 'success' });
     }, 1000),
 
-    openMediaBrowsingModal() {
+    openMediaMediaLibrary() {
       this.isModalOpen = true;
     },
   },

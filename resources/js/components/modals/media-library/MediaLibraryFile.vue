@@ -1,5 +1,5 @@
 <template>
-  <div :class="`uploaded-file ${hasFocus ? 'focus' : ''} ${hasSelected ? 'selected' : ''}`">
+  <div :class="`media-library-file ${hasFocus ? 'focus' : ''} ${hasSelected ? 'selected' : ''}`">
     <div
       v-if="file.thumbnail"
       class="thumbnail-container"
@@ -11,7 +11,7 @@
     </div>
     <div
       v-if="file.model.file_name && !hideName"
-      class="uploaded-file-name"
+      class="media-library-file-name"
     >
       {{ file.model.file_name || '' }}
     </div>
@@ -38,7 +38,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.uploaded-file {
+.media-library-file {
   width: 125px;
   height: 150px;
   position: relative;
@@ -46,7 +46,7 @@ export default {
   overflow: hidden;
   cursor: pointer;
 
-  .uploaded-file-name {
+  .media-library-file-name {
     padding: 4px 5px;
     font-size: 11px;
     line-height: 16px;

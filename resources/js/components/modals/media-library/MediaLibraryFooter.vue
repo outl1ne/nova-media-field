@@ -33,7 +33,7 @@
       <button
         type="button"
         class="btn btn-default btn-danger"
-        @click="closeBrowsingModal"
+        @click="closeMediaLibrary"
       >
         {{ __('Close') }}
       </button>
@@ -50,8 +50,8 @@ export default {
     }
   },
   methods: {
-    closeBrowsingModal() {
-      this.$store.commit('media-library/closeMediaBrowserModal');
+    closeMediaLibrary() {
+      this.$store.commit('media-library/closeMediaLibraryModal');
     },
     setUploadMode(mode) {
       console.log('mode', mode)

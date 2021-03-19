@@ -12,7 +12,7 @@
     <button
       type="button"
       class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3"
-      @click="openBrowsingModal"
+      @click="openMediaLibraryModal"
     >
       <span>
         {{ __('Media library') }}
@@ -40,8 +40,8 @@ export default {
   },
 
   methods: {
-    openBrowsingModal() {
-      this.$store.commit('media-library/openMediaBrowserModal');
+    openMediaLibraryModal() {
+      this.$store.commit('media-library/openMediaLibraryModal');
     },
   },
 };

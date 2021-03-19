@@ -1,5 +1,10 @@
 <template>
-  <default-field :field="field" :errors="errors" full-width-content :show-help-text="showHelpText">
+  <default-field
+    :field="field"
+    :errors="errors"
+    full-width-content
+    :show-help-text="showHelpText"
+  >
     <template slot="field">
       <div :class="`${isCompact && 'compact-form'} ${isMultiple && 'multi-file-upload'}`">
         <div ref="modals">
@@ -28,7 +33,11 @@
           :field="field"
         />
 
-        <p v-else :class="`${!isCompact && 'py-6'}`" :style="`padding-top: ${!isCompact && 9}px;`">
+        <p
+          v-else
+          :class="`${!isCompact && 'py-6'}`"
+          :style="`padding-top: ${!isCompact && 9}px;`"
+        >
           {{ __('No media selected') }}
         </p>
 
@@ -46,7 +55,7 @@
           <button
             type="button"
             class="btn btn-default btn-primary inline-flex items-center relative ml-auto mr-3"
-            @click="openMediaBrowsingModal"
+            @click="openMediaMediaLibrary"
           >
             <span>
               {{ __('Media library') }}
@@ -206,7 +215,7 @@ export default {
       }, 200)();
     },
 
-    openMediaBrowsingModal() {
+    openMediaMediaLibrary() {
       this.isModalOpen = true;
       this.showUploadArea = false;
     },

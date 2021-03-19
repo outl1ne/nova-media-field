@@ -3,7 +3,7 @@ export default {
     mediaLibraryFiles: [],
     selectedFileIds: [],
     nextTmpMediaItemId: 0,
-    mediaBrowser: {
+    mediaLibraryModal: {
       isOpen: false,
       uploadOnly: false
     }
@@ -13,8 +13,8 @@ export default {
       return state.nextTmpMediaItemId;
     },
 
-    'media-library/isMediaBrowserModalOpen': state => {
-      return state.mediaBrowser.isOpen;
+    'media-library/isMediaLibraryModalOpen': state => {
+      return state.mediaLibraryModal.isOpen;
     },
 
     'media-library/getFiles': (state, fileIds = []) => {
@@ -31,16 +31,16 @@ export default {
   },
   mutations: {
 
-    'media-library/closeMediaBrowserModal': state => {
-      state.mediaBrowser = {
+    'media-library/closeMediaLibraryModal': state => {
+      state.mediaLibraryModal = {
         isOpen: false,
         uploadOnly: false
       }
     },
 
-    'media-library/openMediaBrowserModal': (state, options) => {
-      state.mediaBrowser = {
-        uploadOnly: options?.uploadOnly ?? state.mediaBrowser.uploadOnly,
+    'media-library/openMediaLibraryModal': (state, options) => {
+      state.mediaLibraryModal = {
+        uploadOnly: options?.uploadOnly ?? state.mediaLibraryModal.uploadOnly,
         isOpen: true
       }
     },

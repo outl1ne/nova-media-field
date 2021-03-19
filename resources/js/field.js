@@ -3,17 +3,17 @@ import IndexMediaField from './nova-media-field/IndexField';
 import DetailMediaField from './nova-media-field/DetailField';
 import FormMediaField from './nova-media-field/FormField';
 import MediaView from './views/MediaView';
-import MediaBrowsingModal from './components/modals/MediaBrowsingModal';
+import MediaLibraryModal from './components/modals/MediaLibraryModal';
 
-const modalRootEl = document.createElement('media-browsing-modal');
-modalRootEl.id = 'media-browsing-modal';
+const modalRootEl = document.createElement('media-library-modal');
+modalRootEl.id = 'media-library-modal';
 document.querySelector('#nova').appendChild(modalRootEl);
 
 Nova.booting((Vue, router, Store) => {
   Vue.component('IndexMediaField', IndexMediaField);
   Vue.component('DetailMediaField', DetailMediaField);
   Vue.component('FormMediaField', FormMediaField);
-  Vue.component('MediaBrowsingModal', MediaBrowsingModal);
+  Vue.component('MediaLibraryModal', MediaLibraryModal);
 
   router.addRoutes([
     {
