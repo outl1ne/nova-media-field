@@ -2,20 +2,11 @@
   <div class="flex w-full justify-between">
     <div>
       <button
-        v-if="!isUploadMode"
         type="button"
         class="btn btn-default btn-primary whitespace-no-wrap"
-        @click="setUploadMode(true)"
+        @click="openFileBrowser"
       >
         {{ __('Upload files') }}
-      </button>
-      <button
-        v-if="isUploadMode"
-        type="button"
-        class="btn btn-default btn-primary whitespace-no-wrap"
-        @click="setUploadMode(false)"
-      >
-        {{ __('Back to library') }}
       </button>
     </div>
 
@@ -53,8 +44,8 @@ export default {
     closeMediaLibrary() {
       this.$store.commit('media-library/closeMediaLibraryModal');
     },
-    setUploadMode(mode) {
-      this.$emit('update:isUploadMode', mode)
+    openFileBrowser() {
+      document.querySelector('input.input-dropzone')?.click();
     }
   },
 };

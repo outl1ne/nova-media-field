@@ -5,7 +5,7 @@
         class="bg-white rounded-lg shadow-lg od-modal"
         :style="style"
       >
-        <div class="p-6 w-full">
+        <div class="p-6 pb-2 w-full">
           <slot name="container" />
         </div>
 

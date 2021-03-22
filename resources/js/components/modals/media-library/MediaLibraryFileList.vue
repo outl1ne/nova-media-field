@@ -1,5 +1,5 @@
 <template>
-  <div class="flex mb-6 w-full h-full">
+  <div class="flex mb-6 h-full media-library-file-list">
     <div
       v-if="allMediaFiles.length === 0"
       class="empty-message"
@@ -46,5 +46,10 @@ export default {
   .media-library-file {
     margin: 8px;
   }
+}
+
+.media-library-file-list {
+  width: calc(100% + 16px);
+  margin-left: -8px;
 }
 </style>

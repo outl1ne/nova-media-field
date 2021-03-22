@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isUploadMode || isDragAndDropping"
+    v-if="isDragAndDropping"
     class="flex w-full mb-6 align-middle media-library-dropzone h-full"
     :class="`${showDropAnimation ? 'drop-animation' : ''} ${isDragAndDropping ? 'drag-and-drop' : ''}`"
   >
@@ -27,6 +27,19 @@
       >
     </div>
   </div>
+  <div
+    v-else
+    class="drop-listener"
+  >
+    <input
+      ref="uploadFileEl"
+      type="file"
+      name="media"
+      class="input-dropzone"
+      multiple
+      @change="fileBrowserSelectListener"
+    >
+  </div>
 </template>
 <script>
 import MediaLibrary from '../../mixins/MediaLibrary';
@@ -34,14 +47,6 @@ import {debounce, throttle} from '../../../helpers';
 
 export default {
   mixins: [MediaLibrary],
-
-  props: {
-    isUploadMode: {
-      type: Boolean,
-      default: false,
-      required: true,
-    },
-  },
 
   data() {
     return {
@@ -64,8 +69,6 @@ export default {
       e.stopPropagation();
 
       this.addFileListToMediaLibrary(e.target.files);
-
-      this.$emit('update:isUploadMode', false);
     },
 
     dropEventListener(e) {
@@ -73,8 +76,6 @@ export default {
       e.stopPropagation();
 
       this.addFileListToMediaLibrary(e.dataTransfer.files);
-
-      this.$emit('update:isUploadMode', false);
     },
 
     dragLeaveListener: debounce(function (e) {
@@ -82,7 +83,6 @@ export default {
       e.stopPropagation();
 
       if (!e.relatedTarget || !e.relatedTarget.closest('.od-modal')) {
-        if (this.isUploadMode && this.isDragAndDropping) this.$emit('update:isUploadMode', false);
         this.isDragAndDropping = false;
         this.showDropAnimation = false;
       }
@@ -94,11 +94,7 @@ export default {
 
       if (!this.showDropAnimation && e.target && e.target.closest('.od-modal')) {
         this.showDropAnimation = true;
-
-        if (!this.isUploadMode) {
-          this.isDragAndDropping = true;
-          this.showDropAnimation = true;
-        }
+        this.isDragAndDropping = true;
       }
     }, 200),
 
@@ -130,6 +126,10 @@ export default {
   }
 }
 
+.drop-listener {
+  pointer-events: none;
+}
+
 .media-library-dropzone {
   position: relative;
   z-index: 10000;
@@ -138,7 +138,7 @@ export default {
     .dropzone-content {
       animation: pulse infinite linear 2s;
       border-radius: 8px;
-      border: 2px dashed #999a9d;
+      border: 1px dashed #999a9d;
     }
   }
 
@@ -160,7 +160,7 @@ export default {
   height: 100%;
 
   transition: opacity 0.3s, border 0.3s;
-  border: 2px dashed #fff;
+  border: 1px dashed #fff;
 }
 
 .input-dropzone {

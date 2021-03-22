@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="hasConstraints"
     class="media-rules"
   >
     <div
@@ -10,11 +9,11 @@
         Max file size
       </span>
       <span class="value">
-        {{ field.maxFileSize }} MB
+        {{ config.uploadMaxFilesize }} MB
       </span>
     </div>
     <div
-      v-for="constraintKey of Object.keys(collection.constraints)"
+      v-for="constraintKey of Object.keys(constraints)"
       :key="constraintKey"
       class="single-constraint"
     >
@@ -28,28 +27,34 @@
   </div>
 </template>
 <script>
+import {getExtension} from 'mime/lite'
+
 const keyToLabel = {
-  mimetypes: 'Mime types'
+  mimetypes: 'Allowed file types'
 }
 
-// Converts array of string values into one comma separated string
-function arrayToString(items, separator = ', ') {
-  if (Array.isArray(items)) {
-    let newValue = items[0]; // First item without separator
-
-    for (const valueKey in items) {
-      if (!valueKey) continue; // Skip first item
-      newValue += `${separator}${items[valueKey]}`;
-    }
-
-    return newValue;
-  }
-
-  return items
-}
+const mimeTypeToExtension = {}
 
 const keyValueResolvers = {
   mimetypes: arrayToString
+}
+
+// Converts array of string values into one comma separated string
+function arrayToString(arr, separator = ', ') {
+  if (Array.isArray(arr)) {
+    const resolvedValues = []
+
+    for (const arrKey in arr) {
+      const item = arr[arrKey]
+      const value = mimeTypeToExtension?.[item] || getExtension(item) || item
+      if (resolvedValues.indexOf(value) !== -1) continue; // Skip already existing value
+      resolvedValues.push(value)
+    }
+
+    return resolvedValues.join(separator);
+  }
+
+  return ''
 }
 
 export default {
@@ -62,13 +67,13 @@ export default {
   },
 
   computed: {
-    hasConstraints() {
-      return this.collection && this.collection.constraints && Object.keys(this.collection.constraints).length;
+    config() {
+      return window.config.mediaLibrary
     },
 
-    collection() {
-      return this.field.collections[this.field.displayCollection]
-    }
+    constraints() {
+      return this.config.collections?.[this.field.displayCollection]?.constraints || {}
+    },
   },
 
   methods: {
@@ -80,7 +85,7 @@ export default {
 
     // Formats constraint values for better readability
     parseConstraintValue(key) {
-      const value = this.collection.constraints[key]
+      const value = this.constraints[key]
       const resolveValue = keyValueResolvers[key];
       if (typeof resolveValue === 'function') return resolveValue(value)
       return value;
@@ -89,18 +94,17 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-
 .media-rules {
-  padding: 0 0 10px 0;
+  padding: 10px 10px 10px 0;
   display: flex;
   justify-content: flex-start;
   align-content: center;
   align-items: center;
-  border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
-  width: calc(100% - 300px);
-  margin-bottom: 10px;
-  margin-top: -15px;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.2);
+  border-top: 1px dashed rgba(0, 0, 0, 0.2);
   flex-wrap: wrap;
+  width: 100%;
+  margin: 8px 0px;
 
   .media-rule-label {
     width: 100%;
@@ -110,11 +114,13 @@ export default {
   .single-constraint {
     display: flex;
     flex-flow: column;
-    padding-right: 35px;
+    padding: 0 16px;
     font-size: 14px;
+    border-left: 1px dashed rgba(0, 0, 0, 0.2);
 
-    > span:nth-child(1) {
-      text-transform: capitalize;
+    &:first-child {
+      padding-left: 0;
+      border-left: 0;
     }
 
     > span:nth-child(2) {

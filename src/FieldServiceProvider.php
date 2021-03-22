@@ -50,6 +50,14 @@ class FieldServiceProvider extends ServiceProvider
             }
         });
 
+        Nova::provideToScript([
+            'mediaLibrary' => [
+                'uploadMaxFilesize' => (int)ini_get('upload_max_filesize'),
+                'maxFileUploads' => ini_get('max_file_uploads'),
+                'collections' => config('nova-media-field.collections')
+            ]
+        ]);
+
         Nova::resources([
             config('nova-media-field.media_resource', Media::class)
         ]);

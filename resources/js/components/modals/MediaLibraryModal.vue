@@ -6,18 +6,19 @@
     >
       <div
         slot="container"
-        class="w-full"
+        class="w-full h-full"
       >
-        <media-library-header upload-only />
+        <media-library-header
+          :upload-only="uploadOnly"
+          :field="field"
+        />
 
         <media-library-constraints :field="field" />
 
         <div class="modal-content">
-          <media-library-file-list v-if="!isUploadMode" />
+          <media-library-file-list />
 
-          <media-library-dropzone
-            :is-upload-mode.sync="isUploadMode"
-          />
+          <media-library-dropzone />
         </div>
       </div>
       <div
@@ -59,12 +60,6 @@ export default {
     },
   },
 
-  data() {
-    return {
-      isUploadMode: true,
-    };
-  },
-
   computed: {
     ...mapGetters({
       isModalOpen: 'media-library/isMediaLibraryModalOpen',
@@ -79,7 +74,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .modal-content {
-  height: 60vh;
+  height: 100vh;
+  max-height: calc(100vh - 300px);
   position: relative;
 }
 </style>
