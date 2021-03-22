@@ -1,7 +1,7 @@
 <template>
   <div class="field-buttons ml-auto">
     <button
-      v-if="selectedFiles.length"
+      v-if="hasSelectedFiles"
       type="button"
       class="btn btn-default btn-danger inline-flex items-center relative ml-auto mr-3"
     >
@@ -24,11 +24,9 @@
 import { mapGetters } from 'vuex';
 
 export default {
-  inject: ['_field'],
   props: {
-    hasSelectedFiles: {
-      type: Boolean,
-      default: false,
+    field: {
+      type: Object,
       required: true,
     },
   },
@@ -37,11 +35,16 @@ export default {
     ...mapGetters({
       selectedFiles: 'media-library/getSelectedFiles',
     }),
+
+    hasSelectedFiles() {
+      // TODO
+      return false;
+    }
   },
 
   methods: {
     openMediaLibraryModal() {
-      this.$store.commit('media-library/openMediaLibraryModal');
+      this.$store.commit('media-library/openMediaLibraryModal', {field: this.field});
     },
   },
 };

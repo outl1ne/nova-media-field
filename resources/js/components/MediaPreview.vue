@@ -11,7 +11,14 @@
 
 <script>
 export default {
-  inject: ['field'],
+
+  props: {
+    field: {
+      type: Object,
+      required: true
+    }
+  },
+
   computed: {
     compactPreviewStyles() {
       if (!Array.isArray(this.field?.detailThumbnailSize)) return null;

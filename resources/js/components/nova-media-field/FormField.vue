@@ -5,24 +5,21 @@
       full-width-content
     >
       <template slot="field">
-        <media-preview v-if="hasValue" />
-        <field-buttons />
+        <media-preview
+          v-if="hasValue"
+          :field="field"
+        />
+        <form-field-buttons :field="field" />
       </template>
     </default-field>
   </div>
 </template>
 <script>
-import FieldButtons from '../components/common/FieldButtons';
-import MediaPreview from '../components/MediaPreview';
+import FormFieldButtons from './FormFieldButtons';
+import MediaPreview from '../MediaPreview';
 
 export default {
-  components: { FieldButtons, MediaPreview },
-
-  provide() {
-    return {
-      field: this.field,
-    };
-  },
+  components: { FormFieldButtons, MediaPreview },
 
   props: {
     field: {

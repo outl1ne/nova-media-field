@@ -3,5 +3,6 @@ module.exports = {
   globals: {
     Nova: 'readonly',
     axios: 'readonly',
+    _: 'readonly',
   },
 };

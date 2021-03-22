@@ -10,14 +10,15 @@
       >
         <media-library-header upload-only />
 
-        <media-library-constraints />
+        <media-library-constraints :field="field" />
 
-        <media-library-file-list v-if="!isUploadMode" />
+        <div class="modal-content">
+          <media-library-file-list v-if="!isUploadMode" />
 
-        <media-library-dropzone
-          v-else
-          :is-upload-mode.sync="isUploadMode"
-        />
+          <media-library-dropzone
+            :is-upload-mode.sync="isUploadMode"
+          />
+        </div>
       </div>
       <div
         slot="buttons"
@@ -37,10 +38,17 @@ import MediaLibraryFooter from './media-library/MediaLibraryFooter';
 import MediaLibraryConstraints from './media-library/MediaLibraryConstraints';
 import MediaLibrary from '../mixins/MediaLibrary';
 import MediaLibraryFileList from './media-library/MediaLibraryFileList';
-import MediaLibraryDropzone from "./media-library/MediaLibraryDropzone";
+import MediaLibraryDropzone from './media-library/MediaLibraryDropzone';
 
 export default {
-  components: {MediaLibraryDropzone, MediaLibraryFileList, Modal, MediaLibraryHeader, MediaLibraryFooter, MediaLibraryConstraints },
+  components: {
+    MediaLibraryDropzone,
+    MediaLibraryFileList,
+    Modal,
+    MediaLibraryHeader,
+    MediaLibraryFooter,
+    MediaLibraryConstraints,
+  },
 
   mixins: [MediaLibrary],
 
@@ -53,13 +61,14 @@ export default {
 
   data() {
     return {
-      isUploadMode: true
-    }
+      isUploadMode: true,
+    };
   },
 
   computed: {
     ...mapGetters({
       isModalOpen: 'media-library/isMediaLibraryModalOpen',
+      field: 'media-library/getField',
     }),
   },
 
@@ -68,3 +77,9 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.modal-content {
+  height: 60vh;
+  position: relative;
+}
+</style>

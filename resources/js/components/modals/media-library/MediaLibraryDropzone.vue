@@ -1,8 +1,8 @@
 <template>
   <div
-    id="media-library-dropzone"
-    class="flex w-full mb-6 align-middle"
-    :class="showDropAnimation && 'drop-animation'"
+    v-if="isUploadMode || isDragAndDropping"
+    class="flex w-full mb-6 align-middle media-library-dropzone h-full"
+    :class="`${showDropAnimation ? 'drop-animation' : ''} ${isDragAndDropping ? 'drag-and-drop' : ''}`"
   >
     <div class="dropzone-content flex flex-col justify-center">
       <div class="mb-2 text-center">
@@ -29,70 +29,78 @@
   </div>
 </template>
 <script>
-
-import MediaLibrary from "../../mixins/MediaLibrary";
+import MediaLibrary from '../../mixins/MediaLibrary';
+import {debounce, throttle} from '../../../helpers';
 
 export default {
-
   mixins: [MediaLibrary],
 
   props: {
     isUploadMode: {
       type: Boolean,
       default: false,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
     return {
-      showDropAnimation: false
-    }
+      showDropAnimation: false,
+      isDragAndDropping: false,
+    };
   },
 
   mounted() {
-    this.addEventListeners()
+    this.addEventListeners();
   },
 
   beforeDestroy() {
-    this.clearEventListeners()
+    this.clearEventListeners();
   },
 
   methods: {
-
     fileBrowserSelectListener(e) {
       e.preventDefault();
       e.stopPropagation();
 
-      this.addFileListToMediaLibrary(e.target.files)
+      this.addFileListToMediaLibrary(e.target.files);
 
-      this.$emit('update:isUploadMode', false)
+      this.$emit('update:isUploadMode', false);
     },
 
     dropEventListener(e) {
       e.preventDefault();
       e.stopPropagation();
 
-      this.addFileListToMediaLibrary(e.dataTransfer.files)
+      this.addFileListToMediaLibrary(e.dataTransfer.files);
 
-      this.$emit('update:isUploadMode', false)
+      this.$emit('update:isUploadMode', false);
     },
 
-    dragLeaveListener(e) {
+    dragLeaveListener: debounce(function (e) {
       e.preventDefault();
       e.stopPropagation();
 
-      if (e.target.matches('.input-dropzone')) {
+      if (!e.relatedTarget || !e.relatedTarget.closest('.od-modal')) {
+        if (this.isUploadMode && this.isDragAndDropping) this.$emit('update:isUploadMode', false);
+        this.isDragAndDropping = false;
         this.showDropAnimation = false;
       }
-    },
+    }, 200),
 
-    dragOverListener(e) {
+    dragOverListener: throttle(function (e) {
       e.preventDefault();
       e.stopPropagation();
 
-      if (e.target.matches('.input-dropzone')) this.showDropAnimation = true;
-    },
+      if (!this.showDropAnimation && e.target && e.target.closest('.od-modal')) {
+        this.showDropAnimation = true;
+
+        if (!this.isUploadMode) {
+          this.isDragAndDropping = true;
+          this.showDropAnimation = true;
+        }
+      }
+    }, 200),
 
     addEventListeners() {
       window.addEventListener('dragover', this.dragOverListener);
@@ -105,12 +113,11 @@ export default {
       window.removeEventListener('dragleave', this.dragLeaveListener);
       window.removeEventListener('drop', this.dropEventListener);
     },
-
-  }
+  },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @keyframes pulse {
   0% {
     opacity: 1;
@@ -123,16 +130,25 @@ export default {
   }
 }
 
-#media-library-dropzone {
-  padding-bottom: 52%;
+.media-library-dropzone {
   position: relative;
-  border-radius: 8px;
-  transition: opacity 0.3s, border 0.3s;
-  border: 2px dashed #fff;
+  z-index: 10000;
 
   &.drop-animation {
-    border: 2px dashed #999a9d;
-    animation: pulse infinite linear 2s;
+    .dropzone-content {
+      animation: pulse infinite linear 2s;
+      border-radius: 8px;
+      border: 2px dashed #999a9d;
+    }
+  }
+
+  &.drag-and-drop {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: #fff;
   }
 }
 
@@ -142,49 +158,18 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
+
+  transition: opacity 0.3s, border 0.3s;
+  border: 2px dashed #fff;
 }
 
-.media-rules {
-  padding: 0 0 10px 0;
-  display: flex;
-  justify-content: flex-start;
-  align-content: center;
-  align-items: center;
-  border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
-  width: calc(100% - 300px);
-  margin-bottom: 10px;
-  margin-top: -15px;
-  flex-wrap: wrap;
-
-  .media-rule-label {
-    width: 100%;
-    padding-bottom: 5px;
-  }
-
-  .single-constraint {
-    display: flex;
-    flex-flow: column;
-    padding-right: 35px;
-    font-size: 14px;
-
-    > span:nth-child(1) {
-      text-transform: capitalize;
-    }
-
-    > span:nth-child(2) {
-      font-weight: bold;
-    }
-  }
-}
-
-input {
+.input-dropzone {
   position: absolute;
   top: 0;
   left: 0;
   opacity: 0;
   width: 100%;
   height: 100%;
-  z-index: 9999;
   cursor: pointer;
 }
 </style>

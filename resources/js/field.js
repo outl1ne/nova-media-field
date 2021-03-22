@@ -1,7 +1,7 @@
 import MediaLibraryStore from './store/MediaLibraryStore';
-import IndexMediaField from './nova-media-field/IndexField';
-import DetailMediaField from './nova-media-field/DetailField';
-import FormMediaField from './nova-media-field/FormField';
+import IndexMediaField from './components/nova-media-field/IndexField';
+import DetailMediaField from './components/nova-media-field/DetailField';
+import FormMediaField from './components/nova-media-field/FormField';
 import MediaView from './views/MediaView';
 import MediaLibraryModal from './components/modals/MediaLibraryModal';
 

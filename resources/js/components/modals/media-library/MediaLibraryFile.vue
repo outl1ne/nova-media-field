@@ -8,7 +8,7 @@
         draggable="false"
         :src="fileThumbnail"
       >
-      <media-loader
+      <rotating-loader
         v-else
         center
         :text="loadingText"
@@ -26,11 +26,11 @@
 </template>
 
 <script>
-import MediaLoader from "../../common/MediaLoader";
+import RotatingLoader from "../../common/RotatingLoader";
 
 export default {
 
-  components: {MediaLoader},
+  components: {RotatingLoader},
 
   props: {
     file: {

@@ -1,20 +1,11 @@
 <template>
-  <div class="flex mb-6 w-full">
-    <div v-if="false">
-      <div
-        v-if="allMediaFiles.length === 0"
-        class="empty-message"
-      >
-        <p>There are currently no media files in this library</p>
-        <p>Drag and drop files here to upload them</p>
-      </div>
-
-      <div
-        v-if="allMediaFiles.length === 0 && uploadOnly"
-        class="empty-message"
-      >
-        <p>Drag and drop files here to upload them</p>
-      </div>
+  <div class="flex mb-6 w-full h-full">
+    <div
+      v-if="allMediaFiles.length === 0"
+      class="empty-message"
+    >
+      <p>There are currently no media files in this library</p>
+      <p>Drag and drop files here to upload them</p>
     </div>
     <div
       ref="imgCollectionRef"
@@ -51,7 +42,6 @@ export default {
 </script>
 <style lang="scss">
 .img-collection {
-  height: 60vh;
 
   .media-library-file {
     margin: 8px;

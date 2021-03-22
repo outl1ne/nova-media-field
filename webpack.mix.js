@@ -2,6 +2,7 @@ let mix = require('laravel-mix');
 let path = require('path');
 
 mix
+  .setPublicPath('dist')
   .webpackConfig({
     module: {
       rules: [
@@ -14,9 +15,8 @@ mix
       ],
     },
   })
-  .setPublicPath('dist')
   .js('resources/js/field.js', 'js')
   .js('resources/js/url-field.js', 'js')
   .js('resources/js/toolbar.js', 'js')
+  .sass('resources/sass/field.scss', 'css')
   .vue()
-  .sass('resources/sass/field.scss', 'css');

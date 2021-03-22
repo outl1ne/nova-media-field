@@ -1,16 +1,26 @@
+
+const mediaLibraryModalInitialState = {
+  isOpen: false,
+  uploadOnly: false,
+  field: null, // Form field value
+}
+
 export default {
   state: {
     mediaLibraryFiles: [],
     selectedFileIds: [],
     nextTmpMediaItemId: 0,
     mediaLibraryModal: {
-      isOpen: true,
-      uploadOnly: false
+      ...mediaLibraryModalInitialState
     }
   },
   getters: {
     'media-library/getNextMediaItemId': state => {
       return state.nextTmpMediaItemId;
+    },
+
+    'media-library/getField': state => {
+      return state.mediaLibraryModal.field;
     },
 
     'media-library/isMediaLibraryModalOpen': state => {
@@ -33,13 +43,13 @@ export default {
 
     'media-library/closeMediaLibraryModal': state => {
       state.mediaLibraryModal = {
-        isOpen: false,
-        uploadOnly: false
+        ...mediaLibraryModalInitialState
       }
     },
 
     'media-library/openMediaLibraryModal': (state, options) => {
       state.mediaLibraryModal = {
+        field: options?.field ?? state.mediaLibraryModal.field,
         uploadOnly: options?.uploadOnly ?? state.mediaLibraryModal.uploadOnly,
         isOpen: true
       }

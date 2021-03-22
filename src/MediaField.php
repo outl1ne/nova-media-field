@@ -63,7 +63,8 @@ class MediaField extends Field
             'order' => $this->multiple,
             'displayCollection' => $this->collection,
             'collections' => config('nova-media-field.collections'),
-            'detailThumbnailSize' => $this->detailThumbnailSize
+            'detailThumbnailSize' => $this->detailThumbnailSize,
+            'maxFileSize' => (int)(ini_get('upload_max_filesize')) // In MB
         ]);
     }
 
