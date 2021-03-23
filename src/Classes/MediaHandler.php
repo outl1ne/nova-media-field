@@ -26,30 +26,45 @@ class MediaHandler
     }
 
     /**
-     * Create new media resource using laravel's Request class
+     * Adds new media item to db using Request class, handles multiple files when uploaded as an array
      *
      * @param Request $request
-     * @param string $key Used to access Request file upload value
-     * @return Media
+     * @param string $key - Used to access Request file upload value
+     * @return Media|array
      * @throws \Exception
      */
-    public static function createFromRequest(Request $request, $key = 'file'): Media
+    public static function createFromRequest(Request $request, $key = 'file')
     {
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
-        return $instance->storeFile([
-            'name' => $request->file($key)->getClientOriginalName(),
-            'path' => $request->file($key)->getRealPath(),
-            'mime_type' => $request->file($key)->getClientMimeType(),
-            'collection' => $request->get('collection') ?? '',
-            'alt' => $request->get('alt') ?? ''
-        ], $instance->getDisk());
+
+        $createFile = function($file) use ($instance, $request)
+        {
+            return $instance->storeFile([
+                'name' => $file->getClientOriginalName(),
+                'path' => $file->getRealPath(),
+                'mime_type' => $file->getClientMimeType(),
+                'collection' => $request->get('collection') ?? '',
+                'alt' => $request->get('alt') ?? ''
+            ], $instance->getDisk());
+        };
+
+        $createdFiles = [];
+        if (is_array($request->file($key))) {
+            foreach ($request->file($key) as $file) {
+                $createdFiles[] = $createFile($file);
+            }
+
+            return $createdFiles;
+        } else {
+            return $createFile($request->file($key));
+        }
     }
 
     /**
      * Creates new media resource from existing file
      *
-     * @param $file Full path to file
+     * @param $file - Full path to file
      * @return Media
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \Exception

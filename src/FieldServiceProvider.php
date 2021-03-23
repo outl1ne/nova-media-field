@@ -50,9 +50,15 @@ class FieldServiceProvider extends ServiceProvider
             }
         });
 
+        $fileUploadLimit = (int)ini_get('upload_max_filesize');
+        $postLimit = ((int)ini_get('post_max_size'));
+        if ($fileUploadLimit > $postLimit) {
+            $fileUploadLimit = $postLimit;
+        }
+
         Nova::provideToScript([
             'mediaLibrary' => [
-                'uploadMaxFilesize' => (int)ini_get('upload_max_filesize'),
+                'uploadMaxFilesizeMb' => $fileUploadLimit, // Max size that can be uploaded/posted
                 'maxFileUploads' => ini_get('max_file_uploads'),
                 'collections' => config('nova-media-field.collections')
             ]
@@ -69,6 +75,7 @@ class FieldServiceProvider extends ServiceProvider
         ]);
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'nova-media');
+
     }
 
 

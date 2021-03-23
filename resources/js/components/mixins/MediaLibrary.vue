@@ -1,5 +1,6 @@
 <script>
-import { mapGetters } from 'vuex';
+import {mapActions, mapGetters, mapMutations} from 'vuex';
+import {createMediaLibraryItemFromFileList, createMediaLibraryItemFromModel} from "../../helpers";
 
 export default {
   computed: {
@@ -7,33 +8,29 @@ export default {
   },
 
   methods: {
+    createMediaLibraryItemFromFileList,
+    createMediaLibraryItemFromModel,
+    ...mapActions({
+      uploadFiles: 'media-library/uploadFiles',
+    }),
+    ...mapMutations({
+      addToFiles: 'media-library/addToFiles',
+      increaseNextId: 'media-library/increaseTmpMediaItemId',
+    }),
+
     /**
      * Adds Media model to media library file list and displays it in media browser
      *
      * @param {Object} models - Array of "Media" models or single model object
      */
     addModelsToMediaLibrary(models) {
+      const mapModel = model => this.createMediaLibraryItemFromModel(model);
       if (Array.isArray(models)) {
-        const mapModels = model => this.createMediaLibraryItemFromModel(model);
-        this.$store.commit('media-library/addToFiles', models.map(mapModels));
+        this.addToFiles(models.map(mapModel));
       } else {
         // Handles single file
-        this.$store.commit('media-library/addToFiles', this.createMediaLibraryItemFromModel(models));
+        this.addToFiles(mapModel(models));
       }
-    },
-
-    /**
-     * Creates uniform media library item
-     *
-     * @param {Object} model - "Media" model
-     */
-    createMediaLibraryItemFromModel(model) {
-      return {
-        id: model.id,
-        uploaded: true,
-        thumbnail: model.image_sizes?.thumbnail?.url || '',
-        model,
-      };
     },
 
     /**
@@ -43,31 +40,14 @@ export default {
      */
     addFileListToMediaLibrary(fileList) {
       if (!(fileList instanceof FileList)) return;
-      else if (fileList instanceof File) fileList = [fileList]
+      else if (fileList instanceof File) fileList = [fileList]; // Support older browsers
 
       // If not already a list
       if (!fileList.length) {
         fileList = [fileList];
       }
 
-      this.$store.commit('media-library/addToFiles', this.createMediaLibraryItemFromFileList(fileList));
-    },
-
-    /**
-     * Creates uniform media library items from FileList
-     *
-     * @param {FileList} fileList - FileList array
-     */
-    createMediaLibraryItemFromFileList(fileList) {
-      return {
-        id: this.getNextMediaItemId(),
-        uploaded: false,
-        thumbnail: '',
-        fileList,
-        progress: 0,
-        uploading: false,
-        processing: false
-      };
+      this.uploadFiles(this.createMediaLibraryItemFromFileList(fileList));
     },
 
     /**
@@ -76,7 +56,7 @@ export default {
      */
     getNextMediaItemId() {
       const id = this.nextMediaItemIdFromStore;
-      this.$store.commit('media-library/increaseTmpMediaItemId');
+      this.increaseNextId();
       return `tmp-${id}`;
     },
 

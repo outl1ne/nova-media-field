@@ -27,6 +27,7 @@
 
 <script>
 import RotatingLoader from "../../common/RotatingLoader";
+import {mapMutations} from "vuex";
 
 export default {
 

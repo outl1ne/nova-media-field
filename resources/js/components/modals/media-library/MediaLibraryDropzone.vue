@@ -6,13 +6,7 @@
   >
     <div class="dropzone-content flex flex-col justify-center">
       <div class="mb-2 text-center">
-        <svg
-          class="fill-current w-4 h-4 mx-auto"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-        >
-          <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
-        </svg>
+        <download-icon />
       </div>
       <div class="mb-2 text-center">
         To upload files you can simply drag and drop them in the area or click it to open file browser.
@@ -44,8 +38,10 @@
 <script>
 import MediaLibrary from '../../mixins/MediaLibrary';
 import {debounce, throttle} from '../../../helpers';
+import DownloadIcon from "../../../icons/DownloadIcon";
 
 export default {
+  components: {DownloadIcon},
   mixins: [MediaLibrary],
 
   data() {
@@ -75,7 +71,13 @@ export default {
       e.preventDefault();
       e.stopPropagation();
 
-      this.addFileListToMediaLibrary(e.dataTransfer.files);
+
+      if (e.target || e.target.closest('.od-modal')) {
+        this.addFileListToMediaLibrary(e.dataTransfer.files);
+
+        this.isDragAndDropping = false;
+        this.showDropAnimation = false;
+      }
     },
 
     dragLeaveListener: debounce(function (e) {

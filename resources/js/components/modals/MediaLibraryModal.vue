@@ -69,6 +69,9 @@ export default {
 
   mounted() {
     this.fetchImages();
+    document.addEventListener('keydown', e => {
+      if (e.code === 'Escape' && this.isModalOpen) this.$store.commit('media-library/closeMediaLibraryModal');
+    });
   },
 };
 </script>

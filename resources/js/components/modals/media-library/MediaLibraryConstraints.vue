@@ -9,7 +9,7 @@
         Max file size
       </span>
       <span class="value">
-        {{ config.uploadMaxFilesize }} MB
+        {{ config.uploadMaxFilesizeMb }} MB
       </span>
     </div>
     <div
