@@ -19,8 +19,10 @@ class MediaValidator {
         $requiredHeight = $parameters[0];
 
         $img = Image::make($value->getPathname());
+        $height = $img->height();
+        $img->destroy();
 
-        if ($requiredHeight != $img->height()) {
+        if ($requiredHeight != $height) {
             $validator->setCustomMessages([
                 'height' => sprintf(__('Image is not a required height of %spx'), $requiredHeight)
             ]);

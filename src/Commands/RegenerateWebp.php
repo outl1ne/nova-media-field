@@ -40,6 +40,7 @@ class RegenerateWebp extends Command
                     $media->webp_name = "$origFilename.webp";
                     $media->webp_size = $handler->getDisk()->size($webpImagePath);
                     $media->save();
+                    $webpImg->destroy();
                 } catch (\Exception $e) {
                     $msg = $e->getMessage();
                     error_log($e);

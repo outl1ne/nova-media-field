@@ -34,6 +34,7 @@ class OptimizeOriginals extends Command
                 $media->file_size = $handler->getDisk()->size($imagePath);
 
                 $media->save();
+                $img->destroy();
             }
 
             $updateCount++;

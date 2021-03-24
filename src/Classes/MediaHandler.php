@@ -186,6 +186,8 @@ class MediaHandler
                         'webp_size' => $disk->size(dirname($path) . '/' . $webpFilename),
                     ]);
                 }
+
+                $img->destroy();
             } catch (\Intervention\Image\Exception\NotSupportedException $e) {
                 continue;
             }
@@ -268,6 +270,8 @@ class MediaHandler
                 $mimeType = $image->mime();
                 $collection = '';
                 $alt = '';
+
+                $image->destroy();
             }
         }
 
@@ -309,8 +313,7 @@ class MediaHandler
             $newFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
 
             // Encode original
-            $origFile = file_get_contents($tmpPath . $tmpName);
-            $image = Image::make($origFile);
+            $image = Image::make($tmpPath . $tmpName);
 
             // If max resize is enabled
             $maxOriginalDimension = config('nova-media-field.max_original_image_dimensions', null);
@@ -323,11 +326,13 @@ class MediaHandler
 
             $file = $image->encode($origExtension, 80);
             $disk->put($storagePath . $newFilename, $file);
+            $image->destroy();
 
             if ($webpEnabled) {
                 $webpFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, 'webp');
                 $webpImg = Image::make($file)->encode('webp', 80);
                 $disk->put($storagePath . $webpFilename, $webpImg);
+                $webpImg->destroy();
             }
         } else {
             $newFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
