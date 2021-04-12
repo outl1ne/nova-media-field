@@ -20,6 +20,7 @@ class Media extends Model
         'webp_size',
         'image_sizes',
         'data',
+        'file_hash'
     ];
 
     protected $appends = ['url', 'webp_url'];
