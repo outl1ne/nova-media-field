@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ----
 
-## [2.0.0-alpha] - 2021-04-13
+## [2.0.0-alpha.1] - 2021-04-13
 
 Adds a feature that checks for duplicate media entry by generating has based on first megabyte
 of file. **This will not work on existing images**
@@ -32,16 +32,6 @@ This update should allow using any file driver that is supported in Laravel.
 - default filesystem driver for media field was changed in config file, please review these settings
 
 ----
-
-## [bugfix/driver-handling]
-
-This update should allow using any file driver that is supported in Laravel.
-
-### Changed
-
-- **[Breaking change]** Storage driver default in nova media field config has been changed from `config('filesystems.default')` to `env('MEDIA_LIBRARY_DRIVER', 'public')`
-- **[Breaking change]** `Media` model `getUrlAttribute`, `getWebpUrlAttribute` and `getImageSizesAttribute` methods has been fixed by removing URL prefixing.
-
 
 ## [1.3.11] - 2021-03-01
 
