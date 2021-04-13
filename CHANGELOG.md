@@ -18,8 +18,8 @@ This update should allow using any file driver that is supported in Laravel.
 
 ### Updated
 
-- `MediaHandler` class `createFrom...` methods has been updated to support `resolve_duplicates`. When finfing duplicate
-  these methods will return existing instance of that image instead.
+- `MediaHandler` class `createFrom...` methods has been updated to support `resolve_duplicates`. When finding a duplicate
+  media item then these methods will return existing instance of that image instead.
 
 ### Added
 
@@ -29,6 +29,7 @@ This update should allow using any file driver that is supported in Laravel.
 ### Manual changes required
 
 - run `php artisan migrate` to add the new `file_hash` column
+- default filesystem driver for media field was changed in config file, please review these settings
 
 ----
 
