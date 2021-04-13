@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+----
+
+### [feature/duplication-check]
+
+**This will not work on existing images**
+
+Adds a feature that checks for duplicate media entry by generating has based on first megabyte
+of file.
+
+
+### Updated
+
+- `MediaHandler` class `createFrom...` methods has been updated to support `resolve_duplicates`. When finfing duplicate
+  these methods will return existing instance of that image instead.
+
+### Added
+
+- New `file_hash` column, will be used to store original file hash to check for duplicates
+- `resolve_duplicates` key to media field config file. If enabled it will not create a new entry when existing media item is found.
+
+
+### Manual changes required
+
+- run `php artisan migrate` to add the new `file_hash` column
+
+----
+
 ## [bugfix/driver-handling]
 
 This update should allow using any file driver that is supported in Laravel.

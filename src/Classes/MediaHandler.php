@@ -39,9 +39,9 @@ class MediaHandler
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
 
+        // Check if image already exists when enabled and return that instead
         if (config('resolve_duplicates', true)) {
-            $existingMedia = $instance->findExistingMedia($request->file($key)->getRealPath());
-            if ($existingMedia) return $existingMedia;
+            if ($file = $instance->getFileHashFromPath($request->file($key)->getRealPath())) return $file;
         }
 
         return $instance->storeFile([
@@ -66,9 +66,9 @@ class MediaHandler
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
 
+        // Check if image already exists when enabled and return that instead
         if (config('resolve_duplicates', true)) {
-            $existingMedia = $instance->findExistingMedia($filepath);
-            if ($existingMedia) return $existingMedia;
+            if ($file = $instance->getFileHashFromPath($filepath)) return $file;
         }
 
         return $instance->storeFile($filepath, $instance->getDisk());
@@ -85,9 +85,9 @@ class MediaHandler
             $tmpPath = tempnam(sys_get_temp_dir(), 'media-');
             $this->client->get($fileUrl, ['sink' => $tmpPath, 'connect_timeout' => 5, 'timeout' => $options['timeout_in_sec'] ?? 60]);
 
-            $existingMedia = $this->findExistingMedia($tmpPath);
+            // Check if image already exists when enabled and return that instead
             if (config('nova-media-field.resolve_duplicates', true)) {
-                if ($existingMedia) return $existingMedia;
+                if ($existingMedia = $this->findExistingMedia($tmpPath)) return $existingMedia;
             }
 
             $mimeType = mime_content_type($tmpPath);
