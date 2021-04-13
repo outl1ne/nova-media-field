@@ -203,6 +203,7 @@ export default {
             if (this.updateFiles !== cb) cb();
           }
         }
+        this.updateFiles()
       }, 200)();
     },
 
