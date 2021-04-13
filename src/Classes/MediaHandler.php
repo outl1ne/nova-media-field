@@ -300,7 +300,7 @@ class MediaHandler
         $origExtension = pathinfo($filename, PATHINFO_EXTENSION);
         $isImageFile = $this->isReadableImage($tmpPath . $tmpName);
         $isVideoFile = Str::startsWith($mimeType, 'video');
-        $fileHash = $this->getFileHash($tmpPath . $tmpName);
+        $fileHash = $this->getFileHash(fopen($tmpPath . $tmpName, 'r'));
 
         $file = null;
         if ($isImageFile) {
