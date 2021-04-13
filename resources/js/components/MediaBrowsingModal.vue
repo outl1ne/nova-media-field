@@ -426,23 +426,25 @@ export default {
             },
           })
           .then(response => {
-            if (this.uploadOnly) {
-              this.$emit('updateFiles', {
-                uploading: false,
-                processed: true,
-                data: response.data,
-              });
-            } else {
-              window.mediaLibrary.files.unshift({
-                uploading: false,
-                processed: true,
-                data: response.data,
-              });
-
-              this.$emit('update:files', window.mediaLibrary.files);
-
-              this.updateMedia();
+            if (!window.mediaLibrary.files.find(file => file.data?.id && file.data.id === response.data.id)) {
+              if (this.uploadOnly) {
+                this.$emit('updateFiles', {
+                  uploading: false,
+                  processed: true,
+                  data: response.data,
+                });
+              } else {
+                window.mediaLibrary.files.unshift({
+                  uploading: false,
+                  processed: true,
+                  data: response.data,
+                });
+              }
             }
+
+            this.$nextTick(() => {
+              this.updateMedia();
+            })
           })
           .catch(error => {
             if (!error.response) {
