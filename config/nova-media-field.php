@@ -18,7 +18,7 @@ return [
 
     'collections' => [],
 
-    'storage_driver' => config('filesystems.default'),
+    'storage_driver' => env('MEDIA_LIBRARY_DRIVER', 'public'),
 
     'storage_path' => 'public/media/',
 
