@@ -32,7 +32,7 @@ trait ResolvesMedia
     public function getFileHashFromPath(string $filepath) : ?Media {
         $file = fopen($filepath, 'r');
         if ($file) {
-            $existingMedia = $instance->findExistingMedia($file);
+            $existingMedia = $this->findExistingMedia($file);
             if ($existingMedia) return $existingMedia;
         }
         return null;
