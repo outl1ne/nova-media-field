@@ -4,13 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ----
 
-### [feature/duplication-check]
-
-**This will not work on existing images**
+## [2.0.0-alpha] - 2021-04-13
 
 Adds a feature that checks for duplicate media entry by generating has based on first megabyte
-of file.
+of file. **This will not work on existing images**
 
+This update should allow using any file driver that is supported in Laravel.
+
+### Changed
+
+- **[Breaking change]** Storage driver default in nova media field config has been changed from `config('filesystems.default')` to `env('MEDIA_LIBRARY_DRIVER', 'public')`
+- **[Breaking change]** `Media` model `getUrlAttribute`, `getWebpUrlAttribute` and `getImageSizesAttribute` methods has been fixed by removing URL prefixing.
 
 ### Updated
 
@@ -21,7 +25,6 @@ of file.
 
 - New `file_hash` column, will be used to store original file hash to check for duplicates
 - `resolve_duplicates` key to media field config file. If enabled it will not create a new entry when existing media item is found.
-
 
 ### Manual changes required
 
