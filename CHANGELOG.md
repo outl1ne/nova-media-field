@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [bugfix/driver-handling]
+
+This update should allow using any file driver that is supported in Laravel.
+
+### Changed
+
+- **[Breaking change]** Storage driver default in nova media field config has been changed from `config('filesystems.default')` to `env('MEDIA_LIBRARY_DRIVER', 'public')`
+- **[Breaking change]** `Media` model `getUrlAttribute`, `getWebpUrlAttribute` and `getImageSizesAttribute` methods has been fixed by removing URL prefixing.
+
+
 ## [1.3.11] - 2021-03-01
 
 ### Changed
