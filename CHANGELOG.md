@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ----
 
+## [2.0.0-alpha.2] - 2021-04-14
+
+Fixes paths for media rows because of breaking change introduced in v2. Replaces `public/media/*` with `media/*`.
+
+### Added
+
+- Command `media:strip-public-prefix-from-path`
+
+### Manual changes required
+
+Run command `php artisan media:strip-public-prefix-from-path` to fix media field "path" column values.
+
+----
+
 ## [2.0.0-alpha.1] - 2021-04-13
 
 Adds a feature that checks for duplicate media entry by generating has based on first megabyte
