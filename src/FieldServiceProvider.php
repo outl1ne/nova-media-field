@@ -10,6 +10,7 @@ use OptimistDigital\MediaField\Classes\MediaHandler;
 use OptimistDigital\MediaField\Commands\OptimizeOriginals;
 use OptimistDigital\MediaField\Commands\RegenerateThumbnails;
 use OptimistDigital\MediaField\Commands\RegenerateWebp;
+use OptimistDigital\MediaField\Commands\StripPublicPrefixFromPath;
 
 class FieldServiceProvider extends ServiceProvider
 {
@@ -49,11 +50,14 @@ class FieldServiceProvider extends ServiceProvider
             config('nova-media-field.media_resource', Media::class)
         ]);
 
-        $this->commands([
-            RegenerateThumbnails::class,
-            OptimizeOriginals::class,
-            RegenerateWebp::class,
-        ]);
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                RegenerateThumbnails::class,
+                OptimizeOriginals::class,
+                RegenerateWebp::class,
+                StripPublicPrefixFromPath::class,
+            ]);
+        }
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'nova-media');
     }
