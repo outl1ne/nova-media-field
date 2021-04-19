@@ -11,6 +11,7 @@
         :activeFile.sync="activeFile"
         :showUploadArea.sync="showUploadArea"
         @updateFiles="updateFiles"
+        @updateMedia="updateMedia"
         :loadingMediaFiles.sync="loadingMediaFiles"
         :selectedFiles.sync="selectedFiles"
       />
@@ -71,6 +72,7 @@ export default {
 
     updateMedia: debounce(function () {
       this.onUploadFinished();
+      this.isModalOpen = false;
       this.$toasted.show('Files have been successfully uploaded!', { type: 'success' });
     }, 1000),
 

@@ -426,7 +426,7 @@ export default {
             },
           })
           .then(response => {
-            if (!window.mediaLibrary.files.find(file => file.data?.id && file.data.id === response.data.id)) {
+            if (!window.mediaLibrary?.files?.find(file => file.data?.id && file.data.id === response.data.id)) {
               if (this.uploadOnly) {
                 this.$emit('updateFiles', {
                   uploading: false,
@@ -434,7 +434,7 @@ export default {
                   data: response.data,
                 });
               } else {
-                window.mediaLibrary.files.unshift({
+                window.mediaLibrary?.files.unshift({
                   uploading: false,
                   processed: true,
                   data: response.data,
