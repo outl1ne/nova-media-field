@@ -35,14 +35,16 @@ class Media extends Model
 
     public function getWebpUrlAttribute()
     {
-        return !empty($this->webp_name) ? Storage::url($this->path . $this->webp_name) : null;
+        /** @var MediaHandler $instance */
+        $instance = app()->make(MediaHandler::class);
+        return !empty($this->webp_name) ? $instance->getDisk()->url($this->path . $this->webp_name) : null;
     }
 
     public function getImageSizesAttribute($value)
     {
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
-        
+
         $sizes = json_decode($value, true) ?? [];
 
         foreach ($sizes as $key => $size) {
