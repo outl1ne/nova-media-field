@@ -4,43 +4,51 @@ All notable changes to this project will be documented in this file.
 
 ----
 
-## [2.0.0-alpha.2] - 2021-04-14
+## [2.0.0-alpha.x]
+
+### [2.0.0-alpha.4] - 2021-04-20
+
+Use `getDisk` method in Media model for URL generators
+
+### [2.0.0-alpha.3] - 2021-04-19
+
+Fixes exception when uploading from index view
+
+### [2.0.0-alpha.2] - 2021-04-14
 
 Fixes paths for media rows because of breaking change introduced in v2. Replaces `public/media/*` with `media/*`.
 
-### Added
+#### Added
 
 - Command `media:strip-public-prefix-from-path`
 
-### Manual changes required
+#### Manual changes required
 
 Run command `php artisan media:strip-public-prefix-from-path` to fix media field "path" column values.
 
-----
-
-## [2.0.0-alpha.1] - 2021-04-13
+### [2.0.0-alpha.1] - 2021-04-13
 
 Adds a feature that checks for duplicate media entry by generating has based on first megabyte
 of file. **This will not work on existing images**
 
 This update should allow using any file driver that is supported in Laravel.
 
-### Changed
+#### Changed
 
 - **[Breaking change]** Storage driver default in nova media field config has been changed from `config('filesystems.default')` to `env('MEDIA_LIBRARY_DRIVER', 'public')`
 - **[Breaking change]** `Media` model `getUrlAttribute`, `getWebpUrlAttribute` and `getImageSizesAttribute` methods has been fixed by removing URL prefixing.
 
-### Updated
+#### Updated
 
 - `MediaHandler` class `createFrom...` methods has been updated to support `resolve_duplicates`. When finding a duplicate
   media item then these methods will return existing instance of that image instead.
 
-### Added
+#### Added
 
 - New `file_hash` column, will be used to store original file hash to check for duplicates
 - `resolve_duplicates` key to media field config file. If enabled it will not create a new entry when existing media item is found.
 
-### Manual changes required
+#### Manual changes required
 
 - run `php artisan migrate` to add the new `file_hash` column
 - default filesystem driver for media field was changed in config file, please review these settings
