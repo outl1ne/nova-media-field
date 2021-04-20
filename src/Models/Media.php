@@ -48,7 +48,7 @@ class Media extends Model
         $sizes = json_decode($value, true) ?? [];
 
         foreach ($sizes as $key => $size) {
-            $sizes[$key]['url'] = Storage::url($this->path . $size['file_name']);
+            $sizes[$key]['url'] = $instance->getDisk()->url($this->path . $size['file_name']);
             if (config('nova-media-field.webp_enabled', true) && isset($size['webp_name'])) {
                 $sizes[$key]['webp_url'] = $instance->getDisk()->url($this->path . $size['webp_name']);
             }
