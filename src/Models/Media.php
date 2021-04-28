@@ -26,31 +26,31 @@ class Media extends Model
 
     protected $appends = ['url', 'webp_url'];
 
-    public function getUrlAttribute()
+    public function getDisk()
     {
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
-        return $instance->getDisk()->url($this->path . $this->file_name);
+        return $instance->getDisk();
+    }
+
+    public function getUrlAttribute()
+    {
+        return $this->getDisk()->url($this->path . $this->file_name);
     }
 
     public function getWebpUrlAttribute()
     {
-        /** @var MediaHandler $instance */
-        $instance = app()->make(MediaHandler::class);
-        return !empty($this->webp_name) ? $instance->getDisk()->url($this->path . $this->webp_name) : null;
+        return !empty($this->webp_name) ? $this->getDisk()->url($this->path . $this->webp_name) : null;
     }
 
     public function getImageSizesAttribute($value)
     {
-        /** @var MediaHandler $instance */
-        $instance = app()->make(MediaHandler::class);
-
         $sizes = json_decode($value, true) ?? [];
 
         foreach ($sizes as $key => $size) {
-            $sizes[$key]['url'] = $instance->getDisk()->url($this->path . $size['file_name']);
+            $sizes[$key]['url'] = $this->getDisk()->url($this->path . $size['file_name']);
             if (config('nova-media-field.webp_enabled', true) && isset($size['webp_name'])) {
-                $sizes[$key]['webp_url'] = $instance->getDisk()->url($this->path . $size['webp_name']);
+                $sizes[$key]['webp_url'] = $this->getDisk()->url($this->path . $size['webp_name']);
             }
         }
 
