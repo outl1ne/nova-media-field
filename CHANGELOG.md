@@ -6,6 +6,20 @@ All notable changes to this project will be documented in this file.
 
 ## [2.0.0-alpha.x]
 
+### [2.0.0-alpha.5] - 2021-04-28
+
+Fixed 2 instances where config key was invalid when checking if duplication check is enabled.
+
+This release should allow implementing mult-disk support if project requires it. All core logic should
+be overrideable.
+
+#### Added
+
+- New config option `nova-media-field.media_model` allows overriding original Media model. New model
+must be extended from the original.
+
+- Local `getDisk` method for Media model to use.
+
 ### [2.0.0-alpha.4] - 2021-04-20
 
 Use `getDisk` method in Media model for URL generators
