@@ -26,6 +26,9 @@ return [
 
     'media_resource' => \OptimistDigital\MediaField\Media::class,
 
+    // Allows to rewrite core logic for custom needs. NB: Don't use it to modify json responses!
+    'media_model' => \OptimistDigital\MediaField\Models\Media::class,
+
     // When enabled tries to find if file already exists and serve that instead of creating a duplicate entry
     'resolve_duplicates' => true,
 ];

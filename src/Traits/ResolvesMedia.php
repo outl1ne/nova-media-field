@@ -15,9 +15,10 @@ trait ResolvesMedia
      */
     public function findExistingMedia($file) : ?Media
     {
+        $Media = config('nova-media-field.media_model');
         $hash = $this->getFileHash($file);
         if (!$hash) return null;
-        return Media::whereFileHash($hash)->first();
+        return $Media::whereFileHash($hash)->first();
     }
 
     /**

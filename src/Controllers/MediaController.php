@@ -18,12 +18,14 @@ class MediaController extends Controller
 
     public function findFiles(Request $request)
     {
+        $Media = config('nova-media-field.media_model');
+
         if (is_array($request->get('ids'))) {
             $ids =  array_map('trim', array_filter($request->get('ids'), 'is_numeric'));
 
             $orderedMedia = [];
             if (!empty($ids)) {
-                $media = Media::whereIn('id', $ids)->get()->keyBy('id');
+                $media = $Media::whereIn('id', $ids)->get()->keyBy('id');
                 foreach ($ids as $id) {
                     if (!empty($media[$id])) $orderedMedia[] = $media[$id];
                 }
@@ -36,8 +38,9 @@ class MediaController extends Controller
 
     public function updateFile(Request $request)
     {
+        $Media = config('nova-media-field.media_model');
         $media = null;
-        if (is_numeric($request->get('id'))) $media = Media::whereId($request->get('id'))->firstOrFail();
+        if (is_numeric($request->get('id'))) $media = $Media::whereId($request->get('id'))->firstOrFail();
 
         $media->title = $request->get('title');
         $media->alt = $request->get('alt');
@@ -48,7 +51,8 @@ class MediaController extends Controller
 
     public function getFiles(Request $request)
     {
-        $query = Media::query();
+        $Media = config('nova-media-field.media_model');
+        $query = $Media::query();
 
         if ($request->has('search')) {
             $query

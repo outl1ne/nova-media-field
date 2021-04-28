@@ -27,7 +27,7 @@ class MediaHandler
     }
 
     /**
-     * Create new media resource using laravel's Request class
+     * Create new media resource using Laravel's Request class
      *
      * @param Request $request
      * @param string $key Used to access Request file upload value
@@ -40,7 +40,7 @@ class MediaHandler
         $instance = app()->make(MediaHandler::class);
 
         // Check if image already exists when enabled and return that instead
-        if (config('resolve_duplicates', true)) {
+        if (config('nova-media-field.resolve_duplicates', true)) {
             if ($file = $instance->getFileHashFromPath($request->file($key)->getRealPath())) return $file;
         }
 
@@ -67,7 +67,7 @@ class MediaHandler
         $instance = app()->make(MediaHandler::class);
 
         // Check if image already exists when enabled and return that instead
-        if (config('resolve_duplicates', true)) {
+        if (config('nova-media-field.resolve_duplicates', true)) {
             if ($file = $instance->getFileHashFromPath($filepath)) return $file;
         }
 
@@ -340,7 +340,9 @@ class MediaHandler
 
         $fullFilePath = $storagePath . $newFilename;
 
-        $model = new Media([
+        $Media = config('nova-media-field.media_model');
+
+        $model = new $Media([
             'collection_name' => $collection,
             'path' => $storagePath,
             'file_name' => $newFilename,

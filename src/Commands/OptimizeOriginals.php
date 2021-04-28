@@ -14,7 +14,8 @@ class OptimizeOriginals extends Command
 
     public function handle()
     {
-        $medias = Media::all();
+        $Media = config('nova-media-field.media_model');
+        $medias = $Media::all();
 
         /** @var MediaHandler $handler */
         $handler = app()->make(MediaHandler::class);

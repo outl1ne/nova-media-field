@@ -14,8 +14,9 @@ class StripPublicPrefixFromPath extends Command
 
     public function handle()
     {
+        $Media = config('nova-media-field.media_model');
         $prefix = 'public/';
-        $medias = Media::where('path', 'like', $prefix.'%')->get();
+        $medias = $Media::where('path', 'like', $prefix.'%')->get();
 
         /** @var MediaHandler $handler */
         $handler = app()->make(MediaHandler::class);
