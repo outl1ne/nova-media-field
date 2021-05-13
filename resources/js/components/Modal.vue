@@ -48,7 +48,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .od-modal-container .modal > div > div {
   padding: 0 20px;
   width: 100%;
