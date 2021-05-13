@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2021-05-13
+
+### Changed
+
+- Updated packages
+
+### Added
+
+- Added collection parameter to `findFiles` request.
+  - MediaController@findFiles will now properly use collection to search files.
+
 ## [1.3.11] - 2021-03-01
 
 ### Changed
