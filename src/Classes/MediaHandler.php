@@ -172,7 +172,7 @@ class MediaHandler
             try {
                 $sizedFilenameWoExtension = $origName . '-' . $img->getWidth() . 'px-' . $img->getHeight() . 'px';
                 $origFormatFilename = "$sizedFilenameWoExtension.$origExtension";
-                $disk->put(dirname($path) . '/' . $origFormatFilename, $img->encode($origExtension, 80)->__toString());
+                $disk->put(dirname($path) . '/' . $origFormatFilename, $img->encode($origExtension, config('nova-media-field.quality'))->__toString());
 
                 $sizes[$sizeName] = [
                     'file_name' => $origFormatFilename,
@@ -325,12 +325,12 @@ class MediaHandler
                 });
             }
 
-            $file = $image->encode($origExtension, 80);
+            $file = $image->encode($origExtension, config('nova-media-field.quality'));
             $disk->put($storagePath . $newFilename, $file);
 
             if ($webpEnabled) {
                 $webpFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, 'webp');
-                $webpImg = Image::make($file)->encode('webp', 80);
+                $webpImg = Image::make($file)->encode('webp', config('nova-media-field.quality'));
                 $disk->put($storagePath . $webpFilename, $webpImg);
             }
         } else {
