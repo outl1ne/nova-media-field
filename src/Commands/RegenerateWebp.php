@@ -35,7 +35,7 @@ class RegenerateWebp extends Command
 
                 try {
                     // Re-save original file
-                    $webpImg = Image::make($origFile)->encode('webp', config('nova-media-field.quality'));
+                    $webpImg = Image::make($origFile)->encode('webp', config('nova-media-field.quality', 80));
                     $handler->getDisk()->put($webpImagePath, $webpImg);
 
                     $media->webp_name = "$origFilename.webp";

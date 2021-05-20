@@ -30,7 +30,7 @@ class OptimizeOriginals extends Command
                 $origFile = file_get_contents($imagePath);
 
                 // Re-save original file
-                $img = Image::make($origFile)->encode($media->extension, config('nova-media-field.quality'));
+                $img = Image::make($origFile)->encode($media->extension, config('nova-media-field.quality', 80));
                 $handler->getDisk()->put($imagePath, $img);
                 $media->file_size = $handler->getDisk()->size($imagePath);
 
