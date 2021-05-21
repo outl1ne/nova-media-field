@@ -147,7 +147,7 @@ export default {
     },
     currentCollection() {
       return this.field.displayCollection || this.chosenCollection;
-    }
+    },
   },
 
   mounted() {
@@ -308,6 +308,6 @@ export default {
         this.updateMedia();
       }, 200)();
     },
-  }
+  },
 };
 </script>
