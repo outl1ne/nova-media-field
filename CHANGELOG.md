@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.1] - 2021-05-13
+
+### Changed
+
+- Fixed #31, where multiple() was no longer working due to duplicate declaration of computed
+
 ## [1.4.0] - 2021-05-13
 
 ### Changed
