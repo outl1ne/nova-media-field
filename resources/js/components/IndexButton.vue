@@ -36,6 +36,14 @@ export default {
 
   props: ['field', 'onUploadFinished'],
 
+  mounted() {
+    window.addEventListener('open-media-library', this.openMediaBrowsingModal)
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('open-media-library', this.openMediaBrowsingModal)
+  },
+
   data() {
     return {
       files: [],
