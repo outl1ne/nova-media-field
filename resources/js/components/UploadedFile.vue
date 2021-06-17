@@ -11,12 +11,14 @@
     </div>
 
     <div class="thumbnail-container" v-if="file.image_sizes !== void 0">
-      <img v-if="fileThumbnail" draggable="false" :src="fileThumbnail" />
-      <thumbnail-video-icon icon="video-icon" class="thumbnail-placeholder" v-if="!fileThumbnail" />
+      <img v-if="isImageFile && fileThumbnail && !imageFileMissing" draggable="false" :src="fileThumbnail" @error="imageFileMissing = true" />
+      <missing-file-icon v-if="imageFileMissing"/>
+      <thumbnail-video-icon v-if="isVideoFile" icon="video-icon" class="thumbnail-placeholder" />
+      <document-icon v-if="!isImageFile && !isVideoFile"  />
     </div>
 
     <div class="checked-box" v-if="selected">
-      <checkbox :checked="selected" />
+      <checkbox :checked="selected"/>
     </div>
 
     <div class="uploaded-file-name" v-if="file.file_name && !hideName">
@@ -26,6 +28,9 @@
 </template>
 
 <script>
+import DocumentIcon from "../icons/DocumentIcon";
+import MissingFileIcon from "../icons/MissingFileIcon";
+
 export default {
   props: {
     hideName: {
@@ -60,9 +65,16 @@ export default {
     },
   },
 
-  data: () => ({
-    //
-  }),
+  components: {
+    DocumentIcon,
+    MissingFileIcon
+  },
+
+  data() {
+    return {
+      imageFileMissing: false,
+    }
+  },
 
   methods: {
     onClick() {
@@ -88,6 +100,12 @@ export default {
         width: `${this.compactWidth()}px`,
         height: `${this.compactHeight()}px`,
       };
+    },
+    isImageFile() {
+      return this.file?.mime_type?.indexOf('image/') === 0;
+    },
+    isVideoFile() {
+      return this.file?.mime_type?.indexOf('video/') === 0;
     },
   },
 };

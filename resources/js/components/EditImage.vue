@@ -2,10 +2,13 @@
   <div class="edit-image-container">
     <div class="form-field">
       <div class="thumbnail-container">
-        <img :src="file.url" v-if="file.mime_type.indexOf('image') === 0" />
-        <video v-if="file.mime_type.indexOf('video') === 0" controls>
-          <source :src="file.url" :type="file.mime_type" />
+        <img :src="file.url" v-if="file.mime_type.indexOf('image') === 0 && !imageFileMissing"
+             @error="imageFileMissing = true"/>
+        <missing-file-icon :src="file.url" v-else-if="file.mime_type.indexOf('image') === 0 && imageFileMissing"/>
+        <video v-else-if="file.mime_type.indexOf('video') === 0" controls>
+          <source :src="file.url" :type="file.mime_type"/>
         </video>
+        <document-icon v-else  />
       </div>
     </div>
 
@@ -61,6 +64,8 @@
 
 <script>
 import debounce from './../debounce';
+import MissingFileIcon from "../icons/MissingFileIcon";
+import DocumentIcon from "../icons/DocumentIcon";
 
 export default {
   props: {
@@ -71,9 +76,20 @@ export default {
     },
   },
 
+  components: {
+    MissingFileIcon,
+    DocumentIcon
+  },
+
   data: () => ({
-    //
+    imageFileMissing: false
   }),
+
+  watch: {
+    file() {
+      this.imageFileMissing = false
+    }
+  },
 
   methods: {
     onDataUpdate() {
