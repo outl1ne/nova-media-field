@@ -6,9 +6,9 @@
       :src="src"
       @error="isImageFileMissing = true"
     />
-    <missing-file-icon v-else-if="isImageFile && isImageFileMissing" class="p-2" />
-    <audio-icon v-else-if="isAudioFile" class="p-2" />
-    <thumbnail-video-icon v-else-if="isVideoFile && !showVideo" icon="video-icon" class="p-2" />
+    <missing-file-icon v-else-if="isImageFile && isImageFileMissing" />
+    <audio-icon v-else-if="isAudioFile" />
+    <thumbnail-video-icon v-else-if="isVideoFile && !showVideo" icon="video-icon" />
     <video v-else-if="isVideoFile && showVideo" controls>
       <source :src="src" :type="mimeType" />
     </video>

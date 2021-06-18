@@ -41,7 +41,7 @@
         :currentCollection="currentCollection"
       />
 
-      <div :class="`flex mb-6`" id="media-dropzone" v-if="!loadingMediaFiles">
+      <div :class="`flex mb-6`" id="media-dropzone" class="media-dropzone-wrapper" v-if="!loadingMediaFiles">
         <div class="img-collection" @scroll="scrollEventListener" ref="imgCollectionRef">
           <div class="empty-message" v-if="files.length === 0 && !uploadOnly">
             <p>There are currently no media files in this library</p>
@@ -500,3 +500,33 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.od-modal {
+  height: 88vh;
+
+  > div:first-child {
+    height: calc(88vh - 60px);
+
+    > div {
+      height: calc(88vh - 60px - 110px);
+    }
+  }
+
+  #media-dropzone .img-collection {
+    height: 100%;
+    max-height: none;
+  }
+
+  .media-dropzone-wrapper {
+    height: 100%;
+  }
+
+  .mime-type-icon {
+    padding: 24px;
+
+    svg {
+      position: static;
+    }
+  }
+}
+</style>

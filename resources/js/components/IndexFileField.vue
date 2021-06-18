@@ -1,5 +1,5 @@
 <template>
-  <div class="p-2 mime-type-icon-wrapper">
+  <div class="mime-type-icon-wrapper">
     <mime-type-icon :src="fileThumbnail" :mime-type="mimeType" />
   </div>
 </template>

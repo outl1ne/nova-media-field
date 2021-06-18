@@ -130,6 +130,10 @@ export default {
     text-align: center;
   }
 
+  .mime-type-icon {
+    padding: 16px;
+  }
+
   &:hover {
     .thumbnail-container {
       box-shadow: 0 0 5px rgba(#4099de, 0.5);
