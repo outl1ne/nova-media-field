@@ -103,7 +103,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .file-name {
   font-weight: bold;
   color: #4099de;
@@ -113,17 +113,19 @@ export default {
   position: relative;
   width: 100%;
   margin-bottom: 15px;
-  padding-bottom: 40%;
-}
+  height: 250px;
+  overflow: hidden;
 
-img,
-video {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  object-fit: contain;
+  img,
+  svg,
+  video {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    object-fit: contain;
+  }
 }
 
 .form-field {
