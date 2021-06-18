@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ----
 
-## [2.0.1 ] - 2021-06-18
+## [2.0.1] - 2021-06-18
 
 ### Added
 
@@ -14,6 +14,11 @@ All notable changes to this project will be documented in this file.
 - Fixed #31, where multiple() was no longer working due to duplicate declaration of computed
 - Added collection parameter to `findFiles` request.
 - MediaController@findFiles will now properly use collection to search files.
+
+### Fixed
+
+- Media library index resource table view should display upload media
+  button when table is empty and should open media browser modal upon clicking
 
 ----
 

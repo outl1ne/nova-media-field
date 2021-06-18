@@ -30,7 +30,6 @@ export default {
   },
 
   data() {
-    console.log('props', this.src);
     return {
       isImageFileMissing: false,
     };
