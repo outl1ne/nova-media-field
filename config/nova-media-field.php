@@ -32,5 +32,6 @@ return [
     // When enabled tries to find if file already exists and serve that instead of creating a duplicate entry
     'resolve_duplicates' => true,
 
+    // Encoding quality for thumbnails and for source image
     'quality' => 80,
 ];
