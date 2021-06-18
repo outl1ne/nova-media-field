@@ -20,6 +20,19 @@ All notable changes to this project will be documented in this file.
 - Media library index resource table view should display upload media
   button when table is empty and should open media browser modal upon clicking
 
+## Upgrading to [2.0.0]
+
+- Storage driver default in nova media field config has been
+  changed from `config('filesystems.default')` to `env('MEDIA_LIBRARY_DRIVER', 'public')`
+- `Media` model `getUrlAttribute`, `getWebpUrlAttribute` and
+  `getImageSizesAttribute` methods has been fixed by removing URL prefixing.
+- Run `php artisan migrate` to add the new `file_hash` column
+- Default filesystem driver for media field was changed in config file, please review
+  these settings as your images will have broken links upon upgrading, to fix them
+  run `php artisan media:strip-public-prefix-from-path`. This command will regenerate file
+  path column.
+
+
 ----
 
 ## [2.0.0-alpha.x]

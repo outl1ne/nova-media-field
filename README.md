@@ -22,6 +22,12 @@ This [Laravel Nova](https://nova.laravel.com) package adds a simple media upload
 - WebP generator (also re-generation via command)
 - Works with [nova-translatable](https://github.com/optimistdigital/nova-translatable)
 
+
+## Upgrading to v2
+
+Check [CHANGELOG.MD](https://github.com/optimistdigital/nova-media-field/blob/v2/CHANGELOG.md)
+
+
 ## Installation
 
 Install the package in a Laravel Nova project via Composer and run migrations:
