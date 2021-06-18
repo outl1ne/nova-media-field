@@ -145,6 +145,9 @@ export default {
     isMultiple() {
       return this.field.multiple || false;
     },
+    currentCollection() {
+      return this.field.displayCollection || this.chosenCollection;
+    },
   },
 
   mounted() {
@@ -306,12 +309,6 @@ export default {
         this.updateMedia();
       }, 200)();
     },
-  },
-
-  computed: {
-    currentCollection() {
-      return this.field.displayCollection || this.chosenCollection;
-    },
-  },
+  }
 };
 </script>
