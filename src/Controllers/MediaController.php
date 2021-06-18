@@ -53,12 +53,18 @@ class MediaController extends Controller
     {
         $Media = config('nova-media-field.media_model');
         $query = $Media::query();
+        $collecton = $request->get('collection');
+        $search = $request->get('search');
 
-        if ($request->has('search')) {
+        if (!empty($search)) {
             $query
-                ->where('file_name', 'like', '%' . $request->get('search') . '%')
-                ->orWhere('alt', 'like', '%' . $request->get('search') . '%')
-                ->orWhere('title', 'like', '%' . $request->get('search') . '%');
+                ->where('file_name', 'like', '%' . $search . '%')
+                ->orWhere('alt', 'like', '%' . $search . '%')
+                ->orWhere('title', 'like', '%' . $search . '%');
+        }
+
+        if (!empty($collecton)) {
+            $query->where('collection_name', '=', $collecton);
         }
 
         $paginator = $query->latest()->paginate(30);

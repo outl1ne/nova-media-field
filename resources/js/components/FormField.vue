@@ -177,7 +177,6 @@ export default {
         onload: [],
         currentPage: 0,
       };
-
       this.fetchFiles();
       window.mediaLibrary.loaded = true;
     } else if (window.mediaLibrary.loaded) {
@@ -262,6 +261,7 @@ export default {
         const response = await axios.get('/api/media', {
           params: {
             search: searchValue,
+            collection: this.currentCollection,
             page: window.mediaLibrary.currentPage + 1,
           },
         });
@@ -305,6 +305,12 @@ export default {
         this.updateFiles();
         this.updateMedia();
       }, 200)();
+    },
+  },
+
+  computed: {
+    currentCollection() {
+      return this.field.displayCollection || this.chosenCollection;
     },
   },
 };
