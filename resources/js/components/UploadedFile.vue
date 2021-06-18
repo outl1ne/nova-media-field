@@ -11,10 +11,7 @@
     </div>
 
     <div class="thumbnail-container" v-if="file.image_sizes !== void 0">
-      <img v-if="isImageFile && fileThumbnail && !imageFileMissing" draggable="false" :src="fileThumbnail" @error="imageFileMissing = true" />
-      <missing-file-icon v-if="imageFileMissing"/>
-      <thumbnail-video-icon v-if="isVideoFile" icon="video-icon" class="thumbnail-placeholder" />
-      <document-icon v-if="!isImageFile && !isVideoFile"  />
+      <mime-type-icon :src="fileThumbnail" :mime-type="this.file.mime_type" />
     </div>
 
     <div class="checked-box" v-if="selected">
@@ -30,6 +27,7 @@
 <script>
 import DocumentIcon from "../icons/DocumentIcon";
 import MissingFileIcon from "../icons/MissingFileIcon";
+import MimeTypeIcon from "./MimeTypeIcon";
 
 export default {
   props: {
@@ -66,14 +64,9 @@ export default {
   },
 
   components: {
+    MimeTypeIcon,
     DocumentIcon,
     MissingFileIcon
-  },
-
-  data() {
-    return {
-      imageFileMissing: false,
-    }
   },
 
   methods: {
@@ -100,12 +93,6 @@ export default {
         width: `${this.compactWidth()}px`,
         height: `${this.compactHeight()}px`,
       };
-    },
-    isImageFile() {
-      return this.file?.mime_type?.indexOf('image/') === 0;
-    },
-    isVideoFile() {
-      return this.file?.mime_type?.indexOf('video/') === 0;
     },
   },
 };

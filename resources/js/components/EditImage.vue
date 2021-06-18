@@ -2,13 +2,7 @@
   <div class="edit-image-container">
     <div class="form-field">
       <div class="thumbnail-container">
-        <img :src="file.url" v-if="file.mime_type.indexOf('image') === 0 && !imageFileMissing"
-             @error="imageFileMissing = true"/>
-        <missing-file-icon :src="file.url" v-else-if="file.mime_type.indexOf('image') === 0 && imageFileMissing"/>
-        <video v-else-if="file.mime_type.indexOf('video') === 0" controls>
-          <source :src="file.url" :type="file.mime_type"/>
-        </video>
-        <document-icon v-else  />
+        <mime-type-icon :src="file.url" :mime-type="file.mime_type" :show-video="true" />
       </div>
     </div>
 
@@ -66,6 +60,7 @@
 import debounce from './../debounce';
 import MissingFileIcon from "../icons/MissingFileIcon";
 import DocumentIcon from "../icons/DocumentIcon";
+import MimeTypeIcon from "./MimeTypeIcon";
 
 export default {
   props: {
@@ -77,6 +72,7 @@ export default {
   },
 
   components: {
+    MimeTypeIcon,
     MissingFileIcon,
     DocumentIcon
   },
@@ -116,15 +112,11 @@ export default {
 .thumbnail-container {
   position: relative;
   width: 100%;
-  height: 250px;
   margin-bottom: 15px;
-
-  video {
-    width: 100%;
-  }
+  padding-bottom: 40%;
 }
 
-img {
+img, video {
   position: absolute;
   width: 100%;
   height: 100%;
