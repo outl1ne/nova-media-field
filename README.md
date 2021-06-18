@@ -3,7 +3,7 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/optimistdigital/nova-media-field.svg?style=flat-square)](https://packagist.org/packages/optimistdigital/nova-media-field)
 [![Total Downloads](https://img.shields.io/packagist/dt/optimistdigital/nova-media-field.svg?style=flat-square)](https://packagist.org/packages/optimistdigital/nova-media-field)
 
-This [Laravel Nova](https://nova.laravel.com) package adds a simple image/gallery upload field with a media browser to Laravel Nova.
+This [Laravel Nova](https://nova.laravel.com) package adds a simple media upload field with a media browser to Laravel Nova.
 
 ## Requirements
 
@@ -12,6 +12,7 @@ This [Laravel Nova](https://nova.laravel.com) package adds a simple image/galler
 
 ## Features:
 
+- Handles any type of file
 - Media browser
 - Drag-and-drop multi file upload
 - Multiple file selection
@@ -35,7 +36,7 @@ php artisan migrate
 
 And then register the `NovaMediaLibrary` tool in `NovaServiceProvider`:
 
-```php
+```
 use OptimistDigital\MediaField\NovaMediaLibrary;
 
 public function tools()
@@ -48,7 +49,7 @@ public function tools()
 
 ## Usage
 
-```php
+```
 use OptimistDigital\MediaField\MediaField;
 
 // ...
@@ -64,6 +65,7 @@ fields() {
       ->compact($width, $height = null) // Defines the thumbnail image size shown in Nova (to actually change thumbnail image size, use config)
   ]
 }
+
 ```
 
 ### Image thumbnails
@@ -71,7 +73,7 @@ fields() {
 Image thumbnails define different conversions for uploaded images. These conversions can be configured
 under media field config file under `image_sizes` key.
 
-```php
+```
 # config/nova-media-field.php
 
 [
@@ -130,7 +132,7 @@ php artisan media:regenerate-thumbnails
 
 To regenerate your missing WebP files run this command:
 
-```bsah
+```bash
 php artisan media:regenerate-webp
 ```
 
@@ -164,6 +166,43 @@ Collection configuration goes under media field config file under `collection` k
 - `label` - Display label for collection
 - `constraints` - Array of validation rules (like in Request validation)
 - `image_sizes` - Sizes to generate (overrides default)
+
+
+### Handle duplicate uploads
+
+If `resolve_duplicates` is set to true then md5 hash of first mb of the original uploaded
+file will be generated and used to check if any file duplicates are discovered. If there is
+then it will serve existing media item without saving the new one.
+
+```
+# config/nova-media-field.php
+
+[
+    // When enabled tries to find if file already exists and
+    // serve that instead of creating a duplicate entry
+    'resolve_duplicates' => true,
+]
+```
+
+### Customizing
+
+This package allows overriding of core logic for any custom needs project may have
+
+```
+# config/nova-media-field.php
+[
+    // media_handler is core class that handles file uploads, storage and thumbnail generation
+    'media_handler' => \OptimistDigital\MediaField\Classes\MediaHandler::class,
+
+    // media_resource is nova resource class for Media
+    'media_resource' => \OptimistDigital\MediaField\Media::class,
+
+    // media_model is laravel modal used throughout this package
+    'media_model' => \OptimistDigital\MediaField\Models\Media::class,
+]
+
+```
+
 
 ## Credits
 

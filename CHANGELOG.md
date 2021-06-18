@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ----
 
+## [2.0.1] - 2021-06-18
+
+### Added
+
+- Added audio thumbnail for audio mime type
+- Added document thumbnail for all mime types that are unmapped
+- Added fallback image for image preview that has missing/broken source
+
+
+----
+
 ## [2.0.0-alpha.x]
 
 ### [2.0.0-alpha.5] - 2021-04-28
