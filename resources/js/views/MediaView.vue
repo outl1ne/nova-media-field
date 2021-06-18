@@ -51,8 +51,12 @@
         <div class="flex items-center">
           <div class="px-3" v-if="shouldShowCheckBoxes">
             <!-- Select All -->
-            <dropdown dusk="select-all-dropdown">
-              <dropdown-trigger slot-scope="{ toggle }" :handle-click="toggle">
+            <dropdown
+              dusk="select-all-dropdown"
+              placement="bottom-end"
+              class="-mx-2"
+            >
+              <dropdown-trigger class="px-2">
                 <fake-checkbox :checked="selectAllChecked" />
               </dropdown-trigger>
 
@@ -60,7 +64,11 @@
                 <div class="p-4">
                   <ul class="list-reset">
                     <li class="flex items-center mb-4">
-                      <checkbox-with-label :checked="selectAllChecked" @change="toggleSelectAll">
+                      <checkbox-with-label
+                        :checked="selectAllChecked"
+                        @input="toggleSelectAll"
+                        dusk="select-all-button"
+                      >
                         {{ __('Select All') }}
                       </checkbox-with-label>
                     </li>
@@ -68,10 +76,14 @@
                       <checkbox-with-label
                         dusk="select-all-matching-button"
                         :checked="selectAllMatchingChecked"
-                        @change="toggleSelectAllMatching"
+                        @input="toggleSelectAllMatching"
                       >
                         <template>
-                          <span class="mr-1"> {{ __('Select All Matching') }} ({{ allMatchingResourceCount }}) </span>
+                          <span class="mr-1">
+                            {{ __('Select All Matching') }} ({{
+                              allMatchingResourceCount
+                            }})
+                          </span>
                         </template>
                       </checkbox-with-label>
                     </li>
