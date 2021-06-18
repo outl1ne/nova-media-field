@@ -13,10 +13,11 @@ use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Models\Media;
 use OptimistDigital\MediaField\NovaMediaLibrary;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use OptimistDigital\MediaField\Traits\ResolvesMedia;
 
 class MediaHandler
 {
-    use ValidatesRequests;
+    use ValidatesRequests, ResolvesMedia;
 
     protected $client;
 
@@ -26,7 +27,7 @@ class MediaHandler
     }
 
     /**
-     * Create new media resource using laravel's Request class
+     * Create new media resource using Laravel's Request class
      *
      * @param Request $request
      * @param string $key Used to access Request file upload value
@@ -37,6 +38,12 @@ class MediaHandler
     {
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
+
+        // Check if image already exists when enabled and return that instead
+        if (config('nova-media-field.resolve_duplicates', true)) {
+            if ($file = $instance->getFileHashFromPath($request->file($key)->getRealPath())) return $file;
+        }
+
         return $instance->storeFile([
             'name' => $request->file($key)->getClientOriginalName(),
             'path' => $request->file($key)->getRealPath(),
@@ -49,7 +56,7 @@ class MediaHandler
     /**
      * Creates new media resource from existing file
      *
-     * @param $file Full path to file
+     * @param $filepath - Full path to file
      * @return Media
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @throws \Exception
@@ -58,6 +65,12 @@ class MediaHandler
     {
         /** @var MediaHandler $instance */
         $instance = app()->make(MediaHandler::class);
+
+        // Check if image already exists when enabled and return that instead
+        if (config('nova-media-field.resolve_duplicates', true)) {
+            if ($file = $instance->getFileHashFromPath($filepath)) return $file;
+        }
+
         return $instance->storeFile($filepath, $instance->getDisk());
     }
 
@@ -71,12 +84,19 @@ class MediaHandler
         try {
             $tmpPath = tempnam(sys_get_temp_dir(), 'media-');
             $this->client->get($fileUrl, ['sink' => $tmpPath, 'connect_timeout' => 5, 'timeout' => $options['timeout_in_sec'] ?? 60]);
+
+            // Check if image already exists when enabled and return that instead
+            if (config('nova-media-field.resolve_duplicates', true)) {
+                if ($existingMedia = $this->findExistingMedia($tmpPath)) return $existingMedia;
+            }
+
             $mimeType = mime_content_type($tmpPath);
             if (!Str::startsWith($mimeType, 'image')) throw new Exception("Image was not of image mimetype. Instead received: $mimeType");
             return $this->storeFile($tmpPath, $this->getDisk());
         } catch (Exception $e) {
             \Log::error($e->getMessage());
         }
+
         return null;
     }
 
@@ -152,7 +172,7 @@ class MediaHandler
             try {
                 $sizedFilenameWoExtension = $origName . '-' . $img->getWidth() . 'px-' . $img->getHeight() . 'px';
                 $origFormatFilename = "$sizedFilenameWoExtension.$origExtension";
-                $disk->put(dirname($path) . '/' . $origFormatFilename, $img->encode($origExtension, 80)->__toString());
+                $disk->put(dirname($path) . '/' . $origFormatFilename, $img->encode($origExtension, config('nova-media-field.quality', 80))->__toString());
 
                 $sizes[$sizeName] = [
                     'file_name' => $origFormatFilename,
@@ -280,6 +300,7 @@ class MediaHandler
         $origExtension = pathinfo($filename, PATHINFO_EXTENSION);
         $isImageFile = $this->isReadableImage($tmpPath . $tmpName);
         $isVideoFile = Str::startsWith($mimeType, 'video');
+        $fileHash = $this->getFileHash(fopen($tmpPath . $tmpName, 'r'));
 
         $file = null;
         if ($isImageFile) {
@@ -304,12 +325,12 @@ class MediaHandler
                 });
             }
 
-            $file = $image->encode($origExtension, 80);
+            $file = $image->encode($origExtension, config('nova-media-field.quality', 80));
             $disk->put($storagePath . $newFilename, $file);
 
             if ($webpEnabled) {
                 $webpFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, 'webp');
-                $webpImg = Image::make($file)->encode('webp', 80);
+                $webpImg = Image::make($file)->encode('webp', config('nova-media-field.quality', 80));
                 $disk->put($storagePath . $webpFilename, $webpImg);
             }
         } else {
@@ -319,7 +340,9 @@ class MediaHandler
 
         $fullFilePath = $storagePath . $newFilename;
 
-        $model = new Media([
+        $Media = config('nova-media-field.media_model');
+
+        $model = new $Media([
             'collection_name' => $collection,
             'path' => $storagePath,
             'file_name' => $newFilename,
@@ -330,6 +353,7 @@ class MediaHandler
             'webp_size' => isset($webpFilename) ? $disk->size($storagePath . $webpFilename) : null,
             'image_sizes' => '{}',
             'data' => '{}',
+            'file_hash' => $fileHash, // Original hash of uploaded file
         ]);
 
         if ($isImageFile || $isVideoFile) {

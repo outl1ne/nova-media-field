@@ -2,6 +2,118 @@
 
 All notable changes to this project will be documented in this file.
 
+----
+
+## [2.0.3] - 2021-06-18
+
+### Fixed
+
+Fixed small typo
+
+## [2.0.2] - 2021-06-18
+
+### Added
+
+- Added `quality` to media field config file that will be used when encoding thumbnails
+- Added initial index view field for media
+
+
+## [2.0.1] - 2021-06-18
+
+### Added
+
+- Added audio thumbnail for audio mime type
+- Added document thumbnail for all mime types that are unmapped
+- Added fallback image for image preview that has missing/broken source
+- Fixed #31, where multiple() was no longer working due to duplicate declaration of computed
+- Added collection parameter to `findFiles` request.
+- MediaController@findFiles will now properly use collection to search files.
+
+### Fixed
+
+- Media library index resource table view should display upload media
+  button when table is empty and should open media browser modal upon clicking
+
+## Upgrading to [2.0.0]
+
+- Storage driver default in nova media field config has been
+  changed from `config('filesystems.default')` to `env('MEDIA_LIBRARY_DRIVER', 'public')`
+- `Media` model `getUrlAttribute`, `getWebpUrlAttribute` and
+  `getImageSizesAttribute` methods has been fixed by removing URL prefixing.
+- Run `php artisan migrate` to add the new `file_hash` column
+- Default filesystem driver for media field was changed in config file, please review
+  these settings as your images will have broken links upon upgrading, to fix them
+  run `php artisan media:strip-public-prefix-from-path`. This command will regenerate file
+  path column.
+
+
+----
+
+## [2.0.0-alpha.x]
+
+### [2.0.0-alpha.5] - 2021-04-28
+
+Fixed 2 instances where config key was invalid when checking if duplication check is enabled.
+
+This release should allow implementing mult-disk support if project requires it. All core logic should
+be overrideable.
+
+#### Added
+
+- New config option `nova-media-field.media_model` allows overriding original Media model. New model
+must be extended from the original.
+
+- Local `getDisk` method for Media model to use.
+
+### [2.0.0-alpha.4] - 2021-04-20
+
+Use `getDisk` method in Media model for URL generators
+
+### [2.0.0-alpha.3] - 2021-04-19
+
+Fixes exception when uploading from index view
+
+### [2.0.0-alpha.2] - 2021-04-14
+
+Fixes paths for media rows because of breaking change introduced in v2. Replaces `public/media/*` with `media/*`.
+
+#### Added
+
+- Command `media:strip-public-prefix-from-path`
+
+#### Manual changes required
+
+Run command `php artisan media:strip-public-prefix-from-path` to fix media field "path" column values.
+
+### [2.0.0-alpha.1] - 2021-04-13
+
+Adds a feature that checks for duplicate media entry by generating has based on first megabyte
+of file. **This will not work on existing images**
+
+This update should allow using any file driver that is supported in Laravel.
+
+#### Changed
+
+- **[Breaking change]** Storage driver default in nova media field config has been changed from `config('filesystems.default')` to `env('MEDIA_LIBRARY_DRIVER', 'public')`
+- **[Breaking change]** `Media` model `getUrlAttribute`, `getWebpUrlAttribute` and `getImageSizesAttribute` methods has been fixed by removing URL prefixing.
+
+#### Updated
+
+- `MediaHandler` class `createFrom...` methods has been updated to support `resolve_duplicates`. When finding a duplicate
+  media item then these methods will return existing instance of that image instead.
+
+#### Added
+
+- New `file_hash` column, will be used to store original file hash to check for duplicates
+- `resolve_duplicates` key to media field config file. If enabled it will not create a new entry when existing media item is found.
+
+#### Manual changes required
+
+- run `php artisan migrate` to add the new `file_hash` column
+- default filesystem driver for media field was changed in config file, please review these settings
+
+----
+
 ## [1.4.1] - 2021-05-13
 
 ### Changed

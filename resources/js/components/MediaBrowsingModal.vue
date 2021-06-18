@@ -41,7 +41,7 @@
         :currentCollection="currentCollection"
       />
 
-      <div :class="`flex mb-6`" id="media-dropzone" v-if="!loadingMediaFiles">
+      <div :class="`flex mb-6`" id="media-dropzone" class="media-dropzone-wrapper" v-if="!loadingMediaFiles">
         <div class="img-collection" @scroll="scrollEventListener" ref="imgCollectionRef">
           <div class="empty-message" v-if="files.length === 0 && !uploadOnly">
             <p>There are currently no media files in this library</p>
@@ -426,23 +426,25 @@ export default {
             },
           })
           .then(response => {
-            if (this.uploadOnly) {
-              this.$emit('updateFiles', {
-                uploading: false,
-                processed: true,
-                data: response.data,
-              });
-            } else {
-              window.mediaLibrary.files.unshift({
-                uploading: false,
-                processed: true,
-                data: response.data,
-              });
-
-              this.$emit('update:files', window.mediaLibrary.files);
-
-              this.updateMedia();
+            if (!window.mediaLibrary?.files?.find(file => file.data?.id && file.data.id === response.data.id)) {
+              if (this.uploadOnly) {
+                this.$emit('updateFiles', {
+                  uploading: false,
+                  processed: true,
+                  data: response.data,
+                });
+              } else {
+                window.mediaLibrary?.files.unshift({
+                  uploading: false,
+                  processed: true,
+                  data: response.data,
+                });
+              }
             }
+
+            this.$nextTick(() => {
+              this.updateMedia();
+            });
           })
           .catch(error => {
             if (!error.response) {
@@ -498,3 +500,33 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.od-modal {
+  height: 88vh;
+
+  > div:first-child {
+    height: calc(88vh - 60px);
+
+    > div {
+      height: calc(88vh - 60px - 110px);
+    }
+  }
+
+  #media-dropzone .img-collection {
+    height: 100%;
+    max-height: none;
+  }
+
+  .media-dropzone-wrapper {
+    height: 100%;
+  }
+
+  .mime-type-icon {
+    padding: 24px;
+
+    svg {
+      position: static;
+    }
+  }
+}
+</style>

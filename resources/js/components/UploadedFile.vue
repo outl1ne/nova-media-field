@@ -11,8 +11,7 @@
     </div>
 
     <div class="thumbnail-container" v-if="file.image_sizes !== void 0">
-      <img v-if="fileThumbnail" draggable="false" :src="fileThumbnail" />
-      <thumbnail-video-icon icon="video-icon" class="thumbnail-placeholder" v-if="!fileThumbnail" />
+      <mime-type-icon :src="fileThumbnail" :mime-type="this.file.mime_type" />
     </div>
 
     <div class="checked-box" v-if="selected">
@@ -26,6 +25,10 @@
 </template>
 
 <script>
+import DocumentIcon from '../icons/DocumentIcon';
+import MissingFileIcon from '../icons/MissingFileIcon';
+import MimeTypeIcon from './MimeTypeIcon';
+
 export default {
   props: {
     hideName: {
@@ -60,9 +63,11 @@ export default {
     },
   },
 
-  data: () => ({
-    //
-  }),
+  components: {
+    MimeTypeIcon,
+    DocumentIcon,
+    MissingFileIcon,
+  },
 
   methods: {
     onClick() {
@@ -123,6 +128,10 @@ export default {
     text-overflow: ellipsis;
     font-weight: bold;
     text-align: center;
+  }
+
+  .mime-type-icon {
+    padding: 16px;
   }
 
   &:hover {

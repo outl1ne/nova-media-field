@@ -14,7 +14,8 @@ class RegenerateWebp extends Command
 
     public function handle()
     {
-        $medias = Media::all();
+        $Media = config('nova-media-field.media_model');
+        $medias = $Media::all();
 
         /** @var MediaHandler $handler */
         $handler = app()->make(MediaHandler::class);
@@ -34,7 +35,7 @@ class RegenerateWebp extends Command
 
                 try {
                     // Re-save original file
-                    $webpImg = Image::make($origFile)->encode('webp', 80);
+                    $webpImg = Image::make($origFile)->encode('webp', config('nova-media-field.quality', 80));
                     $handler->getDisk()->put($webpImagePath, $webpImg);
 
                     $media->webp_name = "$origFilename.webp";

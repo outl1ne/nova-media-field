@@ -70,7 +70,8 @@ class MediaField extends Field
 
     public function resolveResponseValue($fieldValue)
     {
-        $query = Media::whereIn('id', explode(',', $fieldValue));
+        $Media = config('nova-media-field.media_model');
+        $query = $Media::whereIn('id', explode(',', $fieldValue));
 
         if ($this->multiple) {
             return $query->orderByRaw("FIELD(id, $fieldValue)")->get();

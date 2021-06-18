@@ -2,10 +2,7 @@
   <div class="edit-image-container">
     <div class="form-field">
       <div class="thumbnail-container">
-        <img :src="file.url" v-if="file.mime_type.indexOf('image') === 0" />
-        <video v-if="file.mime_type.indexOf('video') === 0" controls>
-          <source :src="file.url" :type="file.mime_type" />
-        </video>
+        <mime-type-icon :src="file.url" :mime-type="file.mime_type" :show-video="true" />
       </div>
     </div>
 
@@ -61,6 +58,9 @@
 
 <script>
 import debounce from './../debounce';
+import MissingFileIcon from '../icons/MissingFileIcon';
+import DocumentIcon from '../icons/DocumentIcon';
+import MimeTypeIcon from './MimeTypeIcon';
 
 export default {
   props: {
@@ -71,9 +71,21 @@ export default {
     },
   },
 
+  components: {
+    MimeTypeIcon,
+    MissingFileIcon,
+    DocumentIcon,
+  },
+
   data: () => ({
-    //
+    imageFileMissing: false,
   }),
+
+  watch: {
+    file() {
+      this.imageFileMissing = false;
+    },
+  },
 
   methods: {
     onDataUpdate() {
@@ -91,7 +103,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .file-name {
   font-weight: bold;
   color: #4099de;
@@ -100,21 +112,20 @@ export default {
 .thumbnail-container {
   position: relative;
   width: 100%;
-  height: 250px;
   margin-bottom: 15px;
+  height: 250px;
+  overflow: hidden;
 
+  img,
+  svg,
   video {
+    position: absolute;
     width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    object-fit: contain;
   }
-}
-
-img {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  object-fit: contain;
 }
 
 .form-field {

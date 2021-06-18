@@ -2,13 +2,13 @@
 
 namespace OptimistDigital\MediaField;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Resource;
 use OptimistDigital\MediaField\Filters\Collection;
-use OptimistDigital\MediaField\UrlField;
 
 class Media extends Resource
 {
@@ -26,7 +26,9 @@ class Media extends Resource
     {
         return [
             ID::make(),
-            Image::make('Preview', 'thumbnail_path')->hideWhenUpdating()->hideWhenCreating(),
+            Image::make('Preview', 'thumbnail_path')->hideWhenUpdating()->hideWhenCreating()->resolveUsing(function($value, Model $resource, $attribute) {
+                return $resource;
+            }),
             Text::make('Name', 'file_name')->readonly(),
             UrlField::make('Url', 'url')->readonly(),
             Text::make('Collection', 'collection_name')->readonly(),

@@ -174,24 +174,18 @@
               }}
             </h3>
 
-            <create-resource-button
-              classes="btn btn-sm btn-outline inline-flex items-center focus:outline-none focus:shadow-outline active:outline-none active:shadow-outline"
-              :singular-name="singularName"
-              :resource-name="resourceName"
-              :via-resource="viaResource"
-              :via-resource-id="viaResourceId"
-              :via-relationship="viaRelationship"
-              :relationship-type="relationshipType"
-              :authorized-to-create="authorizedToCreate && !resourceIsFull"
-              :authorized-to-relate="authorizedToRelate"
+            <button
+              class="btn btn-sm btn-outline inline-flex items-center focus:outline-none focus:shadow-outline active:outline-none active:shadow-outline"
+              @click="openMediaLibraryModal"
             >
-            </create-resource-button>
+              Upload media
+            </button>
           </div>
         </div>
 
         <div class="overflow-hidden overflow-x-auto relative">
           <!-- Resource Table -->
-          <resource-table
+          <media-resource-table
             :authorized-to-relate="authorizedToRelate"
             :resource-name="resourceName"
             :resources="resources"
@@ -248,6 +242,7 @@ import {
   InteractsWithQueryString,
   InteractsWithResourceInformation,
 } from 'laravel-nova';
+import MediaResourceTable from '../components/tables/MediaResourceTable';
 
 export default {
   mixins: [
@@ -259,6 +254,10 @@ export default {
     InteractsWithResourceInformation,
     InteractsWithQueryString,
   ],
+
+  components: {
+    MediaResourceTable: MediaResourceTable,
+  },
 
   props: {
     field: {
@@ -385,7 +384,14 @@ export default {
   },
 
   methods: {
-    openMediaLibraryModal() {},
+    openMediaLibraryModal() {
+      const event = new Event('open-media-library', {
+        bubbles: true,
+        cancelable: true,
+        composed: false,
+      });
+      window.dispatchEvent(event);
+    },
 
     deleteResourcesFn(data) {
       if (window.mediaLibrary && window.mediaLibrary && window.mediaLibrary.files.length) {
