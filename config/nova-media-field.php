@@ -31,4 +31,6 @@ return [
 
     // When enabled tries to find if file already exists and serve that instead of creating a duplicate entry
     'resolve_duplicates' => true,
+
+    'quality' => 80,
 ];
