@@ -25,7 +25,6 @@
 
     <td class="td-fit text-right pr-6 align-middle">
       <div class="inline-flex items-center">
-
         <!-- View Resource Link -->
         <span v-if="resource.authorizedToView" class="inline-flex">
           <router-link
@@ -145,7 +144,7 @@
 </template>
 
 <script>
-import IndexFileField from "../IndexFileField";
+import IndexFileField from '../IndexFileField';
 
 export default {
   props: [

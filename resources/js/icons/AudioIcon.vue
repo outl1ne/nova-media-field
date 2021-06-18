@@ -25,6 +25,6 @@
 </template>
 <script>
 export default {
-  name: 'audio-icon'
-}
+  name: 'audio-icon',
+};
 </script>

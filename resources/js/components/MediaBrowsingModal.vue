@@ -444,7 +444,7 @@ export default {
 
             this.$nextTick(() => {
               this.updateMedia();
-            })
+            });
           })
           .catch(error => {
             if (!error.response) {

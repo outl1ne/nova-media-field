@@ -1,10 +1,9 @@
 <template>
   <table v-if="resources.length > 0" class="table w-full" cellpadding="0" cellspacing="0" data-testid="resource-table">
     <thead>
-
-    <tr>
-      <!-- Select Checkbox -->
-      <th class="w-16" v-if="shouldShowCheckboxes">&nbsp;</th>
+      <tr>
+        <!-- Select Checkbox -->
+        <th class="w-16" v-if="shouldShowCheckboxes">&nbsp;</th>
         <!-- Field Names -->
         <th v-for="field in fields" :class="`text-${field.textAlign}`">
           <sortable-icon
@@ -18,7 +17,7 @@
 
           <span v-else> {{ field.indexName }} </span>
         </th>
-      <th class="w-16" >&nbsp;</th>
+        <th class="w-16">&nbsp;</th>
       </tr>
     </thead>
     <tbody>
@@ -47,13 +46,13 @@
 
 <script>
 import { InteractsWithResourceInformation } from 'laravel-nova';
-import MediaResourceTableRow from "./MediaResourceTableRow";
+import MediaResourceTableRow from './MediaResourceTableRow';
 
 export default {
   mixins: [InteractsWithResourceInformation],
 
   components: {
-    'MediaResourceTableRow': MediaResourceTableRow,
+    MediaResourceTableRow: MediaResourceTableRow,
   },
 
   props: {

@@ -15,7 +15,7 @@
     </div>
 
     <div class="checked-box" v-if="selected">
-      <checkbox :checked="selected"/>
+      <checkbox :checked="selected" />
     </div>
 
     <div class="uploaded-file-name" v-if="file.file_name && !hideName">
@@ -25,9 +25,9 @@
 </template>
 
 <script>
-import DocumentIcon from "../icons/DocumentIcon";
-import MissingFileIcon from "../icons/MissingFileIcon";
-import MimeTypeIcon from "./MimeTypeIcon";
+import DocumentIcon from '../icons/DocumentIcon';
+import MissingFileIcon from '../icons/MissingFileIcon';
+import MimeTypeIcon from './MimeTypeIcon';
 
 export default {
   props: {
@@ -66,7 +66,7 @@ export default {
   components: {
     MimeTypeIcon,
     DocumentIcon,
-    MissingFileIcon
+    MissingFileIcon,
   },
 
   methods: {

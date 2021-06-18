@@ -58,9 +58,9 @@
 
 <script>
 import debounce from './../debounce';
-import MissingFileIcon from "../icons/MissingFileIcon";
-import DocumentIcon from "../icons/DocumentIcon";
-import MimeTypeIcon from "./MimeTypeIcon";
+import MissingFileIcon from '../icons/MissingFileIcon';
+import DocumentIcon from '../icons/DocumentIcon';
+import MimeTypeIcon from './MimeTypeIcon';
 
 export default {
   props: {
@@ -74,17 +74,17 @@ export default {
   components: {
     MimeTypeIcon,
     MissingFileIcon,
-    DocumentIcon
+    DocumentIcon,
   },
 
   data: () => ({
-    imageFileMissing: false
+    imageFileMissing: false,
   }),
 
   watch: {
     file() {
-      this.imageFileMissing = false
-    }
+      this.imageFileMissing = false;
+    },
   },
 
   methods: {
@@ -116,7 +116,8 @@ export default {
   padding-bottom: 40%;
 }
 
-img, video {
+img,
+video {
   position: absolute;
   width: 100%;
   height: 100%;

@@ -242,7 +242,7 @@ import {
   InteractsWithQueryString,
   InteractsWithResourceInformation,
 } from 'laravel-nova';
-import MediaResourceTable from "../components/tables/MediaResourceTable";
+import MediaResourceTable from '../components/tables/MediaResourceTable';
 
 export default {
   mixins: [
@@ -256,7 +256,7 @@ export default {
   ],
 
   components: {
-    'MediaResourceTable': MediaResourceTable,
+    MediaResourceTable: MediaResourceTable,
   },
 
   props: {
@@ -388,9 +388,9 @@ export default {
       const event = new Event('open-media-library', {
         bubbles: true,
         cancelable: true,
-        composed: false
-      })
-      window.dispatchEvent(event)
+        composed: false,
+      });
+      window.dispatchEvent(event);
     },
 
     deleteResourcesFn(data) {

@@ -1,18 +1,23 @@
 <template>
   <div class="mime-type-icon">
-    <img v-if="isImageFile && src && !isImageFileMissing" draggable="false" :src="src" @error="isImageFileMissing = true" />
-    <missing-file-icon v-else-if="isImageFile && imageFileMissing" class="p-2"/>
-    <audio-icon v-else-if="isAudioFile" class="p-2"/>
+    <img
+      v-if="isImageFile && src && !isImageFileMissing"
+      draggable="false"
+      :src="src"
+      @error="isImageFileMissing = true"
+    />
+    <missing-file-icon v-else-if="isImageFile && imageFileMissing" class="p-2" />
+    <audio-icon v-else-if="isAudioFile" class="p-2" />
     <thumbnail-video-icon v-else-if="isVideoFile && !showVideo" icon="video-icon" class="p-2" />
     <video v-else-if="isVideoFile && showVideo" controls>
-      <source :src="src" :type="mimeType"/>
+      <source :src="src" :type="mimeType" />
     </video>
     <document-icon v-else class="p-2" />
   </div>
 </template>
 <script>
-import AudioIcon from "../icons/AudioIcon";
-import DocumentIcon from "../icons/DocumentIcon";
+import AudioIcon from '../icons/AudioIcon';
+import DocumentIcon from '../icons/DocumentIcon';
 
 export default {
   name: 'mime-type-icon',
@@ -21,14 +26,14 @@ export default {
 
   components: {
     AudioIcon,
-    DocumentIcon
+    DocumentIcon,
   },
 
   data() {
-    console.log('props', this.src)
+    console.log('props', this.src);
     return {
-      isImageFileMissing: false
-    }
+      isImageFileMissing: false,
+    };
   },
 
   computed: {
@@ -41,12 +46,11 @@ export default {
     isVideoFile() {
       return this.mimeType?.indexOf('video/') === 0;
     },
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss" scoped>
-
 .mime-type-icon {
   width: 100%;
 }
@@ -55,5 +59,4 @@ video {
   width: 100%;
   max-height: 100px;
 }
-
 </style>
