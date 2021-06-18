@@ -6,7 +6,7 @@
       :src="src"
       @error="isImageFileMissing = true"
     />
-    <missing-file-icon v-else-if="isImageFile && imageFileMissing" class="p-2" />
+    <missing-file-icon v-else-if="isImageFile && isImageFileMissing" class="p-2" />
     <audio-icon v-else-if="isAudioFile" class="p-2" />
     <thumbnail-video-icon v-else-if="isVideoFile && !showVideo" icon="video-icon" class="p-2" />
     <video v-else-if="isVideoFile && showVideo" controls>
@@ -18,6 +18,7 @@
 <script>
 import AudioIcon from '../icons/AudioIcon';
 import DocumentIcon from '../icons/DocumentIcon';
+import MissingFileIcon from '../icons/MissingFileIcon';
 
 export default {
   name: 'mime-type-icon',
@@ -27,6 +28,7 @@ export default {
   components: {
     AudioIcon,
     DocumentIcon,
+    MissingFileIcon,
   },
 
   data() {
