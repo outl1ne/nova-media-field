@@ -6,10 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ## [2.0.2] - 2021-06-18
 
-
 ### Added
 
 - Added `quality` to media field config file that will be used when encoding thumbnails
+- Added initial index view field for media
 
 
 ## [2.0.1] - 2021-06-18
