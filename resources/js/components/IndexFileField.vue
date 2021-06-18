@@ -40,15 +40,31 @@ export default {
   },
 };
 </script>
-<style scoped lang="scss">
-.mime-type-icon {
-  width: 100%;
-  max-width: 50px;
-}
+<style lang="scss">
+.mime-type-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
 
-img,
-svg {
-  width: 100%;
-  height: 100%;
+  .mime-type-icon {
+    width: 100%;
+    max-width: 50px;
+  }
+
+  .mime-type-video {
+    padding: 6px;
+  }
+
+  .mime-type-audio {
+    padding: 8px;
+  }
+
+  img,
+  svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 }
 </style>

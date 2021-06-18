@@ -1,5 +1,5 @@
 <template>
-  <div class="mime-type-icon">
+  <div :class="`mime-type-icon mime-type-${mimeStartsWith}`">
     <img
       v-if="isImageFile && src && !isImageFileMissing"
       draggable="false"
@@ -38,6 +38,10 @@ export default {
   },
 
   computed: {
+    mimeStartsWith() {
+      const split = this.mimeType?.split('/');
+      return split.length ? split[0] : null;
+    },
     isImageFile() {
       return this.mimeType?.indexOf('image/') === 0;
     },
