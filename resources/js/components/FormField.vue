@@ -309,6 +309,6 @@ export default {
         this.updateMedia();
       }, 200)();
     },
-  }
+  },
 };
 </script>

@@ -4,14 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ----
 
-## [2.0.1] - 2021-06-18
+## [2.0.1 ] - 2021-06-18
 
 ### Added
 
 - Added audio thumbnail for audio mime type
 - Added document thumbnail for all mime types that are unmapped
 - Added fallback image for image preview that has missing/broken source
-
+- Fixed #31, where multiple() was no longer working due to duplicate declaration of computed
+- Added collection parameter to `findFiles` request.
+- MediaController@findFiles will now properly use collection to search files.
 
 ----
 
