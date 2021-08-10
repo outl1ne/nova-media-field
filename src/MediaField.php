@@ -3,7 +3,6 @@
 namespace OptimistDigital\MediaField;
 
 use Laravel\Nova\Fields\Field;
-use OptimistDigital\MediaField\Models\Media;
 
 
 class MediaField extends Field
@@ -75,12 +74,8 @@ class MediaField extends Field
         $Media = config('nova-media-field.media_model');
         $query = $Media::whereIn('id', explode(',', $fieldValue));
 
-        if ($this->multiple) {
-            return $query->orderByRaw("FIELD(id, $fieldValue)")->get();
-        }
+        if ($this->multiple) return $query->orderByRaw("FIELD(id, $fieldValue)")->get();
 
         return $query->first();
     }
-
-
 }
