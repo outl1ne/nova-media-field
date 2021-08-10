@@ -126,9 +126,10 @@ class MediaHandler
     }
 
     /**
-     * @param $file Binary file data
-     * @param $path Path on disk
-     * @param $disk Saving destination
+     * @param $tempFilePath
+     * @param $path - Path on disk
+     * @param $mimeType
+     * @param $disk - Saving destination
      * @return array
      */
     public function generateImageSizes($tempFilePath, $path, $mimeType, $disk): array
