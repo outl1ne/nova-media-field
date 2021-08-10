@@ -74,6 +74,11 @@ class MediaHandler
         return $instance->storeFile($filepath, $instance->getDisk());
     }
 
+    /**
+     * Use MediaHandler::createFromFile instead
+     *
+     * @deprecated deprecated since version 2.0.4
+     */
     public static function createFromData($data): ?Media
     {
         return static::createFromFile($data);
