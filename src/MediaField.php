@@ -68,8 +68,10 @@ class MediaField extends Field
         ]);
     }
 
-    public function resolveResponseValue($fieldValue)
+    public function resolveResponseValue($fieldValue = null)
     {
+        if ($fieldValue !== "0" && $fieldValue !== 0 && !$fieldValue) return null;
+
         $Media = config('nova-media-field.media_model');
         $query = $Media::whereIn('id', explode(',', $fieldValue));
 
