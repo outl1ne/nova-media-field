@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ----
 
+## [2.0.5] - 2021-06-18
+
+### Fixed
+
+- Check for empty field value in `MediaField::resolveResponseValue` - if value is empty then return null
+
+### Deprecated
+
+- `createFromData` is now deprecated in `MediaHandler`, use `createFromFile` method instead
+
 ## [2.0.3] - 2021-06-18
 
 ### Fixed
