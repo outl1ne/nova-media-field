@@ -522,7 +522,6 @@ export default {
   }
 
   .mime-type-icon {
-    padding: 24px;
 
     svg {
       position: static;

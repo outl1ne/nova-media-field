@@ -113,15 +113,16 @@ export default {
   position: relative;
   width: 100%;
   margin-bottom: 15px;
-  height: 250px;
-  overflow: hidden;
+  //height: 250px;
+  //overflow: hidden;
 
   img,
   svg,
   video {
-    position: absolute;
+    //position: absolute;
     width: 100%;
-    height: 100%;
+    max-height: 250px;
+    //height: 100%;
     top: 0;
     left: 0;
     object-fit: contain;
