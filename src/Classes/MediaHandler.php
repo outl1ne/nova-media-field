@@ -5,6 +5,7 @@ namespace OptimistDigital\MediaField\Classes;
 use Exception;
 use FFMpeg\FFMpeg;
 use GuzzleHttp\Client;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use FFMpeg\Coordinate\TimeCode;
@@ -32,7 +33,7 @@ class MediaHandler
      * @param Request $request
      * @param string $key Used to access Request file upload value
      * @return Media
-     * @throws \Exception
+     * @throws Exception
      */
     public static function createFromRequest(Request $request, $key = 'file'): Media
     {
@@ -58,8 +59,8 @@ class MediaHandler
      *
      * @param $filepath - Full path to file
      * @return Media
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     * @throws \Exception
+     * @throws BindingResolutionException
+     * @throws Exception
      */
     public static function createFromFile($filepath): Media
     {
@@ -195,7 +196,7 @@ class MediaHandler
                         'webp_size' => $disk->size(dirname($path) . '/' . $webpFilename),
                     ]);
                 }
-            } catch (\Intervention\Image\Exception\NotSupportedException $e) {
+            } catch (\Intervention\ImageException\NotSupportedException $e) {
                 continue;
             }
         }
@@ -231,12 +232,12 @@ class MediaHandler
      *
      * @param $fileData
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function validateFileInput($fileData)
     {
         if (is_array($fileData) && !(isset($fileData['name']) && isset($fileData['path']))) {
-            throw new \Exception('Cannot store file, missing file name or path!');
+            throw new Exception('Cannot store file, missing file name or path!');
         }
 
         $isString = is_string($fileData);
@@ -244,7 +245,7 @@ class MediaHandler
         $fileExists = $isString && file_exists($fileData);
 
         if ($isString && !$fileExists && !$isBase64) {
-            throw new \Exception('Cannot store file, invalid file path or data!');
+            throw new Exception('Cannot store file, invalid file path or data!');
         }
 
         $mimeType = 'text/plain';
@@ -294,7 +295,7 @@ class MediaHandler
      * @param $fileData
      * @param $disk
      * @return Media
-     * @throws \Exception
+     * @throws Exception
      */
     protected function storeFile($fileData, $disk): Media
     {

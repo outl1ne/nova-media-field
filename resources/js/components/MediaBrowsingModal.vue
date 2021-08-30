@@ -1,5 +1,5 @@
 <template>
-  <od-modal ref="isModalOpen" v-if="isModalOpen" :name="'isModalOpen'" :align="'flex justify-end'" width="1315">
+  <od-modal ref="isModalOpen" v-if="isModalOpen" @onClose="hideMediaLibrary" :name="'isModalOpen'" :align="'flex justify-end'" width="1315">
     <div slot="container">
       <div class="modal-header flex flex-wrap justify-between mb-6">
         <h2 class="text-90 font-normal text-xl">
@@ -495,6 +495,12 @@ export default {
     showMediaLibrary() {
       this.listenUploadArea = false;
       this.$emit('update:isModalOpen', true);
+      this.$emit('update:showUploadArea', false);
+    },
+
+    hideMediaLibrary() {
+      this.listenUploadArea = false;
+      this.$emit('update:isModalOpen', false);
       this.$emit('update:showUploadArea', false);
     },
   },
