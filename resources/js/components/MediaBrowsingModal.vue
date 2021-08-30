@@ -142,6 +142,7 @@ export default {
     'activeFile',
     'selectedFiles',
     'updateMedia',
+    'updateFiles',
     'files',
     'multipleSelect',
     'loadingMediaFiles',
@@ -443,13 +444,13 @@ export default {
             }
 
             this.$nextTick(() => {
-              this.updateMedia();
+              this.$emit('updateMedia');
             });
           })
           .catch(error => {
             if (!error.response) {
               Nova.$emit('error', 'Failed to upload image.');
-              this.updateMedia();
+              this.$emit('updateMedia');
               return;
             }
 
@@ -467,7 +468,7 @@ export default {
               window.mediaLibrary.files.splice(0, 1);
             }
 
-            this.updateMedia();
+            this.$emit('updateMedia');
           });
       }
     },

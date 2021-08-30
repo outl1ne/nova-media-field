@@ -78,11 +78,11 @@ export default {
       this.updateMedia();
     },
 
-    updateMedia: debounce(function () {
+    updateMedia: debounce(function() {
       this.onUploadFinished();
       this.isModalOpen = false;
       this.$toasted.show('Files have been successfully uploaded!', { type: 'success' });
-    }, 1000),
+    }, 500),
 
     openMediaBrowsingModal() {
       this.isModalOpen = true;
