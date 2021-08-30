@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ----
 
+## [2.0.6] - 2021-08-30
+
+### Added
+
+- Media browsing modal can be now closed using "escape" key or clicking on backdrop
+
+### Fixed
+
+- Fixed overflow issue in media modal browser in file data area
+- Fixed a console error when uploading image in media library index view
+
+
 ## [2.0.5] - 2021-08-10
 
 ### Fixed
