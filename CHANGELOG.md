@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.0.8] - 2021-09-06
+
+### Changed
+
+- Fixed base64 encoded file deduplication not working when using `createFromFile` method
+- Fixed ID field not displaying
+
 ## [2.0.7] - 2021-09-06
 
 ### Changed
