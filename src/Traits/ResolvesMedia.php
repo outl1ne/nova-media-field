@@ -13,7 +13,7 @@ trait ResolvesMedia
      * @param resource $file
      * @return Media|null
      */
-    public function findExistingMedia($file) : ?Media
+    public function findExistingMedia($file): ?Media
     {
         $Media = config('nova-media-field.media_model');
         $hash = $this->getFileHash($file);
@@ -25,12 +25,14 @@ trait ResolvesMedia
      * @param resource $file
      * @return string|null
      */
-    public function getFileHash($file) : ?string{
+    public function getFileHash($file): ?string
+    {
         if (!$file || !is_resource($file)) return null;
         return md5(fread($file, 100000000));
     }
 
-    public function getFileHashFromPath(string $filepath) : ?Media {
+    public function getFileHashFromPath(string $filepath): ?Media
+    {
         $file = fopen($filepath, 'r');
         if ($file) {
             $existingMedia = $this->findExistingMedia($file);
