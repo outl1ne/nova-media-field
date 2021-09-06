@@ -2,7 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-----
+---
+
+## [2.0.7] - 2021-09-06
+
+### Changed
+
+- Media created from file or URL will now clean up the temporary file after media's been stored
+- Fixed missing dependency on Guzzle
+- Updated packages
 
 ## [2.0.6] - 2021-08-30
 
@@ -14,7 +22,6 @@ All notable changes to this project will be documented in this file.
 
 - Fixed overflow issue in media modal browser in file data area
 - Fixed a console error when uploading image in media library index view
-
 
 ## [2.0.5] - 2021-08-10
 
@@ -38,7 +45,6 @@ Fixed small typo
 
 - Added `quality` to media field config file that will be used when encoding thumbnails
 - Added initial index view field for media
-
 
 ## [2.0.1] - 2021-06-18
 
@@ -68,8 +74,7 @@ Fixed small typo
   run `php artisan media:strip-public-prefix-from-path`. This command will regenerate file
   path column.
 
-
-----
+---
 
 ## [2.0.0-alpha.x]
 
@@ -83,7 +88,7 @@ be overrideable.
 #### Added
 
 - New config option `nova-media-field.media_model` allows overriding original Media model. New model
-must be extended from the original.
+  must be extended from the original.
 
 - Local `getDisk` method for Media model to use.
 
@@ -134,7 +139,7 @@ This update should allow using any file driver that is supported in Laravel.
 - run `php artisan migrate` to add the new `file_hash` column
 - default filesystem driver for media field was changed in config file, please review these settings
 
-----
+---
 
 ## [1.4.1] - 2021-05-13
 
