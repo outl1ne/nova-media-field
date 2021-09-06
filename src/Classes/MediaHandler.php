@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Models\Media;
 use OptimistDigital\MediaField\NovaMediaLibrary;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Support\Facades\File;
 use OptimistDigital\MediaField\Traits\ResolvesMedia;
 
 class MediaHandler
@@ -369,6 +370,14 @@ class MediaHandler
         }
 
         $model->save();
+
+        // Delete tmp file
+        try {
+            $path = $tmpPath . $tmpName;
+            if (File::exists($path)) File::delete($path);
+        } catch (Exception $e) {
+            \Log::error($e);
+        }
 
         return $model;
     }
