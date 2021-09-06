@@ -16,6 +16,7 @@
       <component
         :is="'index-' + field.component"
         :class="`text-${field.textAlign}`"
+        :resource="resource"
         :resource-name="resourceName"
         :via-resource="viaResource"
         :via-resource-id="viaResourceId"
