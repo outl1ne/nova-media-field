@@ -316,6 +316,16 @@ class MediaHandler
             $origFile = file_get_contents($tmpPath . $tmpName);
             $image = Image::make($origFile);
 
+            if(config('nova-media-field.image_watermark', false)) {
+                 //Save image without watermark
+                $rawFileName = $storagePath . pathinfo($newFilename, PATHINFO_FILENAME) . "-RAW." . $origExtension;
+                $disk->put($rawFileName, $file);
+
+                // Add watermark to image
+                $watermark = Image::make('images/logo-white.png');
+                $image->insert($watermark, 'center');
+            }
+
             // If max resize is enabled
             $maxOriginalDimension = config('nova-media-field.max_original_image_dimensions', null);
             if (!empty($maxOriginalDimension)) {
