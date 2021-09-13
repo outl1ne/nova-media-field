@@ -5,9 +5,11 @@ namespace OptimistDigital\MediaField\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Models\Media;
 use OptimistDigital\MediaField\Classes\MediaHandler;
 use OptimistDigital\MediaField\Requests\StoreMediaRequest;
+use PhpParser\Node\Stmt\Continue_;
 
 class MediaController extends Controller
 {
@@ -71,5 +73,24 @@ class MediaController extends Controller
         $paginator->getCollection();
 
         return response()->json($paginator, 200);
+    }
+
+    public function deleteFiles(Request $request){
+            $file = $request->stateActiveFile;
+            $mediaID = $file['id'];
+
+            if(Media::where('id', $mediaID)->exists()) {
+                Media::find($mediaID)->delete();
+
+                $mediaPath = $file['path'] . $file['file_name'];
+                Storage::disk(config('nova-media-field.storage_driver'))->delete($mediaPath);
+                
+                foreach($file['image_sizes'] as $imageSize) {
+                    if(isset($imageSize)) {
+                        $mediaThumbnailPath = $file['path'] . $imageSize['file_name'];
+                        Storage::disk(config('nova-media-field.storage_driver'))->delete($mediaThumbnailPath);
+                    }    
+                }
+            }    
     }
 }
