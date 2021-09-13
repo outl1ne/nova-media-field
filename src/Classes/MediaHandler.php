@@ -316,13 +316,14 @@ class MediaHandler
             $origFile = file_get_contents($tmpPath . $tmpName);
             $image = Image::make($origFile);
 
-            if(config('nova-media-field.image_watermark', false)) {
+            $image_watermart_path = config('nova-media-field.image_watermark_path', null);
+            if(!is_null($image_watermart_path)) {
                  //Save image without watermark
                 $rawFileName = $storagePath . pathinfo($newFilename, PATHINFO_FILENAME) . "-RAW." . $origExtension;
                 $disk->put($rawFileName, $file);
 
                 // Add watermark to image
-                $watermark = Image::make('images/logo-white.png');
+                $watermark = Image::make($image_watermart_path);
                 $image->insert($watermark, 'center');
             }
 
