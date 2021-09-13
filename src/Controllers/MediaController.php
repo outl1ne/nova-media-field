@@ -80,15 +80,17 @@ class MediaController extends Controller
             $mediaID = $file['id'];
 
             if(Media::where('id', $mediaID)->exists()) {
-                Media::find($mediaID)->delete();
+                Media::find($mediaID)->delete(); //Remove media data in media_library table
 
+                $driver = config('nova-media-field.storage_driver');
                 $mediaPath = $file['path'] . $file['file_name'];
-                Storage::disk(config('nova-media-field.storage_driver'))->delete($mediaPath);
+                Storage::disk($driver)->delete($mediaPath); //Remove media file in storage
                 
+                //Remove other related files like Thumbnail
                 foreach($file['image_sizes'] as $imageSize) {
                     if(isset($imageSize)) {
                         $mediaThumbnailPath = $file['path'] . $imageSize['file_name'];
-                        Storage::disk(config('nova-media-field.storage_driver'))->delete($mediaThumbnailPath);
+                        Storage::disk($driver)->delete($mediaThumbnailPath);
                     }    
                 }
             }    
