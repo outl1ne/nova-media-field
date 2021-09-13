@@ -318,8 +318,9 @@ class MediaHandler
 
             $image_watermart_path = config('nova-media-field.image_watermark_path', null);
             if(!is_null($image_watermart_path)) {
-                 //Save image without watermark
+                //Save image without watermark
                 $rawFileName = $storagePath . pathinfo($newFilename, PATHINFO_FILENAME) . "-RAW." . $origExtension;
+                $file = $image->encode($origExtension, config('nova-media-field.quality', 80));
                 $disk->put($rawFileName, $file);
 
                 // Add watermark to image
