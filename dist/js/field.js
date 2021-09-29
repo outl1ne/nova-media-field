@@ -1074,7 +1074,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           stateActiveFile: this.stateActiveFile.data
         }
       }).then(function (response) {
-        console.log(_this.stateActiveFile.data);
         var selectMediaId = _this.stateActiveFile.data.id;
 
         var i = _this.files.findIndex(function (item) {
@@ -1090,6 +1089,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         _this.stateSelectedFiles.splice(j, 1);
 
         _this.$emit('update:selectedFiles', _toConsumableArray(_this.stateSelectedFiles));
+
+        _this.stateActiveFile = void 0;
       });
     },
     onSearchInput: function onSearchInput(event) {
