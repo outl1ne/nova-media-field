@@ -1092,6 +1092,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         _this.$emit('update:selectedFiles', _toConsumableArray(_this.stateSelectedFiles));
 
+        _this.$emit('updateMedia');
+
         _this.stateActiveFile = void 0;
       });
     },

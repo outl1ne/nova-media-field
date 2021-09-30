@@ -251,6 +251,7 @@ export default {
           let j = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
           this.stateSelectedFiles.splice(j, 1);
           this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
+          this.$emit('updateMedia');
 
           this.stateActiveFile = void 0;
       });
