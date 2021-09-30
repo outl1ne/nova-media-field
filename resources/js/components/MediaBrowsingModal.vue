@@ -246,6 +246,7 @@ export default {
           let selectMediaId = this.stateActiveFile.data.id;
           let i = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
           this.files.splice(i, 1);
+          window.mediaLibrary.files = this.files
 
           let j = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
           this.stateSelectedFiles.splice(j, 1);

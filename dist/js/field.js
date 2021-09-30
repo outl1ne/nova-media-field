@@ -1082,6 +1082,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         _this.files.splice(i, 1);
 
+        window.mediaLibrary.files = _this.files;
+
         var j = _this.stateSelectedFiles.findIndex(function (item) {
           return item.processed && +item.data.id === +selectMediaId;
         });
