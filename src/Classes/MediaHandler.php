@@ -316,18 +316,6 @@ class MediaHandler
             $origFile = file_get_contents($tmpPath . $tmpName);
             $image = Image::make($origFile);
 
-            $image_watermart_path = config('nova-media-field.image_watermark_path', null);
-            if(!is_null($image_watermart_path)) {
-                //Save image without watermark
-                $rawFilePath = $storagePath . pathinfo($newFilename, PATHINFO_FILENAME) . "-RAW." . $origExtension;
-                $file = $image->encode($origExtension, config('nova-media-field.quality', 80));
-                $disk->put($rawFilePath, $file);
-
-                // Add watermark to image
-                $watermark = Image::make($image_watermart_path);
-                $image->insert($watermark, 'center');
-            }
-
             // If max resize is enabled
             $maxOriginalDimension = config('nova-media-field.max_original_image_dimensions', null);
             if (!empty($maxOriginalDimension)) {
@@ -339,6 +327,19 @@ class MediaHandler
 
             $file = $image->encode($origExtension, config('nova-media-field.quality', 80));
             $disk->put($storagePath . $newFilename, $file);
+
+            $image_watermark_path = config('nova-media-field.image_watermark_path', null);
+            if(!is_null($image_watermark_path)) {
+                // Watermake file name setting
+                $watermarkFileName = pathinfo($newFilename, PATHINFO_FILENAME) . "-watermark." . $origExtension;
+
+                // Add watermark to image
+                $watermark = Image::make($image_watermark_path);
+                $watermarkImg = Image::make($origFile)->insert($watermark, 'center')->encode($origExtension, config('nova-media-field.quality', 80));
+
+                // Save image with watermark
+                $disk->put($storagePath . $watermarkFileName, $watermarkImg);
+            }
 
             if ($webpEnabled) {
                 $webpFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, 'webp');
@@ -370,6 +371,10 @@ class MediaHandler
 
         if ($isImageFile || $isVideoFile) {
             $generatedImages = $this->generateImageSizes($tmpPath . $tmpName, $fullFilePath, $mimeType, $disk);
+
+            if(!is_null($image_watermark_path))
+                $generatedImages['watermark']['file_name'] = $watermarkFileName;
+           
             $model->image_sizes = json_encode($generatedImages);
         }
 
