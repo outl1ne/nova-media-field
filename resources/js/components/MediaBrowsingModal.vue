@@ -65,6 +65,14 @@
 
         <div class="image-editor">
           <edit-image v-if="stateActiveFile !== void 0" :file="stateActiveFile.data" />
+           <button
+              type="button"
+              class="btn btn-default btn-primary mr-3 ml-4"
+              @click.prevent="removeItems"
+              v-if="stateActiveFile !== void 0"
+            >
+              {{ __('Remove') }}
+            </button>
         </div>
 
         <div
@@ -227,6 +235,28 @@ export default {
   },
 
   methods: {
+    removeItems() {
+      axios.delete('/api/media/delete', {
+        data : {
+          stateActiveFile : this.stateActiveFile.data,
+        }
+        
+      })
+      .then(response => {
+          let selectMediaId = this.stateActiveFile.data.id;
+          let i = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+          this.files.splice(i, 1);
+          window.mediaLibrary.files = this.files
+
+          let j = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+          this.stateSelectedFiles.splice(j, 1);
+          this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
+          this.$emit('updateMedia');
+
+          this.stateActiveFile = void 0;
+      });
+    },
+
     onSearchInput(event) {
       const oldValue = this.searchValue;
       const newValue = event.target.value;
