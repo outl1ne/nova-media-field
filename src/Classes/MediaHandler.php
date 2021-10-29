@@ -328,17 +328,26 @@ class MediaHandler
             $file = $image->encode($origExtension, config('nova-media-field.quality', 80));
             $disk->put($storagePath . $newFilename, $file);
 
-            $image_watermark_path = config('nova-media-field.image_watermark_path', null);
-            if(!is_null($image_watermark_path)) {
-                // Watermake file name setting
-                $watermarkFileName = pathinfo($newFilename, PATHINFO_FILENAME) . "-watermark." . $origExtension;
+            $watermarkPath = config('nova-media-field.watermark_path', null);
+            $watermarkFileName = null;
+            if (!empty($watermarkPath)) {
+                // Save as a separate file
+                $watermarkFileName = pathinfo($newFilename, PATHINFO_FILENAME) . '-watermark.' . $origExtension;
 
                 // Add watermark to image
-                $watermark = Image::make($image_watermark_path);
-                $watermarkImg = Image::make($origFile)->insert($watermark, 'center')->encode($origExtension, config('nova-media-field.quality', 80));
+                try {
+                    $watermark = Image::make($watermarkPath);
 
-                // Save image with watermark
-                $disk->put($storagePath . $watermarkFileName, $watermarkImg);
+                    $posConf = config('nova-media-field.watermark_positon', ['position' => 'center', 'x' => 0, 'y' => 0]);
+                    $watermarkImg = Image::make($origFile)
+                        ->insert($watermark, $posConf['position'], $posConf['x'], $posConf['y'])
+                        ->encode($origExtension, config('nova-media-field.quality', 80));
+
+                    // Save image with watermark
+                    $disk->put($storagePath . $watermarkFileName, $watermarkImg);
+                } catch (Exception $e) {
+                    \Log::error($e->getMessage());
+                }
             }
 
             if ($webpEnabled) {
@@ -372,9 +381,9 @@ class MediaHandler
         if ($isImageFile || $isVideoFile) {
             $generatedImages = $this->generateImageSizes($tmpPath . $tmpName, $fullFilePath, $mimeType, $disk);
 
-            if(!is_null($image_watermark_path))
+            if (!empty($watermarkPath))
                 $generatedImages['watermark']['file_name'] = $watermarkFileName;
-           
+
             $model->image_sizes = json_encode($generatedImages);
         }
 
