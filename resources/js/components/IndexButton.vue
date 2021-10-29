@@ -5,7 +5,7 @@
         :field="field"
         :multipleSelect="multipleSelect"
         :files.sync="files"
-        :uploadOnly="true"
+        :upload-only="true"
         :isModalOpen.sync="isModalOpen"
         :chosenCollection.sync="chosenCollection"
         :activeFile.sync="activeFile"
@@ -78,7 +78,7 @@ export default {
       this.updateMedia();
     },
 
-    updateMedia: debounce(function() {
+    updateMedia: debounce(function () {
       this.onUploadFinished();
       this.isModalOpen = false;
       this.$toasted.show('Files have been successfully uploaded!', { type: 'success' });

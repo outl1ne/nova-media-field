@@ -105,7 +105,7 @@
       </div>
 
       <label v-if="showUploadArea || draggingFile" for="generate-thumbnails" class="flex">
-        <input id="generate-thumbnails" type="checkbox" v-model="withThumbnails" autofocus/>
+        <input id="generate-thumbnails" type="checkbox" v-model="withThumbnails" autofocus />
         <span class="ml-1">Generate thumbnails</span>
       </label>
 
@@ -127,7 +127,7 @@
       </button>
       <button
         type="button"
-        v-if="!(!(showUploadArea && listenUploadArea) || draggingFile)"
+        v-if="!(!(showUploadArea && listenUploadArea) || draggingFile) && !uploadOnly"
         v-on:click="showMediaLibrary"
         class="btn btn-default btn-primary whitespace-no-wrap"
       >
@@ -178,7 +178,7 @@ export default {
       listenUploadArea: false,
       stateActiveFile: void 0,
       stateSelectedFiles: [],
-      withThumbnails: this.field.withThumbnails ?? true
+      withThumbnails: this.field.withThumbnails ?? true,
     };
   },
 
@@ -450,7 +450,7 @@ export default {
 
         const form = new FormData();
 
-        form.append('withThumbnails', this.withThumbnails)
+        form.append('withThumbnails', this.withThumbnails);
         form.append('file', fileInfo.fileInput);
 
         if (fileInfo.collection) {
@@ -557,7 +557,7 @@ export default {
     height: calc(88vh - 60px);
 
     > div {
-      height: calc(88vh - 60px - 110px);
+      height: calc(100% - 80px);
     }
   }
 
