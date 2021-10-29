@@ -45,8 +45,9 @@ class MediaHandler
             'name' => $request->file($key)->getClientOriginalName(),
             'path' => $request->file($key)->getRealPath(),
             'mime_type' => $request->file($key)->getClientMimeType(),
-            'collection' => $request->get('collection') ?? '',
-            'alt' => $request->get('alt') ?? ''
+            'collection' => $request->get('collection', ''),
+            'alt' => $request->get('alt', ''),
+            'withThumbnails' => $request->get('withThumbnails', true),
         ], $instance->getDisk());
     }
 
@@ -233,6 +234,8 @@ class MediaHandler
         }
 
         $mimeType = 'text/plain';
+        $withThumbnails = true;
+
         $filename = null;
         $tmpName = null;
         $tmpPath = null;
@@ -246,6 +249,13 @@ class MediaHandler
             $tmpPath = rtrim(dirname($fileData['path']), '/') . '/';
             $collection = $fileData['collection'] ?? '';
             $alt = $fileData['alt'] ?? '';
+            $withThumbnails = filter_var($fileData['withThumbnails'] ?? true, FILTER_VALIDATE_BOOLEAN);
+        } else if (is_string($fileData)) {
+            $filename = basename($fileData);
+            $tmpName = $filename;
+            $tmpPath = rtrim(dirname($fileData), '/') . '/';
+            $collection = '';
+            $alt = '';
         } else if ($isString) {
             if ($fileExists) {
                 $filename = $tmpName = basename($fileData);
@@ -265,7 +275,7 @@ class MediaHandler
             }
         }
 
-        return [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType];
+        return [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType, $withThumbnails];
     }
 
     private function isValid64base($str)
@@ -283,7 +293,8 @@ class MediaHandler
      */
     protected function storeFile($fileData, $disk): Media
     {
-        [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType] = $this->validateFileInput($fileData);
+
+        [$filename, $tmpName, $tmpPath, $collection, $alt, $mimeType, $withThumbnails] = $this->validateFileInput($fileData);
 
         if (config('nova-media-field.resolve_duplicates', true)) {
             if ($file = $this->getFileHashFromPath($tmpPath . $tmpName)) {
@@ -378,11 +389,11 @@ class MediaHandler
             'file_hash' => $fileHash, // Original hash of uploaded file
         ]);
 
-        if ($isImageFile || $isVideoFile) {
+
+        if (($isImageFile || $isVideoFile) && $withThumbnails) {
             $generatedImages = $this->generateImageSizes($tmpPath . $tmpName, $fullFilePath, $mimeType, $disk);
 
-            if (!empty($watermarkPath))
-                $generatedImages['watermark']['file_name'] = $watermarkFileName;
+            if (!empty($watermarkPath)) $generatedImages['watermark']['file_name'] = $watermarkFileName;
 
             $model->image_sizes = json_encode($generatedImages);
         }
