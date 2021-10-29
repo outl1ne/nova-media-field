@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.1.0] - 2021-10-29
+
+### Added
+
+- Added WIP watermarking ability (thanks to [@pitchayakit](https://github.com/pitchayakit))
+- Added ability to delete images (thanks to [@pitchayakit](https://github.com/pitchayakit))
+- Added ability to stop thumbnail generation (thanks to [@milewski](https://github.com/milewski))
+
+### Changed
+
+- Slight refactoring
+- Fixed Media Library modal showing both "Close" and "Back" buttons
+- Updated packages
+
 ## [2.0.8] - 2021-09-06
 
 ### Changed
