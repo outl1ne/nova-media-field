@@ -1,5 +1,5 @@
 <template>
-  <default-field :field="field" :errors="errors" fullWidthContent>
+  <default-field :field="field" :errors="errors" fullWidthContent :show-help-text="showHelpText">
     <template slot="field">
       <div :class="`${isCompact && 'compact-form'} ${isMultiple && 'multi-file-upload'}`">
         <div ref="modals">
@@ -10,7 +10,8 @@
             :isModalOpen.sync="isModalOpen"
             :chosenCollection.sync="chosenCollection"
             :activeFile.sync="activeFile"
-            :updateMedia="updateMedia"
+            @updateMedia="updateMedia"
+            @updateFiles="updateFiles"
             :showUploadArea.sync="showUploadArea"
             :loadingMediaFiles.sync="loadingMediaFiles"
             :selectedFiles.sync="selectedFiles"
@@ -145,6 +146,9 @@ export default {
     isMultiple() {
       return this.field.multiple || false;
     },
+    currentCollection() {
+      return this.field.displayCollection || this.chosenCollection;
+    },
   },
 
   mounted() {
@@ -177,7 +181,6 @@ export default {
         onload: [],
         currentPage: 0,
       };
-
       this.fetchFiles();
       window.mediaLibrary.loaded = true;
     } else if (window.mediaLibrary.loaded) {
@@ -196,15 +199,14 @@ export default {
       this.files = [...window.mediaLibrary.files];
     },
 
-    updateMedia() {
-      return debounce(() => {
-        if (window.mediaLibrary.onload.length) {
-          for (const cb of window.mediaLibrary.onload) {
-            if (this.updateFiles !== cb) cb();
-          }
+    updateMedia: debounce(function() {
+      if (window.mediaLibrary.onload.length) {
+        for (const cb of window.mediaLibrary.onload) {
+          if (this.updateFiles !== cb) cb();
         }
-      }, 200)();
-    },
+      }
+      this.updateFiles();
+    }, 500),
 
     openMediaBrowsingModal() {
       this.isModalOpen = true;
@@ -250,61 +252,59 @@ export default {
     },
 
     async fetchFiles(searchValue = null) {
-      return debounce(async () => {
-        const changedFromSearchToOverall = window.mediaLibrary.previousSearchValue !== searchValue;
-        window.mediaLibrary.previousSearchValue = searchValue;
+      const changedFromSearchToOverall = window.mediaLibrary.previousSearchValue !== searchValue;
+      window.mediaLibrary.previousSearchValue = searchValue;
 
-        if (!changedFromSearchToOverall && window.mediaLibrary.currentPage + 1 > window.mediaLibrary.totalPages) return;
-        if (changedFromSearchToOverall) window.mediaLibrary.currentPage = 0;
+      if (!changedFromSearchToOverall && window.mediaLibrary.currentPage + 1 > window.mediaLibrary.totalPages) return;
+      if (changedFromSearchToOverall) window.mediaLibrary.currentPage = 0;
 
-        window.mediaLibrary.fetching = true;
-        const response = await axios.get('/api/media', {
-          params: {
-            search: searchValue,
-            page: window.mediaLibrary.currentPage + 1,
-          },
-        });
+      window.mediaLibrary.fetching = true;
+      const response = await axios.get('/api/media', {
+        params: {
+          search: searchValue,
+          collection: this.currentCollection,
+          page: window.mediaLibrary.currentPage + 1,
+        },
+      });
 
-        const { data } = response.data;
-        let newFiles = data.map(file => {
-          return {
-            uploading: false,
-            processed: true,
-            data: file,
-          };
-        });
+      const { data } = response.data;
+      let newFiles = data.map(file => {
+        return {
+          uploading: false,
+          processed: true,
+          data: file,
+        };
+      });
 
-        if (changedFromSearchToOverall) {
-          window.mediaLibrary.currentPage++;
-        } else {
-          window.mediaLibrary.currentPage++;
+      if (changedFromSearchToOverall) {
+        window.mediaLibrary.currentPage++;
+      } else {
+        window.mediaLibrary.currentPage++;
+      }
+
+      if (searchValue) {
+        if (!window.mediaLibrary.loadedFiles) {
+          window.mediaLibrary.loadedFiles = [...window.mediaLibrary.files];
         }
 
-        if (searchValue) {
-          if (!window.mediaLibrary.loadedFiles) {
-            window.mediaLibrary.loadedFiles = [...window.mediaLibrary.files];
-          }
-
-          window.mediaLibrary.files = [...newFiles];
-        } else {
-          if (window.mediaLibrary.loadedFiles && window.mediaLibrary.loadedFiles.length) {
-            window.mediaLibrary.files = [...window.mediaLibrary.loadedFiles];
-            window.mediaLibrary.loadedFiles = null;
-          }
-
-          window.mediaLibrary.files = [
-            ...window.mediaLibrary.files,
-            ...newFiles.filter(item => !window.mediaLibrary.files.find(file => file.data.id === item.data.id)),
-          ];
+        window.mediaLibrary.files = [...newFiles];
+      } else {
+        if (window.mediaLibrary.loadedFiles && window.mediaLibrary.loadedFiles.length) {
+          window.mediaLibrary.files = [...window.mediaLibrary.loadedFiles];
+          window.mediaLibrary.loadedFiles = null;
         }
 
-        window.mediaLibrary.totalPages = Math.ceil(response.data.total / response.data.per_page);
-        window.mediaLibrary.fetching = false;
+        window.mediaLibrary.files = [
+          ...window.mediaLibrary.files,
+          ...newFiles.filter(item => !window.mediaLibrary.files.find(file => file.data.id === item.data.id)),
+        ];
+      }
 
-        this.updateFiles();
-        this.updateMedia();
-      }, 200)();
-    },
+      window.mediaLibrary.totalPages = Math.ceil(response.data.total / response.data.per_page);
+      window.mediaLibrary.fetching = false;
+
+      this.updateFiles();
+    }
   },
 };
 </script>

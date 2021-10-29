@@ -3,7 +3,6 @@
 namespace OptimistDigital\MediaField;
 
 use Laravel\Nova\Fields\Field;
-use OptimistDigital\MediaField\Models\Media;
 
 
 class MediaField extends Field
@@ -28,7 +27,8 @@ class MediaField extends Field
      * @param null $height - Inherited from width when null
      * @return $this
      */
-    public function compact($width = 36, $height = null) {
+    public function compact($width = 36, $height = null)
+    {
         $this->detailThumbnailSize = [$width, $height];
         return $this;
     }
@@ -77,16 +77,15 @@ class MediaField extends Field
         ]);
     }
 
-    public function resolveResponseValue($fieldValue)
+    public function resolveResponseValue($fieldValue = null)
     {
-        $query = Media::whereIn('id', explode(',', $fieldValue));
+        if (!$fieldValue) return null;
 
-        if ($this->multiple) {
-            return $query->get();
-        }
+        $Media = config('nova-media-field.media_model');
+        $query = $Media::whereIn('id', explode(',', $fieldValue));
+
+        if ($this->multiple) return $query->orderByRaw("FIELD(id, $fieldValue)")->get();
 
         return $query->first();
     }
-
-
 }

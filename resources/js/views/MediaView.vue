@@ -9,9 +9,7 @@
     </div>
 
     <div class="flex">
-      <heading :level="1" class="mb-3 flex-1">
-        Media Library
-      </heading>
+      <heading :level="1" class="mb-3 flex-1"> Media Library </heading>
       <div class="flex items-center" :class="{ 'mb-6': !viaResource }">
         <custom-index-toolbar v-if="!viaResource" :resource-name="resourceName" />
         <media-index-button
@@ -53,8 +51,12 @@
         <div class="flex items-center">
           <div class="px-3" v-if="shouldShowCheckBoxes">
             <!-- Select All -->
-            <dropdown dusk="select-all-dropdown">
-              <dropdown-trigger slot-scope="{ toggle }" :handle-click="toggle">
+            <dropdown
+              dusk="select-all-dropdown"
+              placement="bottom-end"
+              class="-mx-2"
+            >
+              <dropdown-trigger class="px-2">
                 <fake-checkbox :checked="selectAllChecked" />
               </dropdown-trigger>
 
@@ -62,7 +64,11 @@
                 <div class="p-4">
                   <ul class="list-reset">
                     <li class="flex items-center mb-4">
-                      <checkbox-with-label :checked="selectAllChecked" @change="toggleSelectAll">
+                      <checkbox-with-label
+                        :checked="selectAllChecked"
+                        @input="toggleSelectAll"
+                        dusk="select-all-button"
+                      >
                         {{ __('Select All') }}
                       </checkbox-with-label>
                     </li>
@@ -70,10 +76,14 @@
                       <checkbox-with-label
                         dusk="select-all-matching-button"
                         :checked="selectAllMatchingChecked"
-                        @change="toggleSelectAllMatching"
+                        @input="toggleSelectAllMatching"
                       >
                         <template>
-                          <span class="mr-1"> {{ __('Select All Matching') }} ({{ allMatchingResourceCount }}) </span>
+                          <span class="mr-1">
+                            {{ __('Select All Matching') }} ({{
+                              allMatchingResourceCount
+                            }})
+                          </span>
                         </template>
                       </checkbox-with-label>
                     </li>
@@ -176,24 +186,24 @@
               }}
             </h3>
 
-            <create-resource-button
-              classes="btn btn-sm btn-outline inline-flex items-center focus:outline-none focus:shadow-outline active:outline-none active:shadow-outline"
-              :singular-name="singularName"
-              :resource-name="resourceName"
-              :via-resource="viaResource"
-              :via-resource-id="viaResourceId"
-              :via-relationship="viaRelationship"
-              :relationship-type="relationshipType"
-              :authorized-to-create="authorizedToCreate && !resourceIsFull"
-              :authorized-to-relate="authorizedToRelate"
+            <button
+              class="
+                btn btn-sm btn-outline
+                inline-flex
+                items-center
+                focus:outline-none focus:shadow-outline
+                active:outline-none active:shadow-outline
+              "
+              @click="openMediaLibraryModal"
             >
-            </create-resource-button>
+              Upload media
+            </button>
           </div>
         </div>
 
         <div class="overflow-hidden overflow-x-auto relative">
           <!-- Resource Table -->
-          <resource-table
+          <media-resource-table
             :authorized-to-relate="authorizedToRelate"
             :resource-name="resourceName"
             :resources="resources"
@@ -250,6 +260,7 @@ import {
   InteractsWithQueryString,
   InteractsWithResourceInformation,
 } from 'laravel-nova';
+import MediaResourceTable from '../components/tables/MediaResourceTable';
 
 export default {
   mixins: [
@@ -261,6 +272,10 @@ export default {
     InteractsWithResourceInformation,
     InteractsWithQueryString,
   ],
+
+  components: {
+    MediaResourceTable: MediaResourceTable,
+  },
 
   props: {
     field: {
@@ -387,7 +402,14 @@ export default {
   },
 
   methods: {
-    openMediaLibraryModal() {},
+    openMediaLibraryModal() {
+      const event = new Event('open-media-library', {
+        bubbles: true,
+        cancelable: true,
+        composed: false,
+      });
+      window.dispatchEvent(event);
+    },
 
     deleteResourcesFn(data) {
       if (window.mediaLibrary && window.mediaLibrary && window.mediaLibrary.files.length) {

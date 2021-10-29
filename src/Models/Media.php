@@ -4,6 +4,7 @@ namespace OptimistDigital\MediaField\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use OptimistDigital\MediaField\Classes\MediaHandler;
 
 class Media extends Model
 {
@@ -20,32 +21,46 @@ class Media extends Model
         'webp_size',
         'image_sizes',
         'data',
+        'file_hash'
     ];
 
     protected $appends = ['url', 'webp_url'];
 
+    public function getDisk()
+    {
+        /** @var MediaHandler $instance */
+        $instance = app()->make(MediaHandler::class);
+        return $instance->getDisk();
+    }
+
     public function getUrlAttribute()
     {
-        return env('APP_URL') . Storage::url($this->path . $this->file_name);
+        return $this->getDisk()->url($this->path . $this->file_name);
     }
 
     public function getWebpUrlAttribute()
     {
-        return env('APP_URL') . Storage::url($this->path . $this->webp_name);
+        return !empty($this->webp_name) ? $this->getDisk()->url($this->path . $this->webp_name) : null;
     }
 
     public function getImageSizesAttribute($value)
     {
-        $sizes = json_decode($value, true);
+        $sizes = json_decode($value, true) ?? [];
 
         foreach ($sizes as $key => $size) {
-            $sizes[$key]['url'] = env('APP_URL') . Storage::url($this->path . $size['file_name']);
+            $sizes[$key]['url'] = $this->getDisk()->url($this->path . $size['file_name']);
             if (config('nova-media-field.webp_enabled', true) && isset($size['webp_name'])) {
-                $sizes[$key]['webp_url'] = env('APP_URL') . Storage::url($this->path . $size['webp_name']);
+                $sizes[$key]['webp_url'] = $this->getDisk()->url($this->path . $size['webp_name']);
             }
         }
 
         return $sizes;
+    }
+
+    public function getThumbnailPathAttribute()
+    {
+        $thumbnailFileName = $this->image_sizes['thumbnail']['file_name'] ?? null;
+        return $thumbnailFileName ? str_replace('public/', '', $this->path) . $thumbnailFileName : $this->getFilePathAttribute();
     }
 
     public function getFilePathAttribute()

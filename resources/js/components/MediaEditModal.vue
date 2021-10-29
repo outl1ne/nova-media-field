@@ -2,9 +2,7 @@
   <od-modal ref="isModalOpen" v-if="isModalOpen" :name="'isModalOpen'" :align="'flex justify-end'" width="1315">
     <div slot="container">
       <div class="modal-header flex flex-wrap justify-between mb-6">
-        <h2 class="text-90 font-normal text-xl">
-          Edit media
-        </h2>
+        <h2 class="text-90 font-normal text-xl">Edit media</h2>
       </div>
       <edit-image v-if="file" :file="file.data" />
       <div class="loader-container" v-else>

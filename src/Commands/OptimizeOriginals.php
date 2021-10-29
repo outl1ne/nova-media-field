@@ -14,7 +14,8 @@ class OptimizeOriginals extends Command
 
     public function handle()
     {
-        $medias = Media::all();
+        $Media = config('nova-media-field.media_model');
+        $medias = $Media::all();
 
         /** @var MediaHandler $handler */
         $handler = app()->make(MediaHandler::class);
@@ -29,7 +30,7 @@ class OptimizeOriginals extends Command
                 $origFile = file_get_contents($imagePath);
 
                 // Re-save original file
-                $img = Image::make($origFile)->encode($media->extension, 80);
+                $img = Image::make($origFile)->encode($media->extension, config('nova-media-field.quality', 80));
                 $handler->getDisk()->put($imagePath, $img);
                 $media->file_size = $handler->getDisk()->size($imagePath);
 

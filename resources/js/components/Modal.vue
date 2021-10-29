@@ -1,9 +1,9 @@
 <template>
   <portal to="modals" :name="name">
     <transition name="fade">
-      <div class="od-modal-container">
+      <div class="od-modal-container" @click="onBackdropClick">
         <modal>
-          <div class="bg-white rounded-lg shadow-lg od-modal" :style="style">
+          <div class="bg-white rounded-lg shadow-lg od-modal" ref="container" :style="style">
             <div class="p-8"><slot name="container"></slot></div>
 
             <div class="bg-30 px-6 py-3 flex">
@@ -36,9 +36,26 @@ export default {
     },
   },
 
-  data: () => ({
-    //
-  }),
+  mounted() {
+    document.addEventListener('keydown', this.listenEscEvent)
+  },
+
+  unmounted() {
+    document.removeEventListener('keydown', this.listenEscEvent)
+  },
+
+  methods: {
+    onBackdropClick(e) {
+      if (this.$refs.container && !this.$refs.container.contains(e.target)) {
+        this.$emit('onClose')
+      }
+    },
+    listenEscEvent(e) {
+      if (e.key?.toLowerCase() === 'esc' || e.key?.toLowerCase() === 'escape') {
+        this.$emit('onClose')
+      }
+    }
+  },
 
   computed: {
     style() {
@@ -48,7 +65,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .od-modal-container .modal > div > div {
   padding: 0 20px;
   width: 100%;

@@ -1,5 +1,12 @@
 <template>
-  <od-modal ref="isModalOpen" v-if="isModalOpen" :name="'isModalOpen'" :align="'flex justify-end'" width="1315">
+  <od-modal
+    ref="isModalOpen"
+    v-if="isModalOpen"
+    @onClose="hideMediaLibrary"
+    :name="'isModalOpen'"
+    :align="'flex justify-end'"
+    width="1315"
+  >
     <div slot="container">
       <div class="modal-header flex flex-wrap justify-between mb-6">
         <h2 class="text-90 font-normal text-xl">
@@ -41,21 +48,15 @@
         :currentCollection="currentCollection"
       />
 
-      <div :class="`flex mb-6`" id="media-dropzone" v-if="!loadingMediaFiles">
+      <div :class="`flex mb-6`" id="media-dropzone" class="media-dropzone-wrapper" v-if="!loadingMediaFiles">
         <div class="img-collection" @scroll="scrollEventListener" ref="imgCollectionRef">
           <div class="empty-message" v-if="files.length === 0 && !uploadOnly">
-            <p>
-              There are currently no media files in this library
-            </p>
-            <p>
-              Drag and drop files here to upload them
-            </p>
+            <p>There are currently no media files in this library</p>
+            <p>Drag and drop files here to upload them</p>
           </div>
 
           <div class="empty-message" v-if="files.length === 0 && uploadOnly">
-            <p>
-              Drag and drop files here to upload them
-            </p>
+            <p>Drag and drop files here to upload them</p>
           </div>
 
           <uploaded-file
@@ -71,6 +72,14 @@
 
         <div class="image-editor">
           <edit-image v-if="stateActiveFile !== void 0" :file="stateActiveFile.data" />
+          <button
+            type="button"
+            class="btn btn-default btn-primary mr-3 ml-4"
+            @click.prevent="removeItems"
+            v-if="stateActiveFile !== void 0"
+          >
+            {{ __('Delete') }}
+          </button>
         </div>
 
         <div
@@ -153,6 +162,7 @@ export default {
     'activeFile',
     'selectedFiles',
     'updateMedia',
+    'updateFiles',
     'files',
     'multipleSelect',
     'loadingMediaFiles',
@@ -238,6 +248,26 @@ export default {
   },
 
   methods: {
+    async removeItems() {
+      await axios.delete('/api/media/delete', {
+        data: {
+          stateActiveFile: this.stateActiveFile.data.id,
+        },
+      });
+
+      let selectMediaId = this.stateActiveFile.data.id;
+      let i = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+      this.files.splice(i, 1);
+      window.mediaLibrary.files = this.files;
+
+      let j = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+      this.stateSelectedFiles.splice(j, 1);
+      this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
+      this.$emit('updateMedia');
+
+      this.stateActiveFile = void 0;
+    },
+
     onSearchInput(event) {
       const oldValue = this.searchValue;
       const newValue = event.target.value;
@@ -439,38 +469,48 @@ export default {
             },
           })
           .then(response => {
-            if (this.uploadOnly) {
-              this.$emit('updateFiles', {
-                uploading: false,
-                processed: true,
-                data: response.data,
-              });
-            } else {
-              window.mediaLibrary.files.unshift({
-                uploading: false,
-                processed: true,
-                data: response.data,
-              });
-
-              this.$emit('update:files', window.mediaLibrary.files);
-
-              this.updateMedia();
+            if (!window.mediaLibrary?.files?.find(file => file.data?.id && file.data.id === response.data.id)) {
+              if (this.uploadOnly) {
+                this.$emit('updateFiles', {
+                  uploading: false,
+                  processed: true,
+                  data: response.data,
+                });
+              } else {
+                window.mediaLibrary?.files.unshift({
+                  uploading: false,
+                  processed: true,
+                  data: response.data,
+                });
+              }
             }
+
+            this.$nextTick(() => {
+              this.$emit('updateMedia');
+            });
           })
           .catch(error => {
-            if (!error.response) return;
+            if (!error.response) {
+              Nova.$emit('error', 'Failed to upload image.');
+              this.$emit('updateMedia');
+              return;
+            }
 
             const response = error.response.data;
 
-            if (Array.isArray(response.errors.file)) {
+            if (Array.isArray(response && response.errors && response.errors.file)) {
               Nova.$emit('error', response.errors.file[0]);
-            } else {
+            } else if (response.message) {
               Nova.$emit('error', response.message);
+            } else {
+              Nova.$emit('error', 'Failed to upload image.');
             }
 
-            window.mediaLibrary.files.splice(0, 1);
+            if (window.mediaLibrary && window.mediaLibrary.files) {
+              window.mediaLibrary.files.splice(0, 1);
+            }
 
-            this.updateMedia();
+            this.$emit('updateMedia');
           });
       }
     },
@@ -500,6 +540,40 @@ export default {
       this.$emit('update:isModalOpen', true);
       this.$emit('update:showUploadArea', false);
     },
+
+    hideMediaLibrary() {
+      this.listenUploadArea = false;
+      this.$emit('update:isModalOpen', false);
+      this.$emit('update:showUploadArea', false);
+    },
   },
 };
 </script>
+<style lang="scss">
+.od-modal {
+  height: 88vh;
+
+  > div:first-child {
+    height: calc(88vh - 60px);
+
+    > div {
+      height: calc(88vh - 60px - 110px);
+    }
+  }
+
+  #media-dropzone .img-collection {
+    height: 100%;
+    max-height: none;
+  }
+
+  .media-dropzone-wrapper {
+    height: 100%;
+  }
+
+  .mime-type-icon {
+    svg {
+      position: static;
+    }
+  }
+}
+</style>

@@ -11,6 +11,7 @@
         :activeFile.sync="activeFile"
         :showUploadArea.sync="showUploadArea"
         @updateFiles="updateFiles"
+        @updateMedia="updateMedia"
         :loadingMediaFiles.sync="loadingMediaFiles"
         :selectedFiles.sync="selectedFiles"
       />
@@ -34,6 +35,14 @@ export default {
   mixins: [FormField, HandlesValidationErrors],
 
   props: ['field', 'onUploadFinished'],
+
+  mounted() {
+    window.addEventListener('open-media-library', this.openMediaBrowsingModal);
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('open-media-library', this.openMediaBrowsingModal);
+  },
 
   data() {
     return {
@@ -69,10 +78,11 @@ export default {
       this.updateMedia();
     },
 
-    updateMedia: debounce(function () {
+    updateMedia: debounce(function() {
       this.onUploadFinished();
+      this.isModalOpen = false;
       this.$toasted.show('Files have been successfully uploaded!', { type: 'success' });
-    }, 1000),
+    }, 500),
 
     openMediaBrowsingModal() {
       this.isModalOpen = true;
