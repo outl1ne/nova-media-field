@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Image;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Resource;
 use OptimistDigital\MediaField\Filters\Collection;
 
@@ -26,9 +27,15 @@ class Media extends Resource
     {
         return [
             ID::make(),
-            Image::make('Preview', 'thumbnail_path')->hideWhenUpdating()->hideWhenCreating()->resolveUsing(function($value, Model $resource, $attribute) {
-                return $resource;
-            }),
+            Image::make('Preview', 'thumbnail_path')
+                ->hideWhenUpdating()
+                ->hideWhenCreating()
+                ->resolveUsing(function ($value, Model $resource, $attribute) {
+                    $novaRequest = app()->make(NovaRequest::class);
+                    if ($novaRequest->isResourceDetailRequest()) return $resource->file_path;
+
+                    return $resource;
+                }),
             Text::make('Name', 'file_name')->readonly(),
             UrlField::make('Url', 'url')->readonly(),
             Text::make('Collection', 'collection_name')->readonly(),

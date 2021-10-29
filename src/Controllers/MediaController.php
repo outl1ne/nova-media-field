@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Models\Media;
 use OptimistDigital\MediaField\Classes\MediaHandler;
 use OptimistDigital\MediaField\Requests\StoreMediaRequest;
-use PhpParser\Node\Stmt\Continue_;
 
 class MediaController extends Controller
 {
