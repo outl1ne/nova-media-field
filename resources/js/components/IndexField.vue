@@ -1,7 +1,9 @@
 <template>
-  <div class="media-index-preview">
+  <div class="media-index-preview" v-if="files && files.length">
     <media-preview :ordering="false" :files="files" :multiple="multipleSelect" />
   </div>
+
+  <div v-else>&mdash;</div>
 </template>
 
 <script>

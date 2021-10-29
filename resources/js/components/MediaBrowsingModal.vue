@@ -1,5 +1,12 @@
 <template>
-  <od-modal ref="isModalOpen" v-if="isModalOpen" @onClose="hideMediaLibrary" :name="'isModalOpen'" :align="'flex justify-end'" width="1315">
+  <od-modal
+    ref="isModalOpen"
+    v-if="isModalOpen"
+    @onClose="hideMediaLibrary"
+    :name="'isModalOpen'"
+    :align="'flex justify-end'"
+    width="1315"
+  >
     <div slot="container">
       <div class="modal-header flex flex-wrap justify-between mb-6">
         <h2 class="text-90 font-normal text-xl">
@@ -65,14 +72,14 @@
 
         <div class="image-editor">
           <edit-image v-if="stateActiveFile !== void 0" :file="stateActiveFile.data" />
-           <button
-              type="button"
-              class="btn btn-default btn-primary mr-3 ml-4"
-              @click.prevent="removeItems"
-              v-if="stateActiveFile !== void 0"
-            >
-              {{ __('Remove') }}
-            </button>
+          <button
+            type="button"
+            class="btn btn-default btn-primary mr-3 ml-4"
+            @click.prevent="removeItems"
+            v-if="stateActiveFile !== void 0"
+          >
+            {{ __('Delete') }}
+          </button>
         </div>
 
         <div
@@ -235,26 +242,24 @@ export default {
   },
 
   methods: {
-    removeItems() {
-      axios.delete('/api/media/delete', {
-        data : {
-          stateActiveFile : this.stateActiveFile.data,
-        }
-        
-      })
-      .then(response => {
-          let selectMediaId = this.stateActiveFile.data.id;
-          let i = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
-          this.files.splice(i, 1);
-          window.mediaLibrary.files = this.files
-
-          let j = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
-          this.stateSelectedFiles.splice(j, 1);
-          this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
-          this.$emit('updateMedia');
-
-          this.stateActiveFile = void 0;
+    async removeItems() {
+      await axios.delete('/api/media/delete', {
+        data: {
+          stateActiveFile: this.stateActiveFile.data.id,
+        },
       });
+
+      let selectMediaId = this.stateActiveFile.data.id;
+      let i = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+      this.files.splice(i, 1);
+      window.mediaLibrary.files = this.files;
+
+      let j = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+      this.stateSelectedFiles.splice(j, 1);
+      this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
+      this.$emit('updateMedia');
+
+      this.stateActiveFile = void 0;
     },
 
     onSearchInput(event) {
@@ -559,7 +564,6 @@ export default {
   }
 
   .mime-type-icon {
-
     svg {
       position: static;
     }

@@ -75,24 +75,26 @@ class MediaController extends Controller
         return response()->json($paginator, 200);
     }
 
-    public function deleteFiles(Request $request){
-            $file = $request->stateActiveFile;
-            $mediaID = $file['id'];
+    public function deleteFiles(Request $request)
+    {
+        $mediaId = $request->input('mediaId');
 
-            if(Media::where('id', $mediaID)->exists()) {
-                Media::find($mediaID)->delete(); //Remove media data in media_library table
+        if (Media::where('id', $mediaId)->exists()) {
+            Media::find($mediaId)->delete(); // Delete media data in media_library table
 
-                $driver = config('nova-media-field.storage_driver');
-                $mediaPath = $file['path'] . $file['file_name'];
-                Storage::disk($driver)->delete($mediaPath); //Remove media file in storage
-                
-                //Remove other related files like Thumbnail
-                foreach($file['image_sizes'] as $imageSize) {
-                    if(isset($imageSize)) {
-                        $mediaThumbnailPath = $file['path'] . $imageSize['file_name'];
-                        Storage::disk($driver)->delete($mediaThumbnailPath);
-                    }    
+            $driver = config('nova-media-field.storage_driver');
+            $mediaPath = $file['path'] . $file['file_name'];
+            Storage::disk($driver)->delete($mediaPath); // Delete media file in storage
+
+            // Delete other related files like thumbnails
+            foreach ($file['image_sizes'] as $imageSize) {
+                if (isset($imageSize)) {
+                    $mediaThumbnailPath = $file['path'] . $imageSize['file_name'];
+                    Storage::disk($driver)->delete($mediaThumbnailPath);
                 }
-            }    
+            }
+        }
+
+        return response('', 204);
     }
 }
