@@ -5,17 +5,19 @@ namespace OptimistDigital\MediaField\Classes;
 use Exception;
 use FFMpeg\FFMpeg;
 use GuzzleHttp\Client;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use FFMpeg\Coordinate\TimeCode;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use OptimistDigital\MediaField\Models\Media;
 use OptimistDigital\MediaField\NovaMediaLibrary;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Support\Facades\File;
 use OptimistDigital\MediaField\Traits\ResolvesMedia;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Intervention\Image\Exception\NotSupportedException;
 
 class MediaHandler
 {
@@ -85,7 +87,7 @@ class MediaHandler
             if (!Str::startsWith($mimeType, 'image')) throw new Exception("Image was not of image mimetype. Instead received: $mimeType");
             return $this->storeFile($tmpPath, $this->getDisk());
         } catch (Exception $e) {
-            \Log::error($e->getMessage());
+            Log::error($e->getMessage());
         }
 
         return null;
@@ -181,7 +183,7 @@ class MediaHandler
                         'webp_size' => $disk->size(dirname($path) . '/' . $webpFilename),
                     ]);
                 }
-            } catch (\Intervention\ImageException\NotSupportedException $e) {
+            } catch (NotSupportedException $e) {
                 continue;
             }
         }
@@ -250,12 +252,6 @@ class MediaHandler
             $collection = $fileData['collection'] ?? '';
             $alt = $fileData['alt'] ?? '';
             $withThumbnails = filter_var($fileData['withThumbnails'] ?? true, FILTER_VALIDATE_BOOLEAN);
-        } else if (is_string($fileData)) {
-            $filename = basename($fileData);
-            $tmpName = $filename;
-            $tmpPath = rtrim(dirname($fileData), '/') . '/';
-            $collection = '';
-            $alt = '';
         } else if ($isString) {
             if ($fileExists) {
                 $filename = $tmpName = basename($fileData);
@@ -357,7 +353,7 @@ class MediaHandler
                     // Save image with watermark
                     $disk->put($storagePath . $watermarkFileName, $watermarkImg);
                 } catch (Exception $e) {
-                    \Log::error($e->getMessage());
+                    Log::error($e->getMessage());
                 }
             }
 
@@ -422,7 +418,7 @@ class MediaHandler
         try {
             if (File::exists($path)) File::delete($path);
         } catch (Exception $e) {
-            \Log::error($e);
+            Log::error($e);
         }
     }
 }
