@@ -328,6 +328,19 @@ class MediaHandler
             $file = $image->encode($origExtension, config('nova-media-field.quality', 80));
             $disk->put($storagePath . $newFilename, $file);
 
+            $image_watermark_path = config('nova-media-field.image_watermark_path', null);
+            if(!is_null($image_watermark_path)) {
+                // Watermake file name setting
+                $watermarkFileName = pathinfo($newFilename, PATHINFO_FILENAME) . "-watermark." . $origExtension;
+
+                // Add watermark to image
+                $watermark = Image::make($image_watermark_path);
+                $watermarkImg = Image::make($origFile)->insert($watermark, 'center')->encode($origExtension, config('nova-media-field.quality', 80));
+
+                // Save image with watermark
+                $disk->put($storagePath . $watermarkFileName, $watermarkImg);
+            }
+
             if ($webpEnabled) {
                 $webpFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, 'webp');
                 $webpImg = Image::make($file)->encode('webp', config('nova-media-field.quality', 80));
@@ -358,6 +371,10 @@ class MediaHandler
 
         if ($isImageFile || $isVideoFile) {
             $generatedImages = $this->generateImageSizes($tmpPath . $tmpName, $fullFilePath, $mimeType, $disk);
+
+            if(!is_null($image_watermark_path))
+                $generatedImages['watermark']['file_name'] = $watermarkFileName;
+           
             $model->image_sizes = json_encode($generatedImages);
         }
 

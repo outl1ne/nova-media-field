@@ -34,4 +34,8 @@ return [
 
     // Encoding quality for thumbnails and for source image
     'quality' => 80,
+
+    // Enable watermark
+    'image_watermark_path' => null,
+
 ];
