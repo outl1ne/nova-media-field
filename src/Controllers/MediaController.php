@@ -76,8 +76,9 @@ class MediaController extends Controller
 
     public function deleteFiles(Request $request)
     {
-        $mediaId = $request->input('mediaId');
-
+        $file = $request->stateActiveFile;
+        $mediaId = $file['id'];
+        
         if (Media::where('id', $mediaId)->exists()) {
             Media::find($mediaId)->delete(); // Delete media data in media_library table
 
