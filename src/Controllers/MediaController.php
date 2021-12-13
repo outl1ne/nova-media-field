@@ -79,7 +79,8 @@ class MediaController extends Controller
         $mediaId = $request->input('mediaId');
 
         if (Media::where('id', $mediaId)->exists()) {
-            Media::find($mediaId)->delete(); // Delete media data in media_library table
+            $file = Media::find($mediaId); // Delete media data in media_library table
+            $file->delete();
 
             $driver = config('nova-media-field.storage_driver');
             $mediaPath = $file['path'] . $file['file_name'];

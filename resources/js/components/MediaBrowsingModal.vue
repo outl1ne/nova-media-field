@@ -251,7 +251,7 @@ export default {
     async removeItems() {
       await axios.delete('/api/media/delete', {
         data: {
-          stateActiveFile: this.stateActiveFile.data.id,
+          mediaId: this.stateActiveFile.data.id,
         },
       });
 
