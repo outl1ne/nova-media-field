@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.1.1] - 2021-12-13
+
+### Changed
+
+- Fixed deleting media in media browsing modal
+- Updated packages
+
 ## [2.1.0] - 2021-10-29
 
 ### Added
