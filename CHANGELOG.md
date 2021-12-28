@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.1.2] - 2021-12-28
+
+### Changed
+
+- Fixed files not being deleted when media is trashed from the resource index view (thanks to [@murad-optimist](https://github.com/murad-optimist))
+
 ## [2.1.1] - 2021-12-13
 
 ### Changed
