@@ -26,6 +26,24 @@ class Media extends Model
 
     protected $appends = ['url', 'webp_url'];
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::deleting(function ($model) {
+            $driver = config('nova-media-field.storage_driver');
+            $mediaPath = $model->path . $model->file_name;
+            Storage::disk($driver)->delete($mediaPath); // Delete media file in storage
+
+            // Delete other related files like thumbnails
+            foreach ($model->image_sizes as $imageSize) {
+                if (isset($imageSize)) {
+                    $mediaThumbnailPath = $model->path . $imageSize['file_name'];
+                    Storage::disk($driver)->delete($mediaThumbnailPath);
+                }
+            }
+        });
+    }
+
     public function getDisk()
     {
         /** @var MediaHandler $instance */
