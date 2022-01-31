@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.1.3] - 31-01-2022
+
+### Changed
+
+- Fixed file path generation in regenerate-thumbnails command (thanks to [@RistoNiinemets](https://github.com/RistoNiinemets))
+
 ## [2.1.2] - 2021-12-28
 
 ### Changed
