@@ -2,11 +2,11 @@
 
 namespace OptimistDigital\MediaField;
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Validator;
 use Laravel\Nova\Nova;
+use Illuminate\Support\Facades\Route;
 use Laravel\Nova\Events\ServingNova;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Validator;
 use OptimistDigital\MediaField\Classes\MediaHandler;
 use OptimistDigital\MediaField\Commands\OptimizeOriginals;
 use OptimistDigital\MediaField\Commands\RegenerateThumbnails;
@@ -35,11 +35,17 @@ class FieldServiceProvider extends ServiceProvider
             __DIR__ . '/../config/nova-media-field.php' => config_path('nova-media-field.php'),
         ], 'config');
 
-        $this->loadMigrationsFrom(__DIR__ . '/../migrations');
+        $this->publishes([
+            __DIR__ . '/../migrations' => database_path('migrations'),
+        ], 'nova-media-field-migrations');
+
+        if (config('nova-media-field.autoload_migrations', true)) {
+            $this->loadMigrationsFrom(__DIR__ . '/../migrations');
+        }
 
         $this->app->booted(function () {
             Route::middleware(config('nova-media-field.middlewares', []))
-                ->group(__DIR__.'/routes.php');
+                ->group(__DIR__ . '/routes.php');
         });
 
         Validator::extend('height', '\OptimistDigital\MediaField\Classes\MediaValidator@height');

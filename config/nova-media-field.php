@@ -80,7 +80,15 @@ return [
     ],
 
     /**
-     * You can specify middlewares to protect the nova-media-field routes
+     * Specify middlewares to protect the nova-media-field routes
      */
-    'middlewares' => []
+    'middlewares' => [],
+
+    /**
+     * Define whether the migrations are autoloaded or not
+     *
+     * If set to false, you have to publish the migrations to your
+     * own project in order to load them during the migrate step
+     */
+    'autoload_migrations' => true,
 ];
