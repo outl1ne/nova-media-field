@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.1.4] - 07-02-2022
+
+### Added
+
+- Added `middlewares` config option (thanks to [@Gertiozuni](https://github.com/Gertiozuni))
+- Added `autoload_migrations` config option (thanks to [@Gertiozuni](https://github.com/Gertiozuni))
+
 ## [2.1.3] - 31-01-2022
 
 ### Changed
