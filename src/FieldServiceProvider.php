@@ -34,7 +34,8 @@ class FieldServiceProvider extends ServiceProvider
             __DIR__ . '/../config/nova-media-field.php' => config_path('nova-media-field.php'),
         ], 'config');
 
-        $this->loadMigrationsFrom(__DIR__ . '/../migrations');
+        $this->loadMigrations();
+
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
 
         Validator::extend('height', '\OptimistDigital\MediaField\Classes\MediaValidator@height');
@@ -74,5 +75,20 @@ class FieldServiceProvider extends ServiceProvider
             $mediaHandler = config('nova-media-field.media_handler', MediaHandler::class);
             return new $mediaHandler;
         });
+    }
+
+    /**
+     * Load migrations from directory or publish them
+     */
+    private function loadMigrations(): void
+    {
+        if (! config('nova-media-field.publish-migrations', false)) {
+            $this->loadMigrationsFrom(__DIR__ . '/../migrations');
+            return;
+        }
+
+        $this->publishes([
+            __DIR__ . '/../migrations' => database_path('migrations'),
+        ], 'nova-media-field-migrations');
     }
 }

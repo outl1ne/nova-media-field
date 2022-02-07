@@ -79,5 +79,8 @@ return [
         'y' => 0,
     ],
 
-
+    /**
+     * You can publish migrations in case that you need to change them
+     */
+    'publish-migrations' => false,
 ];
