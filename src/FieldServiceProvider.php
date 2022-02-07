@@ -2,6 +2,7 @@
 
 namespace OptimistDigital\MediaField;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Nova\Nova;
 use Laravel\Nova\Events\ServingNova;
@@ -35,7 +36,11 @@ class FieldServiceProvider extends ServiceProvider
         ], 'config');
 
         $this->loadMigrationsFrom(__DIR__ . '/../migrations');
-        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+
+        $this->app->booted(function () {
+            Route::middleware(config('nova-media-field.middlewares', []))
+                ->group(__DIR__.'/routes.php');
+        });
 
         Validator::extend('height', '\OptimistDigital\MediaField\Classes\MediaValidator@height');
 
