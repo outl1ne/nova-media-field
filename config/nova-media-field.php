@@ -79,5 +79,8 @@ return [
         'y' => 0,
     ],
 
-
+    /**
+     * You can specify middlewares to protect the nova-media-field routes
+     */
+    'middlewares' => []
 ];
