@@ -63,8 +63,8 @@ fields() {
     MediaField::make('Profile image', 'profile_image'),
 
     // Configurable options:
-    MediaField::make('Config example', 'config_example'),
-      ->multiple() // Allows multiple images to tbe selected
+    MediaField::make('Config example', 'config_example')
+      ->multiple() // Allows multiple images to to be selected
       ->collection('profile-pictures') // Defines a fixed collection of images instead of a global scope
       ->compact($width, $height = null) // Defines the thumbnail image size shown in Nova (to actually change thumbnail image size, use config)
   ]
