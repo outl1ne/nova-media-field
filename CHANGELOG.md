@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.0.0] - 04-03-2022
+
+### Changed
+
+- Dropped support for PHP 8
+- Added Laravel 9 support
+- Upgraded all packages
+
 ## [2.1.4] - 07-02-2022
 
 ### Added
