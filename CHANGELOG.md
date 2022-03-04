@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Dropped support for PHP 8
+- Dropped support for PHP 7
 - Added Laravel 9 support
 - Upgraded all packages
 
