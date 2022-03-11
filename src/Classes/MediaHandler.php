@@ -320,8 +320,8 @@ class MediaHandler
             $newFilename = $this->createUniqueFilename($disk, $storagePath, $origFilename, $origExtension);
 
             // Encode original
-            $origFile = file_get_contents($tmpPath . $tmpName);
-            $image = Image::make($origFile);
+            $image = Image::make($tmpPath . $tmpName);
+            $image->orientate();
 
             // If max resize is enabled
             $maxOriginalDimension = config('nova-media-field.max_original_image_dimensions', null);
@@ -346,7 +346,9 @@ class MediaHandler
                     $watermark = Image::make($watermarkPath);
 
                     $posConf = config('nova-media-field.watermark_positon', ['position' => 'center', 'x' => 0, 'y' => 0]);
-                    $watermarkImg = Image::make($origFile)
+                    
+                    $newFile = $disk->get($storagePath . $newFilename);
+                    $watermarkImg = Image::make($newFile)
                         ->insert($watermark, $posConf['position'], $posConf['x'], $posConf['y'])
                         ->encode($origExtension, config('nova-media-field.quality', 80));
 
@@ -387,7 +389,7 @@ class MediaHandler
 
 
         if (($isImageFile || $isVideoFile) && $withThumbnails) {
-            $generatedImages = $this->generateImageSizes($tmpPath . $tmpName, $fullFilePath, $mimeType, $disk);
+            $generatedImages = $this->generateImageSizes($image, $fullFilePath, $mimeType, $disk);
 
             if (!empty($watermarkPath)) $generatedImages['watermark']['file_name'] = $watermarkFileName;
 
