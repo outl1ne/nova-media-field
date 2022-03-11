@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.0.1] - 11-03-2022
+
+### Changed
+
+- Fixed image orientation saving (thanks to [@pitchayakit](https://github.com/pitchayakit))
+
 ## [3.0.0] - 04-03-2022
 
 ### Changed
