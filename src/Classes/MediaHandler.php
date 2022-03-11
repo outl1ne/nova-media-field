@@ -114,7 +114,7 @@ class MediaHandler
     }
 
     /**
-     * @param $tempFilePath
+     * @param string $tempFilePath
      * @param $path - Path on disk
      * @param $mimeType
      * @param $disk - Saving destination
@@ -139,6 +139,7 @@ class MediaHandler
                     'ffprobe.binaries' => env('FFPROBE_PATH'),
                 ])->open($tempFilePath);
                 $video->frame(TimeCode::fromSeconds(1))->save($thumbnailTmpFile);
+
                 $img = Image::make($thumbnailTmpFile);
                 $origExtension = 'jpg';
             } else {
@@ -346,7 +347,7 @@ class MediaHandler
                     $watermark = Image::make($watermarkPath);
 
                     $posConf = config('nova-media-field.watermark_positon', ['position' => 'center', 'x' => 0, 'y' => 0]);
-                    
+
                     $newFile = $disk->get($storagePath . $newFilename);
                     $watermarkImg = Image::make($newFile)
                         ->insert($watermark, $posConf['position'], $posConf['x'], $posConf['y'])
@@ -389,7 +390,9 @@ class MediaHandler
 
 
         if (($isImageFile || $isVideoFile) && $withThumbnails) {
-            $generatedImages = $this->generateImageSizes($image, $fullFilePath, $mimeType, $disk);
+            // We will have $image if it was an image file
+            // For video files, pass temp file path
+            $generatedImages = $this->generateImageSizes($image ?? ($tmpPath . $tmpName), $fullFilePath, $mimeType, $disk);
 
             if (!empty($watermarkPath)) $generatedImages['watermark']['file_name'] = $watermarkFileName;
 
