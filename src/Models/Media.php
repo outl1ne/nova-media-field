@@ -4,6 +4,7 @@ namespace OptimistDigital\MediaField\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use OptimistDigital\MediaField\Classes\MediaHandler;
 
 class Media extends Model
@@ -86,8 +87,11 @@ class Media extends Model
         return str_replace('public/', '', $this->path) . $this->file_name;
     }
 
-    public function getDataAttribute($value)
+    protected function data(): Attribute
     {
-        return json_decode($value, true);
+        return Attribute::make(
+            get: fn ($value) => json_decode($value, true),
+            set: fn ($value) => is_string($value) ? $value : json_encode($value)
+        );
     }
 }

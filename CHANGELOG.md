@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.0.2] - 13-06-2022
+
+### Added
+
+- Created a custom attribute mutator for `data` column.
+  - Keeping backwards compatibility.
+  - Existing `$media->data = json_encode($data)` will stay working.
+
 ## [3.0.1] - 11-03-2022
 
 ### Changed
