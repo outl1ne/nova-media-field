@@ -1,3 +1,11 @@
+
+## NB! Nova Media Field is now deprecated in the favour of [Nova Media Hub](https://github.com/outl1ne/nova-media-hub)
+
+**No further updates will be provided!**
+
+---
+
+
 # Nova Media Field
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/optimistdigital/nova-media-field.svg?style=flat-square)](https://packagist.org/packages/optimistdigital/nova-media-field)
