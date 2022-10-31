@@ -96,7 +96,10 @@ class MediaHandler
     public function isReadableImage($file): bool
     {
         try {
-            return exif_imagetype($file);
+            $type = exif_imagetype($file);
+
+            // https://github.com/Intervention/image/pull/1008
+            return !in_array($type, [IMAGETYPE_ICO]);
         } catch (Exception $e) {
             return false;
         }
