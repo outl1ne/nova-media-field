@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.1.0] - 31-10-2022
+
+### Fixed
+
+- Support L8 again, previously `data` attribute casting had L9 syntax.
+- Default to regular upload when uploading .ico files.
+
 ## [3.0.2] - 13-06-2022
 
 ### Added
