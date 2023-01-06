@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.1.1] - 06-01-2023
+
+### Fixed
+
+- `isReadableImage` now returns false when `exif_imagetype` returns false instead of throwing exception
+
 ## [3.1.0] - 31-10-2022
 
 ### Fixed

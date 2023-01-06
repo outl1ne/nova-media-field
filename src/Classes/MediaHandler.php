@@ -98,6 +98,8 @@ class MediaHandler
         try {
             $type = exif_imagetype($file);
 
+            if (!$type) return false;
+
             // https://github.com/Intervention/image/pull/1008
             return !in_array($type, [IMAGETYPE_ICO]);
         } catch (Exception $e) {
