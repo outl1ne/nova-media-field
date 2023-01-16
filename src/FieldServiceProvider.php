@@ -44,9 +44,7 @@ class FieldServiceProvider extends ServiceProvider
         }
 
         Route::middleware(config('nova-media-field.middlewares', []))
-            ->group(function() {
-                $this->loadRoutesFrom(__DIR__ . '/routes.php');
-            });
+            ->group(__DIR__ . '/routes.php');
 
         Validator::extend('height', '\OptimistDigital\MediaField\Classes\MediaValidator@height');
 

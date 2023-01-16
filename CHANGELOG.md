@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [3.1.2] - 16-01-2023
+
+### Fixed
+
+- Fix API routes returning 404 by loading routes in at boot time not after
+
 ## [3.1.1] - 06-01-2023
 
 ### Fixed
