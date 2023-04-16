@@ -8,8 +8,8 @@
     width="1315"
   >
     <div slot="container">
-      <div class="modal-header flex flex-wrap justify-between mb-6">
-        <h2 class="text-90 font-normal text-xl">
+      <div class="flex flex-wrap justify-between mb-6 modal-header">
+        <h2 class="text-xl font-normal text-90">
           <span v-if="!uploadOnly">Browse media library</span>
           <span v-if="uploadOnly">Upload media</span>
           {{ currentCollection ? `(${currentCollectionData.label})` : '' }}
@@ -63,10 +63,12 @@
             v-for="file in fileList.filter(filterUploadedFiles)"
             :selected="stateSelectedFiles.find(item => item.processed && item.data.id === file.data.id) !== void 0"
             :active="file.processed && stateActiveFile && file.data.id === stateActiveFile.data.id"
-            @click.native="toggleFileSelect(file)"
+            @click.native="bulkDelete ? '' : toggleFileSelect(file)"
             :key="file.id"
             :file="file.processed ? file.data : {}"
             :progress="file.uploading ? file.uploadProgress : -1"
+            :bulkDelete="bulkDelete"
+            @deleteFile="deleteFile(file.data.id)"
           />
         </div>
 
@@ -74,8 +76,8 @@
           <edit-image v-if="stateActiveFile !== void 0" :file="stateActiveFile.data" />
           <button
             type="button"
-            class="btn btn-default btn-primary mr-3 ml-4"
-            @click.prevent="removeItems"
+            class="ml-4 mr-3 btn btn-default btn-primary"
+            @click.prevent="deleteFile(stateActiveFile.data.id)"
             v-if="stateActiveFile !== void 0"
           >
             {{ __('Delete') }}
@@ -88,7 +90,7 @@
           }`"
         >
           <p>
-            <svg class="fill-current w-4 h-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <svg class="w-4 h-4 mx-auto fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
               <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
             </svg>
           </p>
@@ -114,32 +116,44 @@
         <div class="small-loader" />
       </div>
     </div>
-    <div slot="buttons" class="w-full flex">
+    <div slot="buttons" class="flex w-full">
       <button
         type="button"
         v-if="
           (uploadOnly && !(showUploadArea && listenUploadArea)) || !(showUploadArea && listenUploadArea) || draggingFile
         "
         v-on:click="openModalWithUpload"
-        class="btn btn-default btn-primary whitespace-no-wrap"
+        class="whitespace-no-wrap btn btn-default btn-primary"
       >
         {{ __('Upload files') }}
       </button>
+
+      <button
+        type="button"
+        v-if="
+          (uploadOnly && !(showUploadArea && listenUploadArea)) || !(showUploadArea && listenUploadArea) || draggingFile
+        "
+        v-on:click="bulkDelete = !bulkDelete"
+        class="ml-3 whitespace-no-wrap btn btn-default btn-primary"
+      >
+        {{ __('Bulk delete') }}
+      </button>
+
       <button
         type="button"
         v-if="!(!(showUploadArea && listenUploadArea) || draggingFile) && !uploadOnly"
         v-on:click="showMediaLibrary"
-        class="btn btn-default btn-primary whitespace-no-wrap"
+        class="whitespace-no-wrap btn btn-default btn-primary"
       >
         {{ __('Back') }}
       </button>
 
-      <div class="flex w-full justify-end">
+      <div class="flex justify-end w-full">
         <button
           type="button"
           v-if="(!(showUploadArea && listenUploadArea) || draggingFile) && !uploadOnly"
           @click.prevent="closeModalAndSave"
-          class="btn btn-default btn-primary mr-3"
+          class="mr-3 btn btn-default btn-primary"
         >
           {{ __('Apply and close') }}
         </button>
@@ -179,6 +193,7 @@ export default {
       stateActiveFile: void 0,
       stateSelectedFiles: [],
       withThumbnails: this.field.withThumbnails ?? true,
+      bulkDelete: false,
     };
   },
 
@@ -248,23 +263,25 @@ export default {
   },
 
   methods: {
-    async removeItems() {
+    async deleteFile(selectMediaId) {
       await axios.delete('/api/media/delete', {
         data: {
-          mediaId: this.stateActiveFile.data.id,
+          mediaId: selectMediaId,
         },
       });
 
-      let selectMediaId = this.stateActiveFile.data.id;
-      let i = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
-      this.files.splice(i, 1);
+      let fileIndex = this.files.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+      if(fileIndex != -1)
+        this.files.splice(fileIndex, 1);
       window.mediaLibrary.files = this.files;
 
-      let j = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
-      this.stateSelectedFiles.splice(j, 1);
+      let stateSelectedFileIndex = this.stateSelectedFiles.findIndex(item => item.processed && +item.data.id === +selectMediaId);
+      if(stateSelectedFileIndex != -1) //if file is selected, remove from state
+        this.stateSelectedFiles.splice(stateSelectedFileIndex, 1);
+
       this.$emit('update:selectedFiles', [...this.stateSelectedFiles]);
       this.$emit('updateMedia');
-
+      
       this.stateActiveFile = void 0;
     },
 
